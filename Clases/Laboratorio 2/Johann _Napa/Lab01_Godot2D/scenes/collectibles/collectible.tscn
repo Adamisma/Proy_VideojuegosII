@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bwwdmg2np2c6h"]
+
+[ext_resource type="Script" uid="uid://cei56wboxtf3" path="res://scripts/collectible.gd" id="1_lb3xb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_slk4c"]
+
+[node name="Collectible" type="Area2D" unique_id=701241505]
+script = ExtResource("1_lb3xb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2097497993]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=582399483]
+shape = SubResource("RectangleShape2D_slk4c")
