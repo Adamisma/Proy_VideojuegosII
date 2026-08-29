@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://ds23fa7jd10wv"]
+
+[ext_resource type="PackedScene" uid="uid://bfhelif42qp0k" path="res://scenes/environment/wall.tscn" id="1_epjhf"]
+
+[node name="PhysicsArena" type="Node2D" unique_id=1452225090]
+position = Vector2(-46, 0)
+
+[node name="Wall" parent="." unique_id=417516317 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 21)
+
+[node name="Wall2" parent="." unique_id=940728874 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 101)
+
+[node name="Wall3" parent="." unique_id=804797681 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 62)
+
+[node name="Wall4" parent="." unique_id=419376434 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 183)
+
+[node name="Wall5" parent="." unique_id=2107735305 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 142)
+
+[node name="Wall6" parent="." unique_id=667865619 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 223)
+
+[node name="Wall7" parent="." unique_id=1933800791 instance=ExtResource("1_epjhf")]
+position = Vector2(23, 264)

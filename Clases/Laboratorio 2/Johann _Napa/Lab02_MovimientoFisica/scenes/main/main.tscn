@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cffdswxidsyci"]
+
+[ext_resource type="PackedScene" uid="uid://cie28t1csn1wt" path="res://scenes/player/player.tscn" id="1_iuonh"]
+[ext_resource type="Script" uid="uid://bpmrip0ilkqtr" path="res://scripts/main.gd" id="1_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://bwwdmg2np2c6h" path="res://scenes/collectibles/collectible.tscn" id="2_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://ds23fa7jd10wv" path="res://scenes/levels/physics_arena.tscn" id="4_l3cfh"]
+
+[node name="Main" type="Node2D" unique_id=764549278]
+script = ExtResource("1_k2fmo")
+
+[node name="Player" parent="." unique_id=1436969451 instance=ExtResource("1_iuonh")]
+position = Vector2(641, 360)
+
+[node name="Collectible" parent="." unique_id=701241505 instance=ExtResource("2_k2fmo")]
+position = Vector2(1061, 564)
+
+[node name="Collectible2" parent="." unique_id=2114032781 instance=ExtResource("2_k2fmo")]
+position = Vector2(431, 605)
+
+[node name="Collectible3" parent="." unique_id=766312938 instance=ExtResource("2_k2fmo")]
+position = Vector2(797, 150)
+
+[node name="Collectible4" parent="." unique_id=702961603 instance=ExtResource("2_k2fmo")]
+position = Vector2(188, 204)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=191240004]
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer" unique_id=605570803]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Puntos: 0"
+
+[node name="PhysicsArena" parent="." unique_id=1452225090 instance=ExtResource("4_l3cfh")]
