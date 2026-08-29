@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cffdswxidsyci"]
+
+[ext_resource type="Script" uid="uid://c8y25iwbcj65e" path="res://scripts/main.gd" id="1_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://bwwdmg2np2c6h" path="res://scenes/collectibles/collectible.tscn" id="2_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://dp21pbsymvtxb" path="res://scenes/levels/level_03.tscn" id="2_l3cfh"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l3cfh"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_k2fmo"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_6q06x"]
+font_size = 56
+
+[node name="Main" type="Node2D" unique_id=1076518107]
+script = ExtResource("1_k2fmo")
+
+[node name="Level3" parent="." unique_id=1142270441 instance=ExtResource("2_l3cfh")]
+
+[node name="Collectible" parent="." unique_id=899075708 instance=ExtResource("2_k2fmo")]
+position = Vector2(38, 29)
+points = 5
+
+[node name="Collectible2" parent="." unique_id=2143312197 instance=ExtResource("2_k2fmo")]
+position = Vector2(606, 102)
+points = 15
+
+[node name="Collectible3" parent="." unique_id=1749893297 instance=ExtResource("2_k2fmo")]
+position = Vector2(764, 383)
+
+[node name="Collectible4" parent="." unique_id=1709063152 instance=ExtResource("2_k2fmo")]
+position = Vector2(481, 406)
+points = 20
+
+[node name="Collectible5" parent="." unique_id=1745177635 instance=ExtResource("2_k2fmo")]
+position = Vector2(1047, 318)
+points = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=598102300]
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer" unique_id=1940629306]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 260.0
+offset_bottom = 56.0
+text = "Puntos: 0"
+label_settings = SubResource("LabelSettings_l3cfh")
+
+[node name="RemainingLabel" type="Label" parent="CanvasLayer" unique_id=1077849048]
+offset_left = 935.0
+offset_top = 13.0
+offset_right = 1267.0
+offset_bottom = 58.0
+text = "Monedas restantes: 0"
+label_settings = SubResource("LabelSettings_k2fmo")
+
+[node name="VictoryLabel" type="Label" parent="CanvasLayer" unique_id=1668099074]
+visible = false
+offset_left = 481.0
+offset_top = 170.0
+offset_right = 775.0
+offset_bottom = 260.0
+text = "¡VICTORIA!"
+label_settings = SubResource("LabelSettings_6q06x")
