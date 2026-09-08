@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://boch8nofbf1l8"]
+
+[ext_resource type="Script" uid="uid://bxn423rlmyqyp" path="res://scripts/checkpoint.gd" id="1_fwd37"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j6e47"]
+
+[node name="Checkpoint" type="Area2D" unique_id=1874459406 groups=["checkpoint"]]
+script = ExtResource("1_fwd37")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=737059010]
+
+[node name="SpawnPoint" type="Marker2D" parent="." unique_id=581012627]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1103473380]
+shape = SubResource("CapsuleShape2D_j6e47")
