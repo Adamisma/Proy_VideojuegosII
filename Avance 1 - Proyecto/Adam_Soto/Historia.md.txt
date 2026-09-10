@@ -1,0 +1,9 @@
+Historia
+
+Contexto histórico: La historia se desarrolla durante el siglo XVI, en el periodo de resistencia inca frente a la conquista española. Cahuide es presentado como un guerrero leal a Manco Inca y comprometido con la defensa del Cuzco.
+
+Inicio: Ante el avance de las fuerzas españolas, Cahuide recibe la misión de defender los territorios incas y descubre que antiguas fuerzas espirituales vinculadas a los Apus pueden ayudarlo en su lucha.
+
+Desarrollo: Cahuide atraviesa distintos territorios, enfrenta enemigos, supera obstáculos y obtiene reliquias que le permiten utilizar poderes ancestrales.
+
+Desenlace: Cahuide enfrenta el ataque final en Sacsayhuamán y, consciente del sacrificio que implica su misión, decide luchar hasta el final para cumplir su juramento y defender a su pueblo.
