@@ -1,0 +1,115 @@
+[gd_scene load_steps=16 format=3 uid="uid://yeaboep172mi"]
+
+[ext_resource type="Script" uid="uid://b0nw20m55fgea" path="res://scripts/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="SpriteFrames" path="res://scenes/enemies/soldado_frames.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://5eg2fxlrp74h" path="res://scripts/enemies/enemy_state_machine.gd" id="3_fsm"]
+[ext_resource type="Script" uid="uid://bclmhb84el3ib" path="res://scripts/enemies/states/enemy_state_idle.gd" id="4_idle"]
+[ext_resource type="Script" uid="uid://brwf1ytmqn1ly" path="res://scripts/enemies/states/enemy_state_patrol.gd" id="5_patrol"]
+[ext_resource type="Script" uid="uid://b6m8crsysl0vv" path="res://scripts/enemies/states/enemy_state_chase.gd" id="6_chase"]
+[ext_resource type="Script" uid="uid://jlysovsi5bfb" path="res://scripts/enemies/states/enemy_state_attack.gd" id="7_attack"]
+[ext_resource type="Script" uid="uid://dkudg5kmt2otw" path="res://scripts/enemies/states/enemy_state_hurt.gd" id="8_hurt"]
+[ext_resource type="Script" uid="uid://00sad480744y" path="res://scripts/enemies/states/enemy_state_dead.gd" id="9_dead"]
+[ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="10_hitbox"]
+[ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="11_hurtbox"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
+radius = 22.0
+height = 86.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hit"]
+size = Vector2(45, 55)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
+radius = 64.846
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_atk"]
+radius = 61.4003
+
+[node name="EnemyMelee" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
+script = ExtResource("1_enemy")
+max_health = 50
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -6)
+scale = Vector2(0.72, 0.72)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_fsm")
+initial_state = NodePath("Patrol")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("4_idle")
+
+[node name="Patrol" type="Node" parent="StateMachine"]
+script = ExtResource("5_patrol")
+
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("6_chase")
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("7_attack")
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource("8_hurt")
+
+[node name="Dead" type="Node" parent="StateMachine"]
+script = ExtResource("9_dead")
+
+[node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(-32, 0)
+collision_layer = 32
+collision_mask = 64
+script = ExtResource("10_hitbox")
+damage = 15
+is_enemy_hitbox = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_hit")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("11_hurtbox")
+is_enemy_hurtbox = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_body")
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_detect")
+
+[node name="AttackArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+shape = SubResource("CircleShape2D_atk")
+
+[node name="FloorDetector" type="RayCast2D" parent="."]
+position = Vector2(-28, 10)
+target_position = Vector2(0, 45)
+
+[node name="WallDetector" type="RayCast2D" parent="."]
+target_position = Vector2(-35, 0)
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = -28.0
+offset_top = -56.0
+offset_right = 28.0
+offset_bottom = -48.0
+max_value = 50.0
+value = 50.0
+show_percentage = false

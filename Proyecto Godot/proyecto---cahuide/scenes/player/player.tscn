@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3 uid="uid://c73f8jejiqg5t"]
+
+[ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="SpriteFrames" path="res://scenes/player/player_frames.tres" id="2_frames"]
+[ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="3_hitbox"]
+[ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+radius = 23.0
+height = 88.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_atk"]
+size = Vector2(65, 104.5)
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 2
+script = ExtResource("1_player")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -6)
+scale = Vector2(0.7, 0.7)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="MeleeHitbox" type="Area2D" parent="."]
+position = Vector2(38, 0)
+collision_layer = 8
+collision_mask = 16
+script = ExtResource("3_hitbox")
+damage = 25
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox"]
+position = Vector2(-38.5, -6.25)
+shape = SubResource("RectangleShape2D_atk")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 32
+script = ExtResource("4_hurtbox")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -50)
+process_callback = 0
+limit_left = -100
+limit_top = -400
+limit_right = 4300
+limit_bottom = 850
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
