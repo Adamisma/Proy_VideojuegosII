@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://iwn434qrlg7g"]
+
+[ext_resource type="Texture2D" uid="uid://vnw7qmhisefa" path="res://assets/Piedra.png" id="1_c8fcr"]
+[ext_resource type="Script" uid="uid://dnsd6cb2bnk0u" path="res://scripts/projectile.gd" id="1_q3m7n"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_slk4c"]
+radius = 18.110771
+
+[node name="Projectile" type="Area2D" unique_id=563882702]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_q3m7n")
+
+[node name="Projectile" type="Sprite2D" parent="." unique_id=1184806980]
+position = Vector2(2.3841858e-07, 1.1920929e-07)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("1_c8fcr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1875246375]
+shape = SubResource("CircleShape2D_slk4c")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

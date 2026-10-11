@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bo6atfajlglng"]
+
+[ext_resource type="PackedScene" uid="uid://bc0cm8u4qh5l0" path="res://scenes/PJ.tscn" id="1_0wfyh"]
+[ext_resource type="Texture2D" uid="uid://vnw7qmhisefa" path="res://assets/Piedra.png" id="2_sugp2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_slk4c"]
+radius = 45.044422
+
+[node name="Main" type="Node2D" unique_id=1469667405]
+
+[node name="CharacterBody2D" parent="." unique_id=2002067977 instance=ExtResource("1_0wfyh")]
+position = Vector2(639, 361)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=339096952]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D" unique_id=666125932]
+position = Vector2(643, 577)
+scale = Vector2(0.49714285, 0.49714285)
+texture = ExtResource("2_sugp2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=155442310]
+position = Vector2(643, 577)
+shape = SubResource("CircleShape2D_slk4c")
