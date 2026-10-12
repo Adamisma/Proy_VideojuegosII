@@ -7,8 +7,9 @@ signal health_changed(new_health: int, max_health: int)
 signal player_died
 
 @export_category("Health & Stats")
-@export var max_health: int = 100
-var health: int = 100
+# 20 de salud total = 10 corazones (cada corazón maneja 2 puntos: vacío, medio, lleno)
+@export var max_health: int = 20
+var health: int = 20
 
 @export_category("Horizontal Movement")
 @export var max_speed: float = 260.0
@@ -53,6 +54,11 @@ var is_invulnerable: bool = false
 var is_attacking: bool = false
 var is_dead: bool = false
 
+# --- POWER-UP DEL SOL ---
+var has_sol_powerup: bool = false
+@export var sol_duration: float = 15.0 # Duración actualizada a 15 segundos
+var sol_timer: float = 0.0
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var melee_hitbox: Hitbox = $MeleeHitbox
@@ -76,11 +82,24 @@ func _ready() -> void:
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 		animated_sprite.play("idle")
 
+func apply_powerup_sol() -> void:
+	has_sol_powerup = true
+	sol_timer = sol_duration
+	
+	# Curamos 2 puntos (1 corazón) si está herido, pero sin alterar max_health para no romper el HUD
+	health = min(health + 2, max_health)
+	health_changed.emit(health, max_health)
+	
+	# Modulación dorada resplandeciente
+	if animated_sprite:
+		animated_sprite.modulate = Color(2.2, 1.8, 0.4, 1.0)
+
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
 		
 	_update_timers(delta)
+	_update_sol_powerup(delta)
 	
 	_update_dash(delta)
 	_try_start_dash()
@@ -97,6 +116,34 @@ func _physics_process(delta: float) -> void:
 	
 	_handle_combat_inputs()
 	_update_animations()
+
+func _update_sol_powerup(delta: float) -> void:
+	if not has_sol_powerup:
+		return
+		
+	sol_timer -= delta
+	
+	# Parpadeo de advertencia cuando quedan 3 segundos o menos
+	if sol_timer <= 3.0 and sol_timer > 0.0:
+		var blink = fmod(sol_timer * 10.0, 2.0) > 1.0
+		if animated_sprite and not is_invulnerable:
+			animated_sprite.modulate = Color(2.5, 2.0, 0.5, 1.0) if blink else Color(1, 1, 1, 1)
+	
+	# Fin del efecto al llegar a 0
+	if sol_timer <= 0.0:
+		_remove_sol_powerup()
+
+func _remove_sol_powerup() -> void:
+	has_sol_powerup = false
+	
+	# Restablecer tono normal
+	if animated_sprite and not is_invulnerable:
+		animated_sprite.modulate = Color(1, 1, 1, 1)
+		
+	# Quitar la resistencia extra otorgada
+	max_health = max(1, max_health - 1)
+	health = min(health, max_health)
+	health_changed.emit(health, max_health)
 
 func _update_timers(delta: float) -> void:
 	_update_coyote_time(delta)
@@ -191,10 +238,10 @@ func _try_start_dash() -> void:
 		dash_timer = dash_duration
 		dash_cooldown_timer = dash_cooldown
 		
-		# Efecto visual de dash
 		var tween = create_tween()
 		tween.tween_property(animated_sprite, "modulate", Color(1.8, 1.8, 2.0, 0.5), 0.08)
-		tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1, 1), 0.08)
+		var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
+		tween.tween_property(animated_sprite, "modulate", restore_color, 0.08)
 
 func _update_dash(delta: float) -> void:
 	dash_cooldown_timer = max(0.0, dash_cooldown_timer - delta)
@@ -209,13 +256,14 @@ func _update_dash(delta: float) -> void:
 		is_dashing = false
 
 func _handle_combat_inputs() -> void:
-	# Ataque cuerpo a cuerpo
 	if Input.is_action_just_pressed("attack") and attack_timer <= 0.0 and not is_attacking:
 		_execute_melee_attack()
 		
-	# Disparo de proyectil (HU04)
-	if Input.is_action_just_pressed("shoot") and shoot_timer <= 0.0:
-		_shoot_projectile()
+	if Input.is_action_just_pressed("shoot"):
+		if has_sol_powerup:
+			_shoot_projectile()
+		elif shoot_timer <= 0.0:
+			_shoot_projectile()
 
 func _execute_melee_attack() -> void:
 	attack_timer = attack_cooldown
@@ -242,28 +290,43 @@ func _shoot_projectile() -> void:
 	proj.damage = shoot_damage
 	proj.speed = 520.0
 	
-	# Dirección según hacia donde mira Cahuide
 	var shoot_dir = Vector2(facing_direction, 0.0)
 	proj.set_direction(shoot_dir)
 	
-	# Punto de aparición
 	proj.global_position = global_position + Vector2(facing_direction * 30.0, -10.0)
-	
 	get_tree().current_scene.add_child(proj)
 	
-	# Efecto de destello de sol en el sprite
 	var tween = create_tween()
-	tween.tween_property(animated_sprite, "modulate", Color(2.0, 1.8, 0.8, 1), 0.08)
-	tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1, 1), 0.12)
+	tween.tween_property(animated_sprite, "modulate", Color(2.8, 2.2, 0.8, 1), 0.08)
+	var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
+	tween.tween_property(animated_sprite, "modulate", restore_color, 0.12)
 
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
 	take_direct_damage(amount, knockback)
 
-func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
+	# Si NO tiene el power-up activo, funciona normal:
+	var final_damage = clamp(amount, 1, 2)
+	take_direct_damage(final_damage, knockback)
+
+func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if is_invulnerable or is_dead:
 		return
 		
-	health = max(0, health - amount)
+	var damage_to_apply = amount
+	
+	# --- LÓGICA REFORZADA DEL POWER-UP DEL SOL ---
+	if has_sol_powerup:
+		# Si el daño es de espada/cuerpo a cuerpo (1 punto), INMUNE (0 daño)
+		if amount <= 1:
+			return
+		# Si el daño es de flecha/proyectil (2 puntos o más), REDUCIR A MEDIO CORAZÓN (1 punto)
+		else:
+			damage_to_apply = 1
+	else:
+		# Daño normal del juego cuando no hay power-up
+		damage_to_apply = clamp(amount, 1, 2)
+		
+	health = max(0, health - damage_to_apply)
 	health_changed.emit(health, max_health)
 	
 	if knockback != Vector2.ZERO:
@@ -273,17 +336,17 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 		_die()
 		return
 		
-	# Estado HURT
 	is_attacking = false
 	animated_sprite.play("hurt")
 	
-	# I-frames y parpadeo rojo
 	is_invulnerable = true
 	var tween = create_tween()
 	tween.tween_property(animated_sprite, "modulate", Color(2.5, 0.3, 0.3, 0.7), 0.1)
 	tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1, 1), 0.1)
 	tween.tween_property(animated_sprite, "modulate", Color(2.5, 0.3, 0.3, 0.7), 0.1)
-	tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1, 1), 0.1)
+	
+	var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
+	tween.tween_property(animated_sprite, "modulate", restore_color, 0.1)
 	
 	await get_tree().create_timer(0.45).timeout
 	is_invulnerable = false

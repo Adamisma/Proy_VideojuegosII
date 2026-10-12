@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bnfwoh1seu4db"]
 
-[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Script" uid="uid://dn8jx7a0t0bt6" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" uid="uid://vu1356xkhd7a" path="res://assets/environment/vida_vacia.png" id="2_bo48s"]
+[ext_resource type="Texture2D" uid="uid://bq7a1ka14gdax" path="res://assets/environment/vida.png" id="2_hqnrr"]
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=226852910]
 script = ExtResource("1_hud")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=509611217]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -16,49 +18,137 @@ theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 18
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2063911775]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=302594839]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="HealthLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1917995259]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Salud: 100 / 100"
 
-[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(240, 24)
+[node name="IndicadorVida" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer" unique_id=149183568]
 layout_mode = 2
-size_flags_vertical = 4
-max_value = 100.0
-value = 100.0
-show_percentage = false
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="Heart1" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1849811532]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart2" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1614947801]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart3" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1040511915]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart4" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1069126749]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart5" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1050732119]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart6" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1158544447]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart7" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=37062901]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart8" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=2129767132]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart9" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1449459188]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="Heart10" type="TextureProgressBar" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorVida" unique_id=1437871343]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+max_value = 2.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_bo48s")
+texture_progress = ExtResource("2_hqnrr")
+
+[node name="IndicadorScore" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer" unique_id=2098466341]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer/IndicadorScore" unique_id=1238285258]
+layout_mode = 2
+text = "SCORE 0"
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1430786749]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="KillsLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar" unique_id=109921694]
+layout_mode = 2
+
+[node name="KillsLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer2" unique_id=715071998]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Enemigos Derrotados: 0"
 
-[node name="ObjectiveLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="RelicLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/VBoxContainer2" unique_id=1384483370]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Reliquias Faltantes: 0"
+
+[node name="ObjectiveLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1725408371]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 16
 text = "🌅 Objetivo: Atraviesa Sacsayhuamán y recupera la Reliquia Ancestral"
 
-[node name="ControlsHint" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ControlsHint" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1630032419]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
 theme_override_font_sizes/font_size = 13
 text = "Controles: [A/D] Mover | [Espacio] Saltar | [Shift] Dash | [J / Click Izq.] Atacar | [K / Click Der.] Disparo (HU04)"
 
-[node name="GameOverPanel" type="PanelContainer" parent="."]
+[node name="GameOverPanel" type="PanelContainer" parent="." unique_id=2060541810]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -72,41 +162,41 @@ offset_bottom = 140.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameOverPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverPanel" unique_id=765395829]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Title" type="Label" parent="GameOverPanel/VBoxContainer"]
+[node name="Title" type="Label" parent="GameOverPanel/VBoxContainer" unique_id=816940337]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.2, 0.2, 1)
 theme_override_font_sizes/font_size = 28
 text = "¡HAS SIDO DERROTADO!"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="GameOverPanel/VBoxContainer"]
+[node name="Subtitle" type="Label" parent="GameOverPanel/VBoxContainer" unique_id=596139827]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Cahuide cayó en la batalla de Sacsayhuamán.
 Presiona [R] para volver a intentarlo."
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameOverPanel/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GameOverPanel/VBoxContainer" unique_id=1568522608]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="BtnRestart" type="Button" parent="GameOverPanel/VBoxContainer/HBoxContainer"]
+[node name="BtnRestart" type="Button" parent="GameOverPanel/VBoxContainer/HBoxContainer" unique_id=2006720312]
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 text = "Reintentar"
 
-[node name="BtnMenu" type="Button" parent="GameOverPanel/VBoxContainer/HBoxContainer"]
+[node name="BtnMenu" type="Button" parent="GameOverPanel/VBoxContainer/HBoxContainer" unique_id=13177002]
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 text = "Menú Principal"
 
-[node name="VictoryPanel" type="PanelContainer" parent="."]
+[node name="VictoryPanel" type="PanelContainer" parent="." unique_id=1949038749]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -120,36 +210,36 @@ offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VictoryPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VictoryPanel" unique_id=922536262]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Title" type="Label" parent="VictoryPanel/VBoxContainer"]
+[node name="Title" type="Label" parent="VictoryPanel/VBoxContainer" unique_id=295190797]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_font_sizes/font_size = 28
 text = "¡VICTORIA EN SACSAYHUAMÁN!"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="VictoryPanel/VBoxContainer"]
+[node name="Subtitle" type="Label" parent="VictoryPanel/VBoxContainer" unique_id=759410002]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "¡Has recuperado la Reliquia Ancestral!
 El Poder del Sol ha sido despertado para la resistencia."
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VictoryPanel/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VictoryPanel/VBoxContainer" unique_id=1475832389]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="BtnVictoryRestart" type="Button" parent="VictoryPanel/VBoxContainer/HBoxContainer"]
+[node name="BtnVictoryRestart" type="Button" parent="VictoryPanel/VBoxContainer/HBoxContainer" unique_id=694007968]
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 text = "Jugar de Nuevo"
 
-[node name="BtnVictoryMenu" type="Button" parent="VictoryPanel/VBoxContainer/HBoxContainer"]
+[node name="BtnVictoryMenu" type="Button" parent="VictoryPanel/VBoxContainer/HBoxContainer" unique_id=1985133582]
 custom_minimum_size = Vector2(140, 40)
 layout_mode = 2
 text = "Menú Principal"

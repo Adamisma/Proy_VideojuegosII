@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bn0sjcnrrpdj3"]
+[gd_scene format=3 uid="uid://bn0sjcnrrpdj3"]
 
 [ext_resource type="Script" uid="uid://b0nw20m55fgea" path="res://scripts/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="SpriteFrames" path="res://scenes/enemies/ballestero_frames.tres" id="2_frames"]
@@ -21,84 +21,85 @@ radius = 450.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_atk"]
 radius = 380.0
 
-[node name="EnemyRanged" type="CharacterBody2D" groups=["enemies"]]
+[node name="EnemyRanged" type="CharacterBody2D" unique_id=1063615890 groups=["enemies"]]
 collision_layer = 4
 script = ExtResource("1_enemy")
 enemy_name = "Ballestero Español"
 max_health = 35
 damage = 12
+score_value = 150
 patrol_speed = 60.0
 chase_speed = 110.0
 is_ranged = true
 projectile_speed = 420.0
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1083924438]
 position = Vector2(0, -6)
 scale = Vector2(0.72, 0.72)
 sprite_frames = ExtResource("2_frames")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1315479104]
 position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_body")
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." unique_id=569892504 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_fsm")
 initial_state = NodePath("Patrol")
 
-[node name="Idle" type="Node" parent="StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine" unique_id=547987758]
 script = ExtResource("4_idle")
 
-[node name="Patrol" type="Node" parent="StateMachine"]
+[node name="Patrol" type="Node" parent="StateMachine" unique_id=687051701]
 script = ExtResource("5_patrol")
 
-[node name="Chase" type="Node" parent="StateMachine"]
+[node name="Chase" type="Node" parent="StateMachine" unique_id=1221701932]
 script = ExtResource("6_chase")
 
-[node name="Attack" type="Node" parent="StateMachine"]
+[node name="Attack" type="Node" parent="StateMachine" unique_id=784312889]
 script = ExtResource("7_attack")
 attack_duration = 1.1
 attack_windup = 0.4
 
-[node name="Hurt" type="Node" parent="StateMachine"]
+[node name="Hurt" type="Node" parent="StateMachine" unique_id=1507739658]
 script = ExtResource("8_hurt")
 
-[node name="Dead" type="Node" parent="StateMachine"]
+[node name="Dead" type="Node" parent="StateMachine" unique_id=1507166705]
 script = ExtResource("9_dead")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1943675923]
 collision_layer = 16
 collision_mask = 8
 script = ExtResource("10_hurtbox")
 is_enemy_hurtbox = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1821027964]
 position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_body")
 
-[node name="DetectionArea" type="Area2D" parent="."]
+[node name="DetectionArea" type="Area2D" parent="." unique_id=680970720]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1150133289]
 shape = SubResource("CircleShape2D_detect")
 
-[node name="AttackArea" type="Area2D" parent="."]
+[node name="AttackArea" type="Area2D" parent="." unique_id=473736006]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=1943710481]
 shape = SubResource("CircleShape2D_atk")
 
-[node name="FloorDetector" type="RayCast2D" parent="."]
+[node name="FloorDetector" type="RayCast2D" parent="." unique_id=1927674189]
 position = Vector2(-28, 10)
 target_position = Vector2(0, 45)
 
-[node name="WallDetector" type="RayCast2D" parent="."]
+[node name="WallDetector" type="RayCast2D" parent="." unique_id=1393969541]
 target_position = Vector2(-35, 0)
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=50017941]
 offset_left = -28.0
 offset_top = -56.0
 offset_right = 28.0

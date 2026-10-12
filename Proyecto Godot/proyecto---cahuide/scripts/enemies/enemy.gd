@@ -9,7 +9,9 @@ signal enemy_defeated(enemy_node: Enemy)
 @export_category("Enemy Stats (HU03)")
 @export var enemy_name: String = "Soldado Español"
 @export var max_health: int = 40
-@export var damage: int = 15
+# Daño Melee por defecto: 1 punto (medio corazón)
+@export var damage: int = 1
+@export var score_value: int = 100 # Puntos otorgados al morir
 @export var patrol_speed: float = 75.0
 @export var chase_speed: float = 150.0
 @export var gravity: float = 1200.0
@@ -18,6 +20,8 @@ signal enemy_defeated(enemy_node: Enemy)
 @export var is_ranged: bool = false
 @export var projectile_scene: PackedScene = preload("res://scenes/projectiles/projectile.tscn")
 @export var projectile_speed: float = 400.0
+# Daño del Proyectil / Flecha: 2 puntos (1 corazón entero)
+@export var ranged_damage: int = 2
 @export var attack_cooldown: float = 1.2
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -43,7 +47,7 @@ func _ready() -> void:
 		health_bar.max_value = max_health
 		health_bar.value = health
 	
-	# Configurar Hitbox
+	# Configurar Hitbox para ataque Melee (1 punto = medio corazón)
 	if hitbox:
 		hitbox.damage = damage
 		hitbox.is_enemy_hitbox = true
@@ -77,7 +81,8 @@ func apply_gravity(delta: float) -> void:
 func set_facing(new_dir: float) -> void:
 	direction = new_dir
 	if animated_sprite:
-		animated_sprite.flip_h = (direction > 0)
+		# Si mirando a la derecha se ve al revés, cambia '>' por '<'
+		animated_sprite.flip_h = (direction < 0)
 	
 	# Ajustar posición de RayCasts y Hitbox al encarar
 	if floor_detector:
@@ -118,6 +123,7 @@ func execute_attack() -> void:
 
 func _execute_melee_attack() -> void:
 	if hitbox:
+		hitbox.damage = damage # Asegura el daño melee (1 de daño)
 		hitbox.monitoring = true
 		await get_tree().create_timer(0.28).timeout
 		if is_instance_valid(hitbox):
@@ -132,7 +138,7 @@ func _shoot_projectile() -> void:
 		return
 		
 	proj.is_enemy_projectile = true
-	proj.damage = damage
+	proj.damage = ranged_damage # Se asigna 2 de daño (1 corazón entero)
 	proj.speed = projectile_speed
 	
 	# Dirección apuntando hacia Cahuide
@@ -162,11 +168,24 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 		
 	# Cambiar a estado HURT o DEAD
 	if health <= 0:
+		_on_death()
 		if state_machine:
 			state_machine.transition_to("dead")
 	else:
 		if state_machine:
 			state_machine.transition_to("hurt")
+
+func _on_death() -> void:
+	# Sumar el puntaje y la baja al HUD
+	var hud = get_tree().get_first_node_in_group("hud")
+	if not hud:
+		hud = get_tree().current_scene.get_node_or_null("HUD")
+		
+	if hud:
+		if hud.has_method("add_score"):
+			hud.add_score(score_value)
+		if hud.has_method("add_enemy_defeated"):
+			hud.add_enemy_defeated()
 
 func disable_collisions() -> void:
 	if collision_shape:

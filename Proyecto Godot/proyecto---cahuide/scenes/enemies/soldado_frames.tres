@@ -1,196 +1,155 @@
-[gd_resource type="SpriteFrames" load_steps=31 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://t2qilgv4bum8"]
 
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/idle_0.png" id="ext_1"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/idle_1.png" id="ext_2"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/idle_2.png" id="ext_3"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/idle_3.png" id="ext_4"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_0.png" id="ext_5"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_1.png" id="ext_6"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_2.png" id="ext_7"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_3.png" id="ext_8"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_4.png" id="ext_9"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/walk_5.png" id="ext_10"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_0.png" id="ext_11"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_1.png" id="ext_12"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_2.png" id="ext_13"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_3.png" id="ext_14"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_4.png" id="ext_15"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/run_5.png" id="ext_16"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_0.png" id="ext_17"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_1.png" id="ext_18"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_2.png" id="ext_19"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_3.png" id="ext_20"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_4.png" id="ext_21"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/attack_5.png" id="ext_22"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/hurt_0.png" id="ext_23"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/hurt_1.png" id="ext_24"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/hurt_2.png" id="ext_25"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/hurt_3.png" id="ext_26"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/hurt_4.png" id="ext_27"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/dead_0.png" id="ext_28"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/dead_1.png" id="ext_29"]
-[ext_resource type="Texture2D" path="res://assets/characters/soldado_anims/dead_2.png" id="ext_30"]
+[ext_resource type="Texture2D" uid="uid://ypbrh6k62g72" path="res://assets/characters/soldado_anims/idle_0.png" id="ext_1"]
+[ext_resource type="Texture2D" uid="uid://sss04dvugl0n" path="res://assets/characters/soldado_anims/idle_1.png" id="ext_2"]
+[ext_resource type="Texture2D" uid="uid://dxjc575kvoaya" path="res://assets/characters/soldado_anims/idle_2.png" id="ext_3"]
+[ext_resource type="Texture2D" uid="uid://5rsk4cys3gqe" path="res://assets/characters/soldado_anims/idle_3.png" id="ext_4"]
+[ext_resource type="Texture2D" uid="uid://hbfnswqd646b" path="res://assets/characters/soldado_anims/walk_0.png" id="ext_5"]
+[ext_resource type="Texture2D" uid="uid://deqfehs7c7i5s" path="res://assets/characters/soldado_anims/walk_1.png" id="ext_6"]
+[ext_resource type="Texture2D" uid="uid://jyxtaeci2o2h" path="res://assets/characters/soldado_anims/walk_2.png" id="ext_7"]
+[ext_resource type="Texture2D" uid="uid://u8r4q4ei8vov" path="res://assets/characters/soldado_anims/walk_3.png" id="ext_8"]
+[ext_resource type="Texture2D" uid="uid://dfk0h6aegg5ud" path="res://assets/characters/soldado_anims/walk_4.png" id="ext_9"]
+[ext_resource type="Texture2D" uid="uid://b1411vwvopeui" path="res://assets/characters/soldado_anims/walk_5.png" id="ext_10"]
+[ext_resource type="Texture2D" uid="uid://tdv8hyiun3jw" path="res://assets/characters/soldado_anims/run_0.png" id="ext_11"]
+[ext_resource type="Texture2D" uid="uid://dv0okhsa87v8e" path="res://assets/characters/soldado_anims/run_1.png" id="ext_12"]
+[ext_resource type="Texture2D" uid="uid://boc8aj1ocvkce" path="res://assets/characters/soldado_anims/run_2.png" id="ext_13"]
+[ext_resource type="Texture2D" uid="uid://bpk31ikk1h5bi" path="res://assets/characters/soldado_anims/run_3.png" id="ext_14"]
+[ext_resource type="Texture2D" uid="uid://bui3uht3wbvum" path="res://assets/characters/soldado_anims/run_4.png" id="ext_15"]
+[ext_resource type="Texture2D" uid="uid://dqkmisdqe4chj" path="res://assets/characters/soldado_anims/run_5.png" id="ext_16"]
+[ext_resource type="Texture2D" uid="uid://c0vm5spviyq78" path="res://assets/characters/soldado_anims/attack_0.png" id="ext_17"]
+[ext_resource type="Texture2D" uid="uid://cskbbup5qm533" path="res://assets/characters/soldado_anims/attack_1.png" id="ext_18"]
+[ext_resource type="Texture2D" uid="uid://ckolnav5ytvxx" path="res://assets/characters/soldado_anims/attack_2.png" id="ext_19"]
+[ext_resource type="Texture2D" uid="uid://b6nayuk1p8v7m" path="res://assets/characters/soldado_anims/attack_3.png" id="ext_20"]
+[ext_resource type="Texture2D" uid="uid://5gy1omu7y556" path="res://assets/characters/soldado_anims/attack_4.png" id="ext_21"]
+[ext_resource type="Texture2D" uid="uid://p1oqo358njmq" path="res://assets/characters/soldado_anims/attack_5.png" id="ext_22"]
+[ext_resource type="Texture2D" uid="uid://b6hcsilfc5d6a" path="res://assets/characters/soldado_anims/hurt_0.png" id="ext_23"]
+[ext_resource type="Texture2D" uid="uid://gpshgho4t256" path="res://assets/characters/soldado_anims/hurt_1.png" id="ext_24"]
+[ext_resource type="Texture2D" uid="uid://bw3bekpxwm6yj" path="res://assets/characters/soldado_anims/hurt_2.png" id="ext_25"]
+[ext_resource type="Texture2D" uid="uid://bmljnxxga3twu" path="res://assets/characters/soldado_anims/hurt_3.png" id="ext_26"]
+[ext_resource type="Texture2D" uid="uid://dfhc0dejp4wu5" path="res://assets/characters/soldado_anims/hurt_4.png" id="ext_27"]
+[ext_resource type="Texture2D" uid="uid://mhoxun38x1gs" path="res://assets/characters/soldado_anims/dead_0.png" id="ext_28"]
+[ext_resource type="Texture2D" uid="uid://dqtvitp1lbld8" path="res://assets/characters/soldado_anims/dead_1.png" id="ext_29"]
+[ext_resource type="Texture2D" uid="uid://dg6kac6ktiv0k" path="res://assets/characters/soldado_anims/dead_2.png" id="ext_30"]
 
 [resource]
 animations = [{
-"frames": [
-{
-"duration": 1.0,
-"texture": ExtResource("ext_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_4")
-}
-],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-},
-{
-"frames": [
-{
-"duration": 1.0,
-"texture": ExtResource("ext_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_6")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_7")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_8")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_9")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_10")
-}
-],
-"loop": true,
-"name": &"walk",
-"speed": 7.0
-},
-{
-"frames": [
-{
-"duration": 1.0,
-"texture": ExtResource("ext_11")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_12")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_13")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_14")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_15")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_16")
-}
-],
-"loop": true,
-"name": &"run",
-"speed": 9.0
-},
-{
-"frames": [
-{
+"frames": [{
 "duration": 1.0,
 "texture": ExtResource("ext_17")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_18")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_19")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_20")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_21")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_22")
-}
-],
-"loop": false,
+}],
+"loop": 0,
 "name": &"attack",
 "speed": 9.0
-},
-{
-"frames": [
-{
-"duration": 1.0,
-"texture": ExtResource("ext_23")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_24")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_25")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_26")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("ext_27")
-}
-],
-"loop": false,
-"name": &"hurt",
-"speed": 8.0
-},
-{
-"frames": [
-{
+}, {
+"frames": [{
 "duration": 1.0,
 "texture": ExtResource("ext_28")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_29")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("ext_30")
-}
-],
-"loop": false,
+}],
+"loop": 0,
 "name": &"dead",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("ext_23")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_24")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_25")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_26")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_27")
+}],
+"loop": 0,
+"name": &"hurt",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("ext_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_4")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("ext_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_15")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_16")
+}],
+"loop": 1,
+"name": &"run",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("ext_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("ext_10")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 7.0
 }]

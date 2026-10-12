@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://4rlbe1hdk34w"]
+[gd_scene format=3 uid="uid://4rlbe1hdk34w"]
 
 [ext_resource type="Script" uid="uid://clthw20s7jh4b" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" uid="uid://lur55k020j4l" path="res://assets/backgrounds/escenario_dia.jpg" id="2_bg"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=449687411]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=212966157]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,7 +23,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2048934748]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.42)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1793965611]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,16 +44,16 @@ theme_override_constants/margin_top = 60
 theme_override_constants/margin_right = 80
 theme_override_constants/margin_bottom = 60
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=161582594]
 layout_mode = 2
 theme_override_constants/separation = 28
 alignment = 1
 
-[node name="TitleBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="TitleBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=767244310]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/TitleBox"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/TitleBox" unique_id=1256966351]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
@@ -62,38 +62,38 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_font_sizes/font_size = 54
 text = "CAHUIDE"
 
-[node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer/TitleBox"]
+[node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer/TitleBox" unique_id=927937604]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_font_sizes/font_size = 24
 text = "🌅 El Despertar de la Resistencia (Sacsayhuamán)"
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=707957283]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 14
 
-[node name="BtnPlay" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+[node name="BtnPlay" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=365865460]
 custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "⚔️ Iniciar Nivel 1"
 
-[node name="BtnControls" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+[node name="BtnControls" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1222730709]
 custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "📜 Controles y Guía"
 
-[node name="BtnQuit" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+[node name="BtnQuit" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1085540042]
 custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "🚪 Salir"
 
-[node name="ControlsDialog" type="PanelContainer" parent="."]
+[node name="ControlsDialog" type="PanelContainer" parent="." unique_id=1647419420]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -108,19 +108,19 @@ offset_bottom = 210.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ControlsDialog"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlsDialog" unique_id=224572426]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="ControlsTitle" type="Label" parent="ControlsDialog/VBoxContainer"]
+[node name="ControlsTitle" type="Label" parent="ControlsDialog/VBoxContainer" unique_id=511551135]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 24
 text = "CONTROLES DE JUEGO"
 horizontal_alignment = 1
 
-[node name="ControlsBody" type="Label" parent="ControlsDialog/VBoxContainer"]
+[node name="ControlsBody" type="Label" parent="ControlsDialog/VBoxContainer" unique_id=456218614]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "• Moverse: [A / D] o Flechas [← / →]
@@ -134,7 +134,7 @@ Objetivo: Derrota a los soldados invasores, supera
 los obstáculos y recupera la Reliquia Ancestral de
 Sacsayhuamán."
 
-[node name="BtnCloseControls" type="Button" parent="ControlsDialog/VBoxContainer"]
+[node name="BtnCloseControls" type="Button" parent="ControlsDialog/VBoxContainer" unique_id=1240547313]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
 size_flags_horizontal = 4

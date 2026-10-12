@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c73f8jejiqg5t"]
+[gd_scene format=3 uid="uid://c73f8jejiqg5t"]
 
 [ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="SpriteFrames" path="res://scenes/player/player_frames.tres" id="2_frames"]
@@ -12,47 +12,47 @@ height = 88.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_atk"]
 size = Vector2(65, 104.5)
 
-[node name="Player" type="CharacterBody2D" groups=["player"]]
+[node name="Player" type="CharacterBody2D" unique_id=156458254 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_player")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
 position = Vector2(0, -6)
 scale = Vector2(0.7, 0.7)
 sprite_frames = ExtResource("2_frames")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1381535601]
 position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_player")
 
-[node name="MeleeHitbox" type="Area2D" parent="."]
+[node name="MeleeHitbox" type="Area2D" parent="." unique_id=558693893]
 position = Vector2(38, 0)
 collision_layer = 8
 collision_mask = 16
 script = ExtResource("3_hitbox")
 damage = 25
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox" unique_id=241218600]
 position = Vector2(-38.5, -6.25)
 shape = SubResource("RectangleShape2D_atk")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=213927214]
 collision_layer = 64
 collision_mask = 32
 script = ExtResource("4_hurtbox")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=2055499754]
 position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_player")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=401472445]
 position = Vector2(0, -50)
 process_callback = 0
-limit_left = -100
-limit_top = -400
-limit_right = 4300
-limit_bottom = 850
+limit_left = 0
+limit_top = -200
+limit_right = 4250
+limit_bottom = 800
 position_smoothing_enabled = true
 position_smoothing_speed = 7.0

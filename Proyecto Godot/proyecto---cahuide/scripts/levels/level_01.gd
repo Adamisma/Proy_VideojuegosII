@@ -7,8 +7,10 @@ extends Node2D
 @onready var player: Player = $Player
 @onready var player_spawn: Marker2D = $PlayerSpawn
 @onready var hud: HUD = $HUD
-@onready var relic: Relic = $Relic
 @onready var enemies_container: Node2D = $Enemies
+
+var total_relics: int = 0
+var collected_relics: int = 0
 
 func _ready() -> void:
 	# Posicionar al jugador en el punto de inicio
@@ -24,15 +26,27 @@ func _ready() -> void:
 		if player:
 			hud.update_health(player.health, player.max_health)
 			
-	# Conectar meta final (Reliquia Ancestral)
-	if relic:
-		relic.relic_collected.connect(_on_relic_collected)
+	# Configurar y contar reliquias del nivel
+	_setup_relics()
 		
 	# Conectar enemigos del nivel
 	if enemies_container:
 		for child in enemies_container.get_children():
 			if child is Enemy:
 				child.enemy_defeated.connect(_on_enemy_defeated)
+
+func _setup_relics() -> void:
+	# Busca todos los nodos en el grupo "relics"
+	var relics = get_tree().get_nodes_in_group("relics")
+	total_relics = relics.size()
+	collected_relics = 0
+	
+	for node in relics:
+		if node is Relic:
+			if not node.relic_collected.is_connected(_on_relic_collected):
+				node.relic_collected.connect(_on_relic_collected)
+				
+	_update_relics_ui()
 
 func _process(_delta: float) -> void:
 	# Reinicio rápido con tecla [R]
@@ -51,9 +65,19 @@ func _on_player_died() -> void:
 	if hud:
 		hud.show_game_over()
 
-func _on_relic_collected() -> void:
-	if hud:
-		hud.show_victory()
+func _on_relic_collected(_relic: Relic) -> void:
+	collected_relics += 1
+	_update_relics_ui()
+	
+	# Cuando las reliquias restantes lleguen a 0, se completa el nivel
+	if total_relics - collected_relics <= 0:
+		if hud:
+			hud.show_victory()
+
+func _update_relics_ui() -> void:
+	var remaining = total_relics - collected_relics
+	if hud and hud.has_method("update_relics_count"):
+		hud.update_relics_count(remaining, total_relics)
 
 func _on_enemy_defeated(_enemy: Enemy) -> void:
 	if hud:
