@@ -20,7 +20,7 @@ height = 86.0
 size = Vector2(45, 55)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
-radius = 64.846
+radius = 280.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_atk"]
 radius = 61.4003

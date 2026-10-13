@@ -1,396 +1,320 @@
-[gd_scene format=3 uid="uid://tu3t1ytxjoq1"]
+[gd_scene format=4 uid="uid://bvx1jatya50es"]
 
-[ext_resource type="Script" uid="uid://b1lfwhgurqok6" path="res://scripts/levels/level_01.gd" id="1_lvl"]
-[ext_resource type="Texture2D" uid="uid://drcuryrila63r" path="res://assets/environment/ground_grass_soil.png" id="3_grass"]
-[ext_resource type="Texture2D" uid="uid://dwnqajp6chyq1" path="res://assets/backgrounds/FondoLejano.png" id="3_iu1m7"]
-[ext_resource type="Texture2D" uid="uid://cy5ovjvvkrtkt" path="res://assets/backgrounds/FondoIntermedio.png" id="4_cywot"]
-[ext_resource type="Texture2D" uid="uid://pp8ti34xtbaf" path="res://assets/environment/stone_masonry_block.png" id="4_stone"]
-[ext_resource type="Texture2D" uid="uid://cn2vm7oawlmyb" path="res://assets/backgrounds/FondoCercano.png" id="5_vrcmr"]
-[ext_resource type="Texture2D" uid="uid://c05vqnmjxx4hi" path="res://assets/environment/inca_wall_carved.png" id="5_wall"]
-[ext_resource type="Texture2D" uid="uid://l6xacljduua" path="res://assets/environment/andean_tree.png" id="6_tree"]
-[ext_resource type="Texture2D" uid="uid://q5oid7dpur8g" path="res://assets/environment/andean_bush.png" id="7_bush"]
-[ext_resource type="Texture2D" uid="uid://bpptc0lygoowy" path="res://assets/environment/inca_torch.png" id="8_torch"]
-[ext_resource type="Texture2D" uid="uid://b3wbev21rlw7i" path="res://assets/environment/inca_banner.png" id="9_banner"]
-[ext_resource type="PackedScene" path="res://scenes/environment/hazard.tscn" id="10_hazard"]
-[ext_resource type="PackedScene" uid="uid://cvplh7rg30cf6" path="res://scenes/environment/relic.tscn" id="11_relic"]
-[ext_resource type="PackedScene" uid="uid://yeaboep172mi" path="res://scenes/enemies/enemy_melee.tscn" id="12_melee"]
-[ext_resource type="PackedScene" uid="uid://bn0sjcnrrpdj3" path="res://scenes/enemies/enemy_ranged.tscn" id="13_ranged"]
-[ext_resource type="PackedScene" uid="uid://c73f8jejiqg5t" path="res://scenes/player/player.tscn" id="14_player"]
-[ext_resource type="PackedScene" uid="uid://bnfwoh1seu4db" path="res://scenes/ui/hud.tscn" id="15_hud"]
-[ext_resource type="PackedScene" uid="uid://b7q84nxiuvemp" path="res://scenes/environment/power_up_sol.tscn" id="16_cwffn"]
+[ext_resource type="Script" uid="uid://b1lfwhgurqok6" path="res://scripts/levels/level_01.gd" id="1_level_script"]
+[ext_resource type="PackedScene" uid="uid://c73f8jejiqg5t" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cvplh7rg30cf6" path="res://scenes/environment/relic.tscn" id="3_relic"]
+[ext_resource type="PackedScene" uid="uid://bnfwoh1seu4db" path="res://scenes/ui/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" uid="uid://yeaboep172mi" path="res://scenes/enemies/enemy_melee.tscn" id="5_soldado"]
+[ext_resource type="PackedScene" uid="uid://bn0sjcnrrpdj3" path="res://scenes/enemies/enemy_ranged.tscn" id="6_ballestero"]
+[ext_resource type="Texture2D" uid="uid://c0tr35xxu4jjq" path="res://assets/backgrounds/fondo_principal.png" id="7_bg_main"]
+[ext_resource type="Texture2D" uid="uid://uahdpunhxt2" path="res://assets/tiles/tileset_inca_nivel1.png" id="8_tileset_atlas"]
+[ext_resource type="Texture2D" uid="uid://l6xacljduua" path="res://assets/environment/andean_tree.png" id="9_tree"]
+[ext_resource type="Texture2D" uid="uid://q5oid7dpur8g" path="res://assets/environment/andean_bush.png" id="10_bush"]
+[ext_resource type="Texture2D" uid="uid://cjh3q12vcy8wq" path="res://assets/environment/plantas.png" id="11_plantas"]
+[ext_resource type="Texture2D" uid="uid://dqmjb4h40gvwt" path="res://assets/environment/planta2.png" id="12_planta2"]
+[ext_resource type="Texture2D" uid="uid://bpptc0lygoowy" path="res://assets/environment/inca_torch.png" id="13_torch"]
+[ext_resource type="Texture2D" uid="uid://b3wbev21rlw7i" path="res://assets/environment/inca_banner.png" id="14_banner"]
+[ext_resource type="Texture2D" uid="uid://bhfojtg6ylqx7" path="res://assets/environment/image-Photoroom (1).png" id="15_quipu"]
+[ext_resource type="Texture2D" uid="uid://cvrjf41k25nhy" path="res://assets/environment/image-Photoroom.png" id="16_pillar"]
+[ext_resource type="Texture2D" uid="uid://drdbjk06skn7r" path="res://assets/environment/inca_sun_relic.png" id="17_sun_emblem"]
+[ext_resource type="PackedScene" path="res://scenes/environment/hazard.tscn" id="18_hazard"]
+[ext_resource type="PackedScene" uid="uid://b7q84nxiuvemp" path="res://scenes/environment/power_up_sol.tscn" id="19_powerup_sol"]
+[ext_resource type="Texture2D" uid="uid://c3rpitlt1idw7" path="res://assets/tiles/tileset_pasto.png" id="20_tileset_pasto"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground_main"]
-size = Vector2(950, 160)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(4400, 76)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_terrace1"]
-size = Vector2(700, 200)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(64, 1200)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fortress"]
-size = Vector2(750, 320)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pasto"]
+texture = ExtResource("20_tileset_pasto")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+4:0/0 = 0
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_descent"]
-size = Vector2(550, 180)
+[sub_resource type="TileSet" id="TileSet_pasto"]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_pasto")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sanctuary"]
-size = Vector2(850, 160)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_inca"]
+texture = ExtResource("8_tileset_atlas")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+1:1/0 = 0
+1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+3:1/0 = 0
+3:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+4:1/0 = 0
+4:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+0:2/0 = 0
+0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+1:2/0 = 0
+1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+2:2/0 = 0
+2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+3:2/0 = 0
+3:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+0:4/0 = 0
+0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+1:4/0 = 0
+1:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+2:4/0 = 0
+2:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+3:4/0 = 0
+3:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+4:4/0 = 0
+4:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat1"]
-size = Vector2(170, 32)
+[sub_resource type="TileSet" id="TileSet_inca_platforms"]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_inca")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat2"]
-size = Vector2(170, 32)
+[node name="Level_01" type="Node2D" unique_id=15217208]
+script = ExtResource("1_level_script")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat3"]
-size = Vector2(160, 32)
+[node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat4"]
-size = Vector2(160, 32)
+[node name="LayerPanoramaAndino" type="ParallaxLayer" parent="ParallaxBackground" unique_id=327717638]
+motion_scale = Vector2(0.25, 1)
 
-[node name="Level_01" type="Node2D" unique_id=1705517807]
-script = ExtResource("1_lvl")
+[node name="FondoPrincipal" type="Sprite2D" parent="ParallaxBackground/LayerPanoramaAndino" unique_id=1728893260]
+position = Vector2(1024, 364)
+scale = Vector2(2, 2)
+texture = ExtResource("7_bg_main")
 
-[node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1938643797]
-
-[node name="ParallaxFondoLejano" type="ParallaxLayer" parent="ParallaxBackground" unique_id=458699287]
-motion_scale = Vector2(0.1, 0.1)
-motion_mirroring = Vector2(1280, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxFondoLejano" unique_id=776031119]
-position = Vector2(640.00006, 400.5)
-scale = Vector2(1.9814243, 2.0751295)
-texture = ExtResource("3_iu1m7")
-
-[node name="ParallaxFondoIntermedio" type="ParallaxLayer" parent="ParallaxBackground" unique_id=1831533549]
-motion_scale = Vector2(0.4, 0.4)
-motion_mirroring = Vector2(1280, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxFondoIntermedio" unique_id=237109763]
-position = Vector2(639.99994, 400.5)
-scale = Vector2(1.9814241, 2.0751297)
-texture = ExtResource("4_cywot")
-
-[node name="ParallaxFondoCercano" type="ParallaxLayer" parent="ParallaxBackground" unique_id=263987658]
-motion_mirroring = Vector2(1280, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxFondoCercano" unique_id=2032757657]
-position = Vector2(639.99994, 400.49997)
-scale = Vector2(1.9161676, 2.1474528)
-texture = ExtResource("5_vrcmr")
-
-[node name="SceneryProps" type="Node2D" parent="." unique_id=1299231659]
-
-[node name="Tree1" type="Sprite2D" parent="SceneryProps" unique_id=19193896]
-position = Vector2(180, 475)
-scale = Vector2(0.9, 0.9)
-texture = ExtResource("6_tree")
-
-[node name="Bush1" type="Sprite2D" parent="SceneryProps" unique_id=2122789812]
-position = Vector2(350, 520)
-scale = Vector2(0.7, 0.7)
-texture = ExtResource("7_bush")
-
-[node name="Bush2" type="Sprite2D" parent="SceneryProps" unique_id=848155853]
-position = Vector2(750, 520)
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("7_bush")
-
-[node name="Torch1" type="Sprite2D" parent="SceneryProps" unique_id=1843392167]
-position = Vector2(880, 400)
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("8_torch")
-
-[node name="Banner1" type="Sprite2D" parent="SceneryProps" unique_id=280973172]
-position = Vector2(920, 390)
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("9_banner")
-
-[node name="Bush3" type="Sprite2D" parent="SceneryProps" unique_id=1909059224]
-position = Vector2(1250, 410)
-scale = Vector2(0.7, 0.7)
-texture = ExtResource("7_bush")
-
-[node name="Torch2" type="Sprite2D" parent="SceneryProps" unique_id=2095789647]
-position = Vector2(1780, 250)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("8_torch")
-
-[node name="Banner2" type="Sprite2D" parent="SceneryProps" unique_id=841511808]
-position = Vector2(2150, 220)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("9_banner")
-
-[node name="Torch3" type="Sprite2D" parent="SceneryProps" unique_id=2014620088]
-position = Vector2(2520, 250)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("8_torch")
-
-[node name="Tree2" type="Sprite2D" parent="SceneryProps" unique_id=929929581]
-position = Vector2(2780, 370)
-scale = Vector2(0.85, 0.85)
-texture = ExtResource("6_tree")
-
-[node name="Bush4" type="Sprite2D" parent="SceneryProps" unique_id=1707911217]
-position = Vector2(3450, 480)
-scale = Vector2(0.7, 0.7)
-texture = ExtResource("7_bush")
-
-[node name="Banner3" type="Sprite2D" parent="SceneryProps" unique_id=437347293]
-position = Vector2(3850, 440)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("9_banner")
-
-[node name="Torch4" type="Sprite2D" parent="SceneryProps" unique_id=1092875072]
-position = Vector2(3980, 440)
-scale = Vector2(0.65, 0.65)
-texture = ExtResource("8_torch")
-
-[node name="Terrain" type="Node2D" parent="." unique_id=85573919]
-
-[node name="GroundValley" type="StaticBody2D" parent="Terrain" unique_id=489387029]
-position = Vector2(450, 630)
+[node name="SueloPrincipal" type="StaticBody2D" parent="." unique_id=627930567]
 collision_mask = 0
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/GroundValley" unique_id=1979285041]
-offset_left = -475.0
-offset_top = -80.0
-offset_right = 475.0
-offset_bottom = 80.0
-texture = ExtResource("3_grass")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="CollisionFloor" type="CollisionShape2D" parent="SueloPrincipal" unique_id=1077554185]
+position = Vector2(2100, 690)
+shape = SubResource("RectangleShape2D_floor")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/GroundValley" unique_id=577296735]
-shape = SubResource("RectangleShape2D_ground_main")
+[node name="WallLeft" type="CollisionShape2D" parent="SueloPrincipal" unique_id=713236486]
+position = Vector2(-32, 300)
+shape = SubResource("RectangleShape2D_wall")
 
-[node name="GroundTerrace1" type="StaticBody2D" parent="Terrain" unique_id=1047091658]
-position = Vector2(1300, 560)
-collision_mask = 0
+[node name="WallRight" type="CollisionShape2D" parent="SueloPrincipal" unique_id=1800653075]
+position = Vector2(4232, 300)
+shape = SubResource("RectangleShape2D_wall")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/GroundTerrace1" unique_id=679550315]
-offset_left = -350.0
-offset_top = -100.0
-offset_right = 350.0
-offset_bottom = 100.0
-texture = ExtResource("3_grass")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="TileMapPasto" type="TileMapLayer" parent="." unique_id=351337087]
+position = Vector2(0, 12)
+tile_map_data = PackedByteArray("AAAAAAoAAAAAAAAAAAABAAoAAAABAAAAAAACAAoAAAABAAAAAAADAAoAAAABAAAAAAAEAAkAAAAAAAAAAAAEAAoAAAABAAAAAAAFAAkAAAACAAAAAAAFAAoAAAABAAAAAAAGAAoAAAABAAAAAAAHAAoAAAABAAAAAAAIAAoAAAABAAAAAAAJAAoAAAABAAAAAAAKAAgAAAAAAAAAAAAKAAoAAAABAAAAAAALAAgAAAABAAAAAAALAAoAAAABAAAAAAAMAAgAAAACAAAAAAAMAAoAAAABAAAAAAANAAoAAAABAAAAAAAOAAoAAAABAAAAAAAPAAoAAAABAAAAAAAQAAoAAAABAAAAAAARAAoAAAABAAAAAAASAAoAAAABAAAAAAATAAoAAAABAAAAAAAUAAoAAAABAAAAAAAVAAoAAAABAAAAAAAWAAoAAAABAAAAAAAXAAoAAAABAAAAAAAYAAoAAAABAAAAAAAZAAoAAAABAAAAAAAaAAgAAAAAAAAAAAAaAAoAAAABAAAAAAAbAAgAAAABAAAAAAAbAAoAAAABAAAAAAAcAAgAAAACAAAAAAAcAAoAAAABAAAAAAAdAAoAAAABAAAAAAAeAAoAAAABAAAAAAAfAAoAAAABAAAAAAAgAAoAAAABAAAAAAAhAAoAAAABAAAAAAAiAAoAAAABAAAAAAAjAAoAAAABAAAAAAAkAAoAAAABAAAAAAAlAAoAAAABAAAAAAAmAAoAAAABAAAAAAAnAAoAAAABAAAAAAAoAAoAAAABAAAAAAApAAoAAAABAAAAAAAqAAoAAAABAAAAAAArAAgAAAAAAAAAAAArAAoAAAABAAAAAAAsAAgAAAABAAAAAAAsAAoAAAABAAAAAAAtAAgAAAACAAAAAAAtAAoAAAABAAAAAAAuAAoAAAABAAAAAAAvAAoAAAABAAAAAAAwAAoAAAABAAAAAAAxAAoAAAABAAAAAAAyAAoAAAABAAAAAAAzAAoAAAABAAAAAAA0AAoAAAABAAAAAAA1AAoAAAABAAAAAAA2AAoAAAABAAAAAAA3AAoAAAABAAAAAAA4AAoAAAABAAAAAAA5AAoAAAABAAAAAAA6AAoAAAABAAAAAAA7AAoAAAABAAAAAAA8AAoAAAABAAAAAAA9AAoAAAABAAAAAAA+AAoAAAABAAAAAAA/AAoAAAABAAAAAABAAAoAAAABAAAAAABBAAoAAAACAAAAAAA=")
+tile_set = SubResource("TileSet_pasto")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/GroundTerrace1" unique_id=70113998]
-shape = SubResource("RectangleShape2D_terrace1")
+[node name="TileMapPlataformas" type="TileMapLayer" parent="." unique_id=1558574509]
+position = Vector2(0, 12)
+tile_map_data = PackedByteArray("AAAEAAkAAAADAAEAAAAFAAkAAAAEAAEAAAAIAAkAAAAAAAIAAAAKAAgAAAAAAAAAAAAKAAkAAAACAAMAAAALAAgAAAABAAAAAAAMAAgAAAACAAAAAAAMAAkAAAACAAMAAAAOAAkAAAADAAAAAAAQAAgAAAADAAEAAAARAAgAAAAEAAEAAAASAAcAAAAAAAAAAAASAAgAAAAAAAMAAAASAAkAAAACAAMAAAATAAcAAAABAAAAAAAUAAcAAAABAAAAAAAVAAcAAAABAAAAAAAWAAcAAAACAAAAAAAWAAgAAAAAAAMAAAAWAAkAAAACAAMAAAAXAAYAAAAAAAEAAAAYAAYAAAABAAEAAAAYAAcAAAAAAAMAAAAYAAgAAAABAAMAAAAYAAkAAAACAAMAAAAZAAYAAAACAAEAAAAZAAkAAAADAAAAAAAaAAgAAAAAAAAAAAAbAAgAAAABAAAAAAAcAAgAAAACAAAAAAAdAAcAAAAAAAIAAAAeAAYAAAADAAEAAAAfAAYAAAAEAAEAAAAgAAUAAAAAAAIAAAAhAAQAAAAAAAAAAAAhAAUAAAAAAAMAAAAhAAYAAAABAAMAAAAhAAcAAAABAAMAAAAhAAgAAAABAAMAAAAhAAkAAAACAAMAAAAiAAQAAAABAAAAAAAjAAQAAAABAAAAAAAkAAQAAAABAAAAAAAlAAQAAAABAAAAAAAmAAQAAAACAAAAAAAmAAUAAAAAAAMAAAAmAAYAAAABAAMAAAAmAAcAAAABAAMAAAAmAAgAAAABAAMAAAAmAAkAAAACAAMAAAAoAAYAAAAAAAEAAAApAAYAAAABAAEAAAAqAAYAAAACAAEAAAArAAgAAAADAAEAAAAsAAgAAAAEAAEAAAAvAAkAAAADAAAAAAAwAAgAAAADAAEAAAAxAAgAAAAEAAEAAAAyAAcAAAAAAAIAAAAzAAYAAAAAAAAAAAAzAAcAAAAAAAMAAAAzAAgAAAABAAMAAAAzAAkAAAACAAMAAAA0AAYAAAABAAAAAAA1AAYAAAABAAAAAAA2AAYAAAACAAAAAAA2AAcAAAAAAAMAAAA2AAgAAAABAAMAAAA2AAkAAAACAAMAAAA7AAkAAAADAAEAAAA8AAkAAAAEAAEAAAA9AAgAAAAAAAAAAAA9AAkAAAABAAIAAAA+AAgAAAABAAAAAAA+AAkAAAACAAIAAAA/AAgAAAABAAAAAAA/AAkAAAABAAIAAABAAAgAAAACAAAAAABAAAkAAAACAAIAAAA=")
+tile_set = SubResource("TileSet_inca_platforms")
 
-[node name="GroundHighFortress" type="StaticBody2D" parent="Terrain" unique_id=1311885464]
-position = Vector2(2175, 480)
-collision_mask = 0
+[node name="SceneryProps" type="Node2D" parent="." unique_id=2055440907]
 
-[node name="TextureWall" type="NinePatchRect" parent="Terrain/GroundHighFortress" unique_id=1060871373]
-offset_left = -375.0
-offset_top = -160.0
-offset_right = 375.0
-offset_bottom = 160.0
-texture = ExtResource("5_wall")
-region_rect = Rect2(0, 0, 260, 140)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="TreeStart" type="Sprite2D" parent="SceneryProps" unique_id=958866621]
+position = Vector2(70, 560)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("9_tree")
 
-[node name="TextureTop" type="NinePatchRect" parent="Terrain/GroundHighFortress" unique_id=2101062681]
-offset_left = -375.0
-offset_top = -160.0
-offset_right = 375.0
-offset_bottom = -90.0
-texture = ExtResource("3_grass")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="PlantaInicio" type="Sprite2D" parent="SceneryProps" unique_id=1869230884]
+position = Vector2(215, 626)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("11_plantas")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/GroundHighFortress" unique_id=1242631627]
-shape = SubResource("RectangleShape2D_fortress")
+[node name="TorchInicio" type="Sprite2D" parent="SceneryProps" unique_id=1380350820]
+position = Vector2(290, 520)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("13_torch")
 
-[node name="GroundDescent" type="StaticBody2D" parent="Terrain" unique_id=1879058050]
-position = Vector2(2975, 570)
-collision_mask = 0
+[node name="PlantaPuente" type="Sprite2D" parent="SceneryProps" unique_id=586190968]
+position = Vector2(736, 502)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("12_planta2")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/GroundDescent" unique_id=1168352867]
-offset_left = -275.0
-offset_top = -90.0
-offset_right = 275.0
-offset_bottom = 90.0
-texture = ExtResource("3_grass")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="TreeBeforeTerrace" type="Sprite2D" parent="SceneryProps" unique_id=753947691]
+position = Vector2(990, 558)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("9_tree")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/GroundDescent" unique_id=1921390393]
-shape = SubResource("RectangleShape2D_descent")
+[node name="BannerTerraceLeft" type="Sprite2D" parent="SceneryProps" unique_id=1319164801]
+position = Vector2(1184, 520)
+scale = Vector2(0.22, 0.22)
+texture = ExtResource("14_banner")
 
-[node name="GroundSanctuary" type="StaticBody2D" parent="Terrain" unique_id=1349789366]
-position = Vector2(3825, 620)
-collision_mask = 0
+[node name="TorchTerraceTop" type="Sprite2D" parent="SceneryProps" unique_id=33348237]
+position = Vector2(1280, 405)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("13_torch")
 
-[node name="TextureWall" type="NinePatchRect" parent="Terrain/GroundSanctuary" unique_id=1790274579]
-offset_left = -425.0
-offset_top = -80.0
-offset_right = 425.0
-offset_bottom = 80.0
-texture = ExtResource("4_stone")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 16
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="BushTerraceFloor" type="Sprite2D" parent="SceneryProps" unique_id=144067606]
+position = Vector2(1312, 628)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("10_bush")
 
-[node name="TextureTop" type="NinePatchRect" parent="Terrain/GroundSanctuary" unique_id=1679101198]
-offset_left = -425.0
-offset_top = -80.0
-offset_right = 425.0
-offset_bottom = -25.0
-texture = ExtResource("3_grass")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 16
-patch_margin_top = 24
-patch_margin_right = 16
-patch_margin_bottom = 16
+[node name="QuipuTerrace" type="Sprite2D" parent="SceneryProps" unique_id=556653576]
+position = Vector2(1568, 445)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("15_quipu")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/GroundSanctuary" unique_id=860003314]
-shape = SubResource("RectangleShape2D_sanctuary")
+[node name="PlantaEscalera" type="Sprite2D" parent="SceneryProps" unique_id=1877236372]
+position = Vector2(1952, 374)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("12_planta2")
 
-[node name="Platform1" type="StaticBody2D" parent="Terrain" unique_id=1721720833]
-position = Vector2(935, 490)
-collision_mask = 0
+[node name="BannerBastionLeft" type="Sprite2D" parent="SceneryProps" unique_id=1367507409]
+position = Vector2(2144, 340)
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("14_banner")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/Platform1" unique_id=297292950]
-offset_left = -85.0
-offset_top = -16.0
-offset_right = 85.0
-offset_bottom = 16.0
-texture = ExtResource("4_stone")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 12
-patch_margin_top = 12
-patch_margin_right = 12
-patch_margin_bottom = 12
+[node name="TorchBastionLeft" type="Sprite2D" parent="SceneryProps" unique_id=868130734]
+position = Vector2(2190, 212)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("13_torch")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Platform1" unique_id=1999076348]
-shape = SubResource("RectangleShape2D_plat1")
+[node name="TorchBastionRight" type="Sprite2D" parent="SceneryProps" unique_id=1988134294]
+position = Vector2(2415, 212)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("13_torch")
 
-[node name="Platform2" type="StaticBody2D" parent="Terrain" unique_id=1961592900]
-position = Vector2(1710, 410)
-collision_mask = 0
+[node name="BannerBastionRight" type="Sprite2D" parent="SceneryProps" unique_id=1916550868]
+position = Vector2(2464, 340)
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("14_banner")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/Platform2" unique_id=1429156447]
-offset_left = -85.0
-offset_top = -16.0
-offset_right = 85.0
-offset_bottom = 16.0
-texture = ExtResource("4_stone")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 12
-patch_margin_top = 12
-patch_margin_right = 12
-patch_margin_bottom = 12
+[node name="PlantaBastionUnder" type="Sprite2D" parent="SceneryProps" unique_id=1328412652]
+position = Vector2(2300, 624)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("11_plantas")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Platform2" unique_id=326953184]
-shape = SubResource("RectangleShape2D_plat2")
+[node name="TreePatio" type="Sprite2D" parent="SceneryProps" unique_id=479317241]
+position = Vector2(2720, 558)
+scale = Vector2(0.44, 0.44)
+texture = ExtResource("9_tree")
 
-[node name="Platform3" type="StaticBody2D" parent="Terrain" unique_id=1515599323]
-position = Vector2(2620, 390)
-collision_mask = 0
+[node name="BushPatio" type="Sprite2D" parent="SceneryProps" unique_id=1132359133]
+position = Vector2(2840, 628)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("10_bush")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/Platform3" unique_id=641901394]
-offset_left = -80.0
-offset_top = -16.0
-offset_right = 80.0
-offset_bottom = 16.0
-texture = ExtResource("4_stone")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 12
-patch_margin_top = 12
-patch_margin_right = 12
-patch_margin_bottom = 12
+[node name="TorchTorreTop" type="Sprite2D" parent="SceneryProps" unique_id=1564867781]
+position = Vector2(3310, 340)
+scale = Vector2(0.16, 0.16)
+texture = ExtResource("13_torch")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Platform3" unique_id=1742885309]
-shape = SubResource("RectangleShape2D_plat3")
+[node name="QuipuTorre" type="Sprite2D" parent="SceneryProps" unique_id=2005042535]
+position = Vector2(3392, 445)
+scale = Vector2(0.18, 0.18)
+texture = ExtResource("15_quipu")
 
-[node name="Platform4" type="StaticBody2D" parent="Terrain" unique_id=528041483]
-position = Vector2(3320, 380)
-collision_mask = 0
+[node name="TreeSanctuary" type="Sprite2D" parent="SceneryProps" unique_id=76800277]
+position = Vector2(3600, 558)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("9_tree")
 
-[node name="Texture" type="NinePatchRect" parent="Terrain/Platform4" unique_id=724410802]
-offset_left = -80.0
-offset_top = -16.0
-offset_right = 80.0
-offset_bottom = 16.0
-texture = ExtResource("4_stone")
-region_rect = Rect2(0, 0, 250, 148)
-patch_margin_left = 12
-patch_margin_top = 12
-patch_margin_right = 12
-patch_margin_bottom = 12
+[node name="PillarGateLeft" type="Sprite2D" parent="SceneryProps" unique_id=1111382287]
+position = Vector2(3860, 550)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("16_pillar")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Platform4" unique_id=884285132]
-shape = SubResource("RectangleShape2D_plat4")
+[node name="PillarGateRight" type="Sprite2D" parent="SceneryProps" unique_id=745267269]
+position = Vector2(4140, 550)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("16_pillar")
 
-[node name="Hazards" type="Node2D" parent="." unique_id=2055093827]
+[node name="BannerAltarLeft" type="Sprite2D" parent="SceneryProps" unique_id=1689525117]
+position = Vector2(3930, 440)
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("14_banner")
 
-[node name="Spikes1" parent="Hazards" unique_id=1175302234 instance=ExtResource("10_hazard")]
-position = Vector2(935, 545)
+[node name="BannerAltarRight" type="Sprite2D" parent="SceneryProps" unique_id=1879787566]
+position = Vector2(4100, 440)
+scale = Vector2(0.24, 0.24)
+texture = ExtResource("14_banner")
 
-[node name="Spikes2" parent="Hazards" unique_id=1896986151 instance=ExtResource("10_hazard")]
-position = Vector2(1710, 520)
+[node name="SunEmblemAltar" type="Sprite2D" parent="SceneryProps" unique_id=306424149]
+modulate = Color(1, 0.92, 0.55, 0.55)
+position = Vector2(4032, 345)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("17_sun_emblem")
 
-[node name="Spikes3" parent="Hazards" unique_id=845348064 instance=ExtResource("10_hazard")]
-position = Vector2(3300, 535)
+[node name="Hazards" type="Node2D" parent="." unique_id=1966507750]
 
-[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=357722631]
-position = Vector2(120, 490)
+[node name="Spikes1" parent="Hazards" unique_id=556058367 instance=ExtResource("18_hazard")]
+position = Vector2(650, 628)
 
-[node name="Player" parent="." unique_id=1597569641 instance=ExtResource("14_player")]
-position = Vector2(120, 490)
+[node name="Spikes2" parent="Hazards" unique_id=1407056564 instance=ExtResource("18_hazard")]
+position = Vector2(1760, 628)
 
-[node name="Relic" parent="." unique_id=68923675 instance=ExtResource("11_relic")]
-position = Vector2(4080, 480)
+[node name="Spikes3" parent="Hazards" unique_id=1942183459 instance=ExtResource("18_hazard")]
+position = Vector2(2620, 628)
 
-[node name="Relic2" parent="." unique_id=905360466 instance=ExtResource("11_relic")]
-position = Vector2(3316, 302)
+[node name="Spikes4" parent="Hazards" unique_id=1154913954 instance=ExtResource("18_hazard")]
+position = Vector2(3360, 628)
 
-[node name="Relic3" parent="." unique_id=277145849 instance=ExtResource("11_relic")]
-position = Vector2(2212, 213)
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1663900693]
+position = Vector2(120, 604)
 
-[node name="Relic4" parent="." unique_id=112886002 instance=ExtResource("11_relic")]
-position = Vector2(1575, 265)
+[node name="Player" parent="." unique_id=700838500 instance=ExtResource("2_player")]
+position = Vector2(120, 604)
 
-[node name="Enemies" type="Node2D" parent="." unique_id=2003195328]
+[node name="Relic" parent="." unique_id=1625584188 groups=["relics"] instance=ExtResource("3_relic")]
+position = Vector2(4032, 468)
 
-[node name="SoldadoValle" parent="Enemies" unique_id=1030724417 instance=ExtResource("12_melee")]
-position = Vector2(580, 490)
+[node name="Relic2" parent="." unique_id=1166347455 groups=["relics"] instance=ExtResource("3_relic")]
+position = Vector2(3456, 340)
 
-[node name="SoldadoTerraza" parent="Enemies" unique_id=1617295351 instance=ExtResource("12_melee")]
-position = Vector2(1420, 400)
+[node name="Relic3" parent="." unique_id=932575252 groups=["relics"] instance=ExtResource("3_relic")]
+position = Vector2(2400, 212)
 
-[node name="BallesteroBastion" parent="Enemies" unique_id=1053087972 instance=ExtResource("13_ranged")]
-position = Vector2(2250, 260)
+[node name="Relic4" parent="." unique_id=48923182 groups=["relics"] instance=ExtResource("3_relic")]
+position = Vector2(1568, 340)
 
-[node name="SoldadoPatio" parent="Enemies" unique_id=1794890701 instance=ExtResource("12_melee")]
-position = Vector2(2920, 420)
+[node name="PowerUpSol" parent="." unique_id=1853025105 instance=ExtResource("19_powerup_sol")]
+position = Vector2(1083, 466)
 
-[node name="BallesteroTorre" parent="Enemies" unique_id=1665616822 instance=ExtResource("13_ranged")]
-position = Vector2(3320, 310)
+[node name="Enemies" type="Node2D" parent="." unique_id=1471652116]
 
-[node name="SoldadoGuardiaReal" parent="Enemies" unique_id=26141041 instance=ExtResource("12_melee")]
-position = Vector2(3820, 480)
+[node name="SoldadoValle" parent="Enemies" unique_id=657887745 instance=ExtResource("5_soldado")]
+position = Vector2(726, 482)
 
-[node name="HUD" parent="." unique_id=1849290147 instance=ExtResource("15_hud")]
+[node name="SoldadoTerraza" parent="Enemies" unique_id=1633547665 instance=ExtResource("5_soldado")]
+position = Vector2(1312, 413)
 
-[node name="PowerUpSol" parent="." unique_id=2056899327 instance=ExtResource("16_cwffn")]
-position = Vector2(745, 385)
+[node name="BallesteroBastion" parent="Enemies" unique_id=986072066 instance=ExtResource("6_ballestero")]
+position = Vector2(2272, 221)
+
+[node name="SoldadoPatio" parent="Enemies" unique_id=954770255 instance=ExtResource("5_soldado")]
+position = Vector2(2920, 605)
+
+[node name="BallesteroTorre" parent="Enemies" unique_id=1405506589 instance=ExtResource("6_ballestero")]
+position = Vector2(3360, 349)
+
+[node name="SoldadoGuardiaReal" parent="Enemies" unique_id=196680247 instance=ExtResource("5_soldado")]
+position = Vector2(3680, 605)
+
+[node name="HUD" parent="." unique_id=1579635593 instance=ExtResource("4_hud")]

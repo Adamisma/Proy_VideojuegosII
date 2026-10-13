@@ -18,7 +18,7 @@ var health: int = 20
 
 @export_category("Jump")
 @export var gravity: float = 1350.0
-@export var jump_velocity: float = -520.0
+@export var jump_velocity: float = -570.0
 @export var coyote_time: float = 0.12
 @export var jump_buffer_time: float = 0.12
 @export var jump_cut_multiplier: float = 0.5

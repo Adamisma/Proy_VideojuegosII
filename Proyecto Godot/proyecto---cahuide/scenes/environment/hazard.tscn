@@ -1,21 +1,21 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/levels/hazard.gd" id="1_hazard"]
+[ext_resource type="Script" uid="uid://c56d8j7m32g2k" path="res://scripts/levels/hazard.gd" id="1_hazard"]
 [ext_resource type="Texture2D" path="res://assets/environment/inca_spikes.png" id="2_spikes"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_haz"]
-size = Vector2(96, 32)
+size = Vector2(106, 44)
 
 [node name="Hazard" type="Area2D"]
 collision_layer = 128
-collision_mask = 2
+collision_mask = 66
 script = ExtResource("1_hazard")
-damage = 25
+damage = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.8, 0.8)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_spikes")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 10)
+position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_haz")

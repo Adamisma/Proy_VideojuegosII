@@ -28,7 +28,7 @@ signal enemy_defeated(enemy_node: Enemy)
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var state_machine: EnemyStateMachine = $StateMachine
 @onready var hurtbox: Hurtbox = $Hurtbox
-@onready var hitbox: Hitbox = $Hitbox
+@onready var hitbox: Hitbox = get_node_or_null("Hitbox")
 @onready var health_bar: ProgressBar = $HealthBar
 @onready var detection_area: Area2D = $DetectionArea
 @onready var attack_area: Area2D = $AttackArea
