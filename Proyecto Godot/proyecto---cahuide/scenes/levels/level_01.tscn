@@ -13,11 +13,12 @@
 [ext_resource type="Texture2D" uid="uid://cjh3q12vcy8wq" path="res://assets/environment/plantas.png" id="11_plantas"]
 [ext_resource type="Texture2D" uid="uid://dqmjb4h40gvwt" path="res://assets/environment/planta2.png" id="12_planta2"]
 [ext_resource type="Texture2D" uid="uid://bpptc0lygoowy" path="res://assets/environment/inca_torch.png" id="13_torch"]
+[ext_resource type="Texture2D" uid="uid://et3qjeqmc4ql" path="res://assets/environment/BARRIL.png" id="13_vrcmr"]
 [ext_resource type="Texture2D" uid="uid://b3wbev21rlw7i" path="res://assets/environment/inca_banner.png" id="14_banner"]
+[ext_resource type="Texture2D" uid="uid://ck6mv7n5l1hhx" path="res://assets/environment/estandarte_español.png" id="14_svp4f"]
 [ext_resource type="Texture2D" uid="uid://bhfojtg6ylqx7" path="res://assets/environment/image-Photoroom (1).png" id="15_quipu"]
-[ext_resource type="Texture2D" uid="uid://cvrjf41k25nhy" path="res://assets/environment/image-Photoroom.png" id="16_pillar"]
 [ext_resource type="Texture2D" uid="uid://drdbjk06skn7r" path="res://assets/environment/inca_sun_relic.png" id="17_sun_emblem"]
-[ext_resource type="PackedScene" path="res://scenes/environment/hazard.tscn" id="18_hazard"]
+[ext_resource type="PackedScene" uid="uid://c5wughuk537nr" path="res://scenes/environment/hazard.tscn" id="18_hazard"]
 [ext_resource type="PackedScene" uid="uid://b7q84nxiuvemp" path="res://scenes/environment/power_up_sol.tscn" id="19_powerup_sol"]
 [ext_resource type="Texture2D" uid="uid://c3rpitlt1idw7" path="res://assets/tiles/tileset_pasto.png" id="20_tileset_pasto"]
 
@@ -77,8 +78,11 @@ texture_region_size = Vector2i(64, 64)
 3:2/0 = 0
 3:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 0:3/0 = 0
+0:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -8.677685, -32, -32, 32, -32, 32, -14.462807, 23.553719, 5.3719025, 20.247932, 18.59504, 19.421486, 32, -21.074379, 32, -21.900826, 18.59504, -24.380165, 6.198349)
 1:3/0 = 0
+1:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-20.5, 32, -19.5, -32, 17.5, -32, 18.5, 32)
 2:3/0 = 0
+2:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-24.5, 32, 32, 32, 32, 16.5, 21.5, 0.5, 17.5, -32, -17.5, -32, -19.5, -7.5, -22.5, 1.5, -32, 12.5)
 0:4/0 = 0
 0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 1:4/0 = 0
@@ -121,200 +125,220 @@ position = Vector2(-32, 300)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="WallRight" type="CollisionShape2D" parent="SueloPrincipal" unique_id=1800653075]
-position = Vector2(4232, 300)
+position = Vector2(4256, 300)
 shape = SubResource("RectangleShape2D_wall")
 
 [node name="TileMapPasto" type="TileMapLayer" parent="." unique_id=351337087]
 position = Vector2(0, 12)
-tile_map_data = PackedByteArray("AAAAAAoAAAAAAAAAAAABAAoAAAABAAAAAAACAAoAAAABAAAAAAADAAoAAAABAAAAAAAEAAkAAAAAAAAAAAAEAAoAAAABAAAAAAAFAAkAAAACAAAAAAAFAAoAAAABAAAAAAAGAAoAAAABAAAAAAAHAAoAAAABAAAAAAAIAAoAAAABAAAAAAAJAAoAAAABAAAAAAAKAAgAAAAAAAAAAAAKAAoAAAABAAAAAAALAAgAAAABAAAAAAALAAoAAAABAAAAAAAMAAgAAAACAAAAAAAMAAoAAAABAAAAAAANAAoAAAABAAAAAAAOAAoAAAABAAAAAAAPAAoAAAABAAAAAAAQAAoAAAABAAAAAAARAAoAAAABAAAAAAASAAoAAAABAAAAAAATAAoAAAABAAAAAAAUAAoAAAABAAAAAAAVAAoAAAABAAAAAAAWAAoAAAABAAAAAAAXAAoAAAABAAAAAAAYAAoAAAABAAAAAAAZAAoAAAABAAAAAAAaAAgAAAAAAAAAAAAaAAoAAAABAAAAAAAbAAgAAAABAAAAAAAbAAoAAAABAAAAAAAcAAgAAAACAAAAAAAcAAoAAAABAAAAAAAdAAoAAAABAAAAAAAeAAoAAAABAAAAAAAfAAoAAAABAAAAAAAgAAoAAAABAAAAAAAhAAoAAAABAAAAAAAiAAoAAAABAAAAAAAjAAoAAAABAAAAAAAkAAoAAAABAAAAAAAlAAoAAAABAAAAAAAmAAoAAAABAAAAAAAnAAoAAAABAAAAAAAoAAoAAAABAAAAAAApAAoAAAABAAAAAAAqAAoAAAABAAAAAAArAAgAAAAAAAAAAAArAAoAAAABAAAAAAAsAAgAAAABAAAAAAAsAAoAAAABAAAAAAAtAAgAAAACAAAAAAAtAAoAAAABAAAAAAAuAAoAAAABAAAAAAAvAAoAAAABAAAAAAAwAAoAAAABAAAAAAAxAAoAAAABAAAAAAAyAAoAAAABAAAAAAAzAAoAAAABAAAAAAA0AAoAAAABAAAAAAA1AAoAAAABAAAAAAA2AAoAAAABAAAAAAA3AAoAAAABAAAAAAA4AAoAAAABAAAAAAA5AAoAAAABAAAAAAA6AAoAAAABAAAAAAA7AAoAAAABAAAAAAA8AAoAAAABAAAAAAA9AAoAAAABAAAAAAA+AAoAAAABAAAAAAA/AAoAAAABAAAAAABAAAoAAAABAAAAAABBAAoAAAACAAAAAAA=")
+tile_map_data = PackedByteArray("AAAAAAoAAAAAAAAAAAABAAoAAAABAAAAAAACAAoAAAABAAAAAAADAAoAAAABAAAAAAAEAAoAAAABAAAAAAAFAAoAAAABAAAAAAAGAAoAAAABAAAAAAALAAoAAAABAAAAAAAMAAoAAAABAAAAAAANAAoAAAABAAAAAAAOAAoAAAABAAAAAAAPAAoAAAABAAAAAAAQAAoAAAABAAAAAAARAAoAAAABAAAAAAASAAoAAAABAAAAAAATAAoAAAABAAAAAAAUAAoAAAABAAAAAAAVAAoAAAABAAAAAAAWAAoAAAAEAAAAAAAXAAoAAAAEAAAAAAAYAAoAAAAEAAAAAAAZAAoAAAAEAAAAAAAaAAoAAAABAAAAAAAbAAoAAAABAAAAAAAcAAoAAAABAAAAAAAdAAoAAAABAAAAAAAeAAoAAAABAAAAAAAfAAoAAAABAAAAAAAgAAoAAAAEAAAAAAAhAAoAAAAEAAAAAAAiAAoAAAAEAAAAAAAjAAoAAAAEAAAAAAAkAAoAAAAEAAAAAAAlAAoAAAAEAAAAAAAmAAoAAAAEAAAAAAAnAAoAAAAEAAAAAAAoAAoAAAABAAAAAAApAAoAAAABAAAAAAAqAAoAAAABAAAAAAArAAoAAAABAAAAAAAsAAoAAAABAAAAAAAtAAoAAAABAAAAAAAuAAoAAAABAAAAAAAvAAoAAAABAAAAAAAwAAoAAAABAAAAAAAxAAoAAAABAAAAAAAyAAoAAAABAAAAAAAzAAoAAAABAAAAAAA0AAoAAAABAAAAAAA1AAoAAAABAAAAAAA2AAoAAAABAAAAAAA3AAoAAAABAAAAAAA4AAoAAAABAAAAAAA5AAoAAAABAAAAAAA6AAoAAAABAAAAAAA7AAoAAAABAAAAAAA8AAoAAAABAAAAAAA9AAoAAAABAAAAAAA+AAoAAAABAAAAAAA/AAoAAAABAAAAAABAAAoAAAABAAAAAABBAAoAAAACAAAAAAAKAAoAAAABAAAAAAAHAAoAAAABAAAAAAAIAAoAAAABAAAAAAAJAAoAAAABAAAAAAAWAAkAAAABAAAAAAAXAAkAAAABAAAAAAAYAAkAAAABAAAAAAAZAAkAAAABAAAAAAAgAAkAAAABAAAAAAAhAAkAAAAEAAAAAAAhAAgAAAABAAAAAAAiAAgAAAABAAAAAAAiAAkAAAAEAAAAAAAjAAkAAAAEAAAAAAAjAAgAAAABAAAAAAAkAAgAAAABAAAAAAAkAAkAAAAEAAAAAAAlAAkAAAAEAAAAAAAlAAgAAAABAAAAAAAmAAgAAAABAAAAAAAmAAkAAAAEAAAAAAAnAAkAAAABAAAAAAA=")
 tile_set = SubResource("TileSet_pasto")
 
 [node name="TileMapPlataformas" type="TileMapLayer" parent="." unique_id=1558574509]
 position = Vector2(0, 12)
-tile_map_data = PackedByteArray("AAAEAAkAAAADAAEAAAAFAAkAAAAEAAEAAAAIAAkAAAAAAAIAAAAKAAgAAAAAAAAAAAAKAAkAAAACAAMAAAALAAgAAAABAAAAAAAMAAgAAAACAAAAAAAMAAkAAAACAAMAAAAOAAkAAAADAAAAAAAQAAgAAAADAAEAAAARAAgAAAAEAAEAAAASAAcAAAAAAAAAAAASAAgAAAAAAAMAAAASAAkAAAACAAMAAAATAAcAAAABAAAAAAAUAAcAAAABAAAAAAAVAAcAAAABAAAAAAAWAAcAAAACAAAAAAAWAAgAAAAAAAMAAAAWAAkAAAACAAMAAAAXAAYAAAAAAAEAAAAYAAYAAAABAAEAAAAYAAcAAAAAAAMAAAAYAAgAAAABAAMAAAAYAAkAAAACAAMAAAAZAAYAAAACAAEAAAAZAAkAAAADAAAAAAAaAAgAAAAAAAAAAAAbAAgAAAABAAAAAAAcAAgAAAACAAAAAAAdAAcAAAAAAAIAAAAeAAYAAAADAAEAAAAfAAYAAAAEAAEAAAAgAAUAAAAAAAIAAAAhAAQAAAAAAAAAAAAhAAUAAAAAAAMAAAAhAAYAAAABAAMAAAAhAAcAAAABAAMAAAAhAAgAAAABAAMAAAAhAAkAAAACAAMAAAAiAAQAAAABAAAAAAAjAAQAAAABAAAAAAAkAAQAAAABAAAAAAAlAAQAAAABAAAAAAAmAAQAAAACAAAAAAAmAAUAAAAAAAMAAAAmAAYAAAABAAMAAAAmAAcAAAABAAMAAAAmAAgAAAABAAMAAAAmAAkAAAACAAMAAAAoAAYAAAAAAAEAAAApAAYAAAABAAEAAAAqAAYAAAACAAEAAAArAAgAAAADAAEAAAAsAAgAAAAEAAEAAAAvAAkAAAADAAAAAAAwAAgAAAADAAEAAAAxAAgAAAAEAAEAAAAyAAcAAAAAAAIAAAAzAAYAAAAAAAAAAAAzAAcAAAAAAAMAAAAzAAgAAAABAAMAAAAzAAkAAAACAAMAAAA0AAYAAAABAAAAAAA1AAYAAAABAAAAAAA2AAYAAAACAAAAAAA2AAcAAAAAAAMAAAA2AAgAAAABAAMAAAA2AAkAAAACAAMAAAA7AAkAAAADAAEAAAA8AAkAAAAEAAEAAAA9AAgAAAAAAAAAAAA9AAkAAAABAAIAAAA+AAgAAAABAAAAAAA+AAkAAAACAAIAAAA/AAgAAAABAAAAAAA/AAkAAAABAAIAAABAAAgAAAACAAAAAABAAAkAAAACAAIAAAA=")
+tile_map_data = PackedByteArray("AAAKAAgAAAAAAAIAAAAOAAgAAAAAAAIAAAAKAAkAAAABAAIAAAAOAAkAAAABAAIAAAAJAAkAAAABAAIAAAAPAAkAAAABAAIAAAAVAAkAAAAEAAEAAAAVAAgAAAAEAAEAAAAWAAgAAAAEAAEAAAAZAAgAAAAEAAEAAAAaAAgAAAAEAAEAAAAaAAkAAAAEAAEAAAAfAAkAAAAAAAIAAAAfAAgAAAAAAAIAAAAgAAgAAAAAAAIAAAAgAAcAAAAAAAIAAAAeAAkAAAAAAAIAAAAhAAcAAAAAAAAAAAAiAAcAAAAAAAAAAAAjAAcAAAAAAAAAAAAkAAcAAAAAAAAAAAAlAAcAAAAAAAAAAAAmAAcAAAAAAAAAAAAnAAcAAAAAAAIAAAAnAAgAAAAAAAIAAAAoAAgAAAAAAAIAAAAoAAkAAAAAAAIAAAApAAkAAAAAAAIAAAAqAAkAAAAAAAIAAAAuAAkAAAAAAAIAAABBAAkAAAACAAMAAABBAAgAAAABAAMAAABBAAcAAAABAAMAAABBAAYAAAAAAAMAAAA9AAYAAAAAAAMAAAA9AAcAAAABAAMAAAA9AAgAAAABAAMAAAA9AAkAAAACAAMAAAAvAAgAAAACAAEAAAAwAAcAAAACAAEAAAAwAAgAAAACAAEAAAAvAAkAAAACAAEAAAAwAAYAAAACAAEAAAAxAAYAAAACAAEAAAAyAAYAAAACAAEAAAAfAAcAAAAAAAIAAAAoAAcAAAAAAAIAAAAoAAYAAAABAAMAAAAfAAYAAAABAAMAAAAdAAkAAAAAAAIAAAAeAAgAAAAAAAIAAAApAAgAAAAAAAIAAAAxAAcAAAACAAEAAAA=")
 tile_set = SubResource("TileSet_inca_platforms")
 
 [node name="SceneryProps" type="Node2D" parent="." unique_id=2055440907]
 
 [node name="TreeStart" type="Sprite2D" parent="SceneryProps" unique_id=958866621]
-position = Vector2(70, 560)
-scale = Vector2(0.42, 0.42)
+position = Vector2(74.292496, 563.4375)
+scale = Vector2(0.7328027, 0.8322729)
 texture = ExtResource("9_tree")
 
 [node name="PlantaInicio" type="Sprite2D" parent="SceneryProps" unique_id=1869230884]
-position = Vector2(215, 626)
-scale = Vector2(0.18, 0.18)
+position = Vector2(390.4325, 631.385)
+scale = Vector2(0.49645633, 0.53556645)
 texture = ExtResource("11_plantas")
 
 [node name="TorchInicio" type="Sprite2D" parent="SceneryProps" unique_id=1380350820]
-position = Vector2(290, 520)
-scale = Vector2(0.18, 0.18)
+position = Vector2(670, 503)
+scale = Vector2(0.51857144, 0.32529408)
 texture = ExtResource("13_torch")
 
 [node name="PlantaPuente" type="Sprite2D" parent="SceneryProps" unique_id=586190968]
-position = Vector2(736, 502)
-scale = Vector2(0.16, 0.16)
+position = Vector2(504, 625)
+scale = Vector2(0.6785539, 0.6218182)
 texture = ExtResource("12_planta2")
 
 [node name="TreeBeforeTerrace" type="Sprite2D" parent="SceneryProps" unique_id=753947691]
-position = Vector2(990, 558)
-scale = Vector2(0.45, 0.45)
+position = Vector2(1101, 595)
+scale = Vector2(0.5882287, 0.51954544)
 texture = ExtResource("9_tree")
 
 [node name="BannerTerraceLeft" type="Sprite2D" parent="SceneryProps" unique_id=1319164801]
-position = Vector2(1184, 520)
-scale = Vector2(0.22, 0.22)
+position = Vector2(996, 542)
+scale = Vector2(0.44600016, 0.3843681)
 texture = ExtResource("14_banner")
 
 [node name="TorchTerraceTop" type="Sprite2D" parent="SceneryProps" unique_id=33348237]
-position = Vector2(1280, 405)
-scale = Vector2(0.16, 0.16)
+position = Vector2(928.99994, 504)
+scale = Vector2(0.54031885, 0.30352926)
 texture = ExtResource("13_torch")
 
 [node name="BushTerraceFloor" type="Sprite2D" parent="SceneryProps" unique_id=144067606]
-position = Vector2(1312, 628)
-scale = Vector2(0.2, 0.2)
+position = Vector2(1770, 590)
+scale = Vector2(0.46990237, 0.64772725)
 texture = ExtResource("10_bush")
 
 [node name="QuipuTerrace" type="Sprite2D" parent="SceneryProps" unique_id=556653576]
-position = Vector2(1568, 445)
-scale = Vector2(0.18, 0.18)
+position = Vector2(4067, 466)
+scale = Vector2(1.2628791, 0.51506007)
 texture = ExtResource("15_quipu")
 
 [node name="PlantaEscalera" type="Sprite2D" parent="SceneryProps" unique_id=1877236372]
-position = Vector2(1952, 374)
-scale = Vector2(0.16, 0.16)
+position = Vector2(1252, 631.00006)
+scale = Vector2(0.50988054, 0.5672725)
 texture = ExtResource("12_planta2")
 
 [node name="BannerBastionLeft" type="Sprite2D" parent="SceneryProps" unique_id=1367507409]
-position = Vector2(2144, 340)
-scale = Vector2(0.24, 0.24)
+position = Vector2(1885.0001, 520)
+scale = Vector2(0.49600008, 0.5798556)
 texture = ExtResource("14_banner")
 
 [node name="TorchBastionLeft" type="Sprite2D" parent="SceneryProps" unique_id=868130734]
-position = Vector2(2190, 212)
-scale = Vector2(0.16, 0.16)
-texture = ExtResource("13_torch")
-
-[node name="TorchBastionRight" type="Sprite2D" parent="SceneryProps" unique_id=1988134294]
-position = Vector2(2415, 212)
-scale = Vector2(0.16, 0.16)
+position = Vector2(2014, 373.00003)
+scale = Vector2(0.54031557, 0.3564705)
 texture = ExtResource("13_torch")
 
 [node name="BannerBastionRight" type="Sprite2D" parent="SceneryProps" unique_id=1916550868]
-position = Vector2(2464, 340)
-scale = Vector2(0.24, 0.24)
+position = Vector2(2725.0002, 516)
+scale = Vector2(0.55199975, 0.59610116)
 texture = ExtResource("14_banner")
 
 [node name="PlantaBastionUnder" type="Sprite2D" parent="SceneryProps" unique_id=1328412652]
-position = Vector2(2300, 624)
-scale = Vector2(0.2, 0.2)
+position = Vector2(1888, 641)
+scale = Vector2(0.2747573, 0.3264151)
 texture = ExtResource("11_plantas")
 
-[node name="TreePatio" type="Sprite2D" parent="SceneryProps" unique_id=479317241]
-position = Vector2(2720, 558)
-scale = Vector2(0.44, 0.44)
-texture = ExtResource("9_tree")
-
 [node name="BushPatio" type="Sprite2D" parent="SceneryProps" unique_id=1132359133]
-position = Vector2(2840, 628)
-scale = Vector2(0.2, 0.2)
+position = Vector2(3198.9998, 588.00006)
+scale = Vector2(0.56698877, 0.70681816)
 texture = ExtResource("10_bush")
 
 [node name="TorchTorreTop" type="Sprite2D" parent="SceneryProps" unique_id=1564867781]
-position = Vector2(3310, 340)
-scale = Vector2(0.16, 0.16)
+position = Vector2(3992, 621)
+scale = Vector2(0.4288907, 0.39588234)
 texture = ExtResource("13_torch")
 
-[node name="QuipuTorre" type="Sprite2D" parent="SceneryProps" unique_id=2005042535]
-position = Vector2(3392, 445)
-scale = Vector2(0.18, 0.18)
-texture = ExtResource("15_quipu")
-
 [node name="TreeSanctuary" type="Sprite2D" parent="SceneryProps" unique_id=76800277]
-position = Vector2(3600, 558)
-scale = Vector2(0.45, 0.45)
+position = Vector2(3705, 585)
+scale = Vector2(0.6016803, 0.6686365)
 texture = ExtResource("9_tree")
 
-[node name="PillarGateLeft" type="Sprite2D" parent="SceneryProps" unique_id=1111382287]
-position = Vector2(3860, 550)
-scale = Vector2(0.42, 0.42)
-texture = ExtResource("16_pillar")
-
-[node name="PillarGateRight" type="Sprite2D" parent="SceneryProps" unique_id=745267269]
-position = Vector2(4140, 550)
-scale = Vector2(0.42, 0.42)
-texture = ExtResource("16_pillar")
-
 [node name="BannerAltarLeft" type="Sprite2D" parent="SceneryProps" unique_id=1689525117]
-position = Vector2(3930, 440)
-scale = Vector2(0.24, 0.24)
+position = Vector2(3933.0002, 344)
+scale = Vector2(0.40000078, 0.44851992)
 texture = ExtResource("14_banner")
 
 [node name="BannerAltarRight" type="Sprite2D" parent="SceneryProps" unique_id=1879787566]
-position = Vector2(4100, 440)
-scale = Vector2(0.24, 0.24)
+position = Vector2(4192.0005, 346)
+scale = Vector2(0.41600248, 0.4340794)
 texture = ExtResource("14_banner")
 
 [node name="SunEmblemAltar" type="Sprite2D" parent="SceneryProps" unique_id=306424149]
 modulate = Color(1, 0.92, 0.55, 0.55)
-position = Vector2(4032, 345)
+position = Vector2(4069, 343)
 scale = Vector2(0.28, 0.28)
 texture = ExtResource("17_sun_emblem")
+
+[node name="TorchBastionLeft2" type="Sprite2D" parent="SceneryProps" unique_id=478945365]
+position = Vector2(2590, 377.99997)
+scale = Vector2(0.5558732, 0.31764728)
+texture = ExtResource("13_torch")
+
+[node name="Barril" type="Sprite2D" parent="SceneryProps" unique_id=5681927]
+position = Vector2(3090, 629.875)
+scale = Vector2(0.48936033, 0.45610654)
+texture = ExtResource("13_vrcmr")
+
+[node name="Barril2" type="Sprite2D" parent="SceneryProps" unique_id=800268119]
+position = Vector2(3626.9998, 630)
+scale = Vector2(0.48936033, 0.45610654)
+texture = ExtResource("13_vrcmr")
+
+[node name="EstandarteEspañol" type="Sprite2D" parent="SceneryProps" unique_id=329572970]
+position = Vector2(2420.0002, 416)
+scale = Vector2(0.6666667, 0.6069182)
+texture = ExtResource("14_svp4f")
+
+[node name="EstandarteEspañol2" type="Sprite2D" parent="SceneryProps" unique_id=1835612125]
+position = Vector2(3282, 606)
+scale = Vector2(0.6666667, 0.6069182)
+texture = ExtResource("14_svp4f")
+
+[node name="EstandarteEspañol3" type="Sprite2D" parent="SceneryProps" unique_id=1912737126]
+position = Vector2(3580, 609)
+scale = Vector2(0.6666667, 0.6069182)
+texture = ExtResource("14_svp4f")
 
 [node name="Hazards" type="Node2D" parent="." unique_id=1966507750]
 
 [node name="Spikes1" parent="Hazards" unique_id=556058367 instance=ExtResource("18_hazard")]
-position = Vector2(650, 628)
+position = Vector2(731, 607)
 
 [node name="Spikes2" parent="Hazards" unique_id=1407056564 instance=ExtResource("18_hazard")]
-position = Vector2(1760, 628)
+position = Vector2(1498, 542)
 
 [node name="Spikes3" parent="Hazards" unique_id=1942183459 instance=ExtResource("18_hazard")]
-position = Vector2(2620, 628)
+position = Vector2(2781, 606)
 
-[node name="Spikes4" parent="Hazards" unique_id=1154913954 instance=ExtResource("18_hazard")]
-position = Vector2(3360, 628)
+[node name="Spikes5" parent="Hazards" unique_id=1211282357 instance=ExtResource("18_hazard")]
+position = Vector2(796, 608)
+
+[node name="Spikes6" parent="Hazards" unique_id=1313827631 instance=ExtResource("18_hazard")]
+position = Vector2(863, 606)
+
+[node name="Spikes7" parent="Hazards" unique_id=1839124979 instance=ExtResource("18_hazard")]
+position = Vector2(1564, 540)
+
+[node name="Spikes8" parent="Hazards" unique_id=605340122 instance=ExtResource("18_hazard")]
+position = Vector2(2847, 605)
+
+[node name="Spikes9" parent="Hazards" unique_id=1710919069 instance=ExtResource("18_hazard")]
+position = Vector2(2905, 605)
 
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1663900693]
 position = Vector2(120, 604)
 
 [node name="Player" parent="." unique_id=700838500 instance=ExtResource("2_player")]
-position = Vector2(120, 604)
+position = Vector2(182, 616)
 
 [node name="Relic" parent="." unique_id=1625584188 groups=["relics"] instance=ExtResource("3_relic")]
-position = Vector2(4032, 468)
+position = Vector2(4080, 553)
 
 [node name="Relic2" parent="." unique_id=1166347455 groups=["relics"] instance=ExtResource("3_relic")]
-position = Vector2(3456, 340)
+position = Vector2(3425, 503)
 
 [node name="Relic3" parent="." unique_id=932575252 groups=["relics"] instance=ExtResource("3_relic")]
-position = Vector2(2400, 212)
+position = Vector2(2296, 354)
 
 [node name="Relic4" parent="." unique_id=48923182 groups=["relics"] instance=ExtResource("3_relic")]
-position = Vector2(1568, 340)
+position = Vector2(1549, 405)
 
 [node name="PowerUpSol" parent="." unique_id=1853025105 instance=ExtResource("19_powerup_sol")]
-position = Vector2(1083, 466)
+position = Vector2(3156, 336)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1471652116]
 
 [node name="SoldadoValle" parent="Enemies" unique_id=657887745 instance=ExtResource("5_soldado")]
-position = Vector2(726, 482)
+position = Vector2(1176, 616)
 
 [node name="SoldadoTerraza" parent="Enemies" unique_id=1633547665 instance=ExtResource("5_soldado")]
-position = Vector2(1312, 413)
+position = Vector2(2089, 415)
 
 [node name="BallesteroBastion" parent="Enemies" unique_id=986072066 instance=ExtResource("6_ballestero")]
-position = Vector2(2272, 221)
+position = Vector2(2505, 404)
 
 [node name="SoldadoPatio" parent="Enemies" unique_id=954770255 instance=ExtResource("5_soldado")]
-position = Vector2(2920, 605)
+position = Vector2(3499, 609)
 
 [node name="BallesteroTorre" parent="Enemies" unique_id=1405506589 instance=ExtResource("6_ballestero")]
-position = Vector2(3360, 349)
+position = Vector2(3816, 597)
 
 [node name="SoldadoGuardiaReal" parent="Enemies" unique_id=196680247 instance=ExtResource("5_soldado")]
-position = Vector2(3680, 605)
+position = Vector2(3215, 609)
+
+[node name="SoldadoValle2" parent="Enemies" unique_id=2071436326 instance=ExtResource("5_soldado")]
+position = Vector2(3828, 606)
 
 [node name="HUD" parent="." unique_id=1579635593 instance=ExtResource("4_hud")]
