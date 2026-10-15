@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c73f8jejiqg5t"]
 
 [ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
-[ext_resource type="SpriteFrames" path="res://scenes/player/player_frames.tres" id="2_frames"]
+[ext_resource type="SpriteFrames" uid="uid://ddh1a8uvf6fkt" path="res://scenes/player/player_frames.tres" id="2_frames"]
 [ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="3_hitbox"]
 [ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
 
@@ -17,10 +17,10 @@ collision_layer = 2
 script = ExtResource("1_player")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
-position = Vector2(0, -6)
-scale = Vector2(0.7, 0.7)
+position = Vector2(-0.49999917, -6.499999)
+scale = Vector2(0.60747665, 0.546875)
 sprite_frames = ExtResource("2_frames")
-animation = &"idle"
+animation = &"dead"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1381535601]
