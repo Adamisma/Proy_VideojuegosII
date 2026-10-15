@@ -8,6 +8,9 @@ extends Node2D
 @onready var player_spawn: Marker2D = $PlayerSpawn
 @onready var hud: HUD = $HUD
 @onready var enemies_container: Node2D = $Enemies
+@onready var sky_layer: ParallaxLayer = $ParallaxBackground/ParallaxLayer_Cielo
+
+@export var sky_speed: float = 15.0
 
 var total_relics: int = 0
 var collected_relics: int = 0
@@ -34,7 +37,7 @@ func _ready() -> void:
 		for child in enemies_container.get_children():
 			if child is Enemy:
 				child.enemy_defeated.connect(_on_enemy_defeated)
-
+		
 func _setup_relics() -> void:
 	# Busca todos los nodos en el grupo "relics"
 	var relics = get_tree().get_nodes_in_group("relics")
@@ -48,14 +51,18 @@ func _setup_relics() -> void:
 				
 	_update_relics_ui()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	# Reinicio rápido con tecla [R]
 	if Input.is_action_just_pressed("restart"):
 		_on_restart_level()
-		
+
 	# Detección de caída al vacío
 	if player and player.global_position.y > 800.0:
 		player.take_direct_damage(100)
+
+	# Desplazar el cielo permanentemente hacia la izquierda
+	if sky_layer:
+		sky_layer.motion_offset.x -= sky_speed * delta
 
 func _on_player_health_changed(new_health: int, max_health: int) -> void:
 	if hud:
@@ -88,3 +95,4 @@ func _on_restart_level() -> void:
 
 func _on_return_main_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+	

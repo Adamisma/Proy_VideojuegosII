@@ -2,11 +2,12 @@
 
 [ext_resource type="Script" uid="uid://b1lfwhgurqok6" path="res://scripts/levels/level_01.gd" id="1_level_script"]
 [ext_resource type="PackedScene" uid="uid://c73f8jejiqg5t" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="Texture2D" uid="uid://bnglppk25p2xo" path="res://assets/backgrounds/fondo_principal1.png" id="2_svp4f"]
+[ext_resource type="Texture2D" uid="uid://d4nb8bldc8rdf" path="res://assets/backgrounds/fondo_cielo.png" id="3_1b0o8"]
 [ext_resource type="PackedScene" uid="uid://cvplh7rg30cf6" path="res://scenes/environment/relic.tscn" id="3_relic"]
 [ext_resource type="PackedScene" uid="uid://bnfwoh1seu4db" path="res://scenes/ui/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" uid="uid://yeaboep172mi" path="res://scenes/enemies/enemy_melee.tscn" id="5_soldado"]
 [ext_resource type="PackedScene" uid="uid://bn0sjcnrrpdj3" path="res://scenes/enemies/enemy_ranged.tscn" id="6_ballestero"]
-[ext_resource type="Texture2D" uid="uid://c0tr35xxu4jjq" path="res://assets/backgrounds/fondo_principal.png" id="7_bg_main"]
 [ext_resource type="Texture2D" uid="uid://uahdpunhxt2" path="res://assets/tiles/tileset_inca_nivel1.png" id="8_tileset_atlas"]
 [ext_resource type="Texture2D" uid="uid://l6xacljduua" path="res://assets/environment/andean_tree.png" id="9_tree"]
 [ext_resource type="Texture2D" uid="uid://q5oid7dpur8g" path="res://assets/environment/andean_bush.png" id="10_bush"]
@@ -105,15 +106,21 @@ script = ExtResource("1_level_script")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 
-[node name="LayerPanoramaAndino" type="ParallaxLayer" parent="ParallaxBackground" unique_id=327717638]
+[node name="ParallaxLayer_Cielo" type="ParallaxLayer" parent="ParallaxBackground" unique_id=249637946]
 motion_scale = Vector2(0.25, 1)
 
-[node name="FondoPrincipal" type="Sprite2D" parent="ParallaxBackground/LayerPanoramaAndino" unique_id=1728893260]
-position = Vector2(1024, 364)
-scale = Vector2(2, 2)
-texture = ExtResource("7_bg_main")
+[node name="FondoCielo" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer_Cielo" unique_id=108520720]
+position = Vector2(1023.5, 364.5)
+scale = Vector2(3.8622644, 3.9619567)
+texture = ExtResource("3_1b0o8")
 
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/LayerPanoramaAndino" unique_id=227305550]
+[node name="ParallaxLayer_Principal" type="ParallaxLayer" parent="ParallaxBackground" unique_id=327717638]
+motion_scale = Vector2(0.25, 1)
+
+[node name="FondoPrincipal" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer_Principal" unique_id=227305550]
+position = Vector2(1024.5, 364.50003)
+scale = Vector2(3.8622644, 3.961957)
+texture = ExtResource("2_svp4f")
 
 [node name="SueloPrincipal" type="StaticBody2D" parent="." unique_id=627930567]
 collision_mask = 0
