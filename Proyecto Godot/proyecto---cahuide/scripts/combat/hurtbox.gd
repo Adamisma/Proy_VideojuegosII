@@ -18,7 +18,9 @@ func _process(delta: float) -> void:
 
 func take_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 	if is_invulnerable:
+		print("Golpe ignorado por invulnerabilidad")
 		return
+	print("Hurtbox recibió una solicitud de daño: ", amount)
 	
 	if invulnerability_time > 0.0:
 		is_invulnerable = true

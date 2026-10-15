@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b053hgvqgwfru"]
+
+[ext_resource type="Texture2D" uid="uid://b1k6n1j8wn7ni" path="res://assets/projectiles/Piedra_02.png" id="1_1ytqs"]
+[ext_resource type="Script" uid="uid://bj52flgm6ic8b" path="res://scripts/projectiles/stone_projectile.gd" id="1_8ujap"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e0yrb"]
+radius = 4.1231055
+
+[node name="stone_projectile" type="Area2D" unique_id=1331034320]
+collision_layer = 8
+collision_mask = 7
+script = ExtResource("1_8ujap")
+damage = 15
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1852615063]
+position = Vector2(2.3841858e-07, -2.3841858e-07)
+scale = Vector2(0.044189453, 0.044189453)
+texture = ExtResource("1_1ytqs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=702263186]
+shape = SubResource("CircleShape2D_e0yrb")

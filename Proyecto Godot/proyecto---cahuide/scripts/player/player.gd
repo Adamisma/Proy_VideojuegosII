@@ -64,6 +64,14 @@ var sol_timer: float = 0.0
 @onready var melee_hitbox: Hitbox = $MeleeHitbox
 @onready var hurtbox: Hurtbox = $Hurtbox
 
+# PROYECTIL - PIEDRA #
+@export var stone_projectile_scene: PackedScene
+@export var stone_speed_x: float = 420.0
+@export var stone_speed_y: float = -380.0
+@export var stone_cooldown: float = 0.8
+
+var stone_timer: float = 0.0
+
 func _ready() -> void:
 	add_to_group("player")
 	health = max_health
@@ -150,6 +158,7 @@ func _update_timers(delta: float) -> void:
 	_update_jump_buffer(delta)
 	attack_timer = max(0.0, attack_timer - delta)
 	shoot_timer = max(0.0, shoot_timer - delta)
+	stone_timer = maxf(0.0, stone_timer - delta)
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
@@ -264,7 +273,10 @@ func _handle_combat_inputs() -> void:
 			_shoot_projectile()
 		elif shoot_timer <= 0.0:
 			_shoot_projectile()
-
+			
+	if Input.is_action_just_pressed("stone_shoot") and stone_timer <= 0.0:
+		_throw_stone()
+		
 func _execute_melee_attack() -> void:
 	attack_timer = attack_cooldown
 	is_attacking = true
@@ -300,6 +312,28 @@ func _shoot_projectile() -> void:
 	tween.tween_property(animated_sprite, "modulate", Color(2.8, 2.2, 0.8, 1), 0.08)
 	var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
 	tween.tween_property(animated_sprite, "modulate", restore_color, 0.12)
+
+
+func _throw_stone() -> void:
+	if stone_projectile_scene == null:
+		return
+
+	var stone := stone_projectile_scene.instantiate() as StoneProjectile
+	if stone == null:
+		return
+
+	var direction := facing_direction
+	get_tree().current_scene.add_child(stone)
+	stone.global_position = global_position + Vector2(direction * 25.0, -10.0)
+	stone.launch(Vector2(direction * stone_speed_x, stone_speed_y))
+	stone_timer = stone_cooldown
+
+	# Velocidad horizontal según la dirección de Cahuide.
+	# La velocidad vertical negativa hace que la piedra suba.
+	stone.launch(Vector2(
+		direction * stone_speed_x,
+		stone_speed_y
+	))
 
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
 	take_direct_damage(amount, knockback)

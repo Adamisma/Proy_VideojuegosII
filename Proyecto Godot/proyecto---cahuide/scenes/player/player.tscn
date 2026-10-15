@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="SpriteFrames" uid="uid://ddh1a8uvf6fkt" path="res://scenes/player/player_frames.tres" id="2_frames"]
+[ext_resource type="PackedScene" uid="uid://b053hgvqgwfru" path="res://scenes/projectiles/stone_projectile.tscn" id="2_p47bc"]
 [ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="3_hitbox"]
 [ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
 
@@ -15,6 +16,7 @@ size = Vector2(65, 104.5)
 [node name="Player" type="CharacterBody2D" unique_id=156458254 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_player")
+stone_projectile_scene = ExtResource("2_p47bc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
 position = Vector2(-0.49999917, -6.499999)

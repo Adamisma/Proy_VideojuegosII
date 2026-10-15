@@ -151,22 +151,34 @@ func _shoot_projectile() -> void:
 	get_tree().current_scene.add_child(proj)
 
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
+	print(
+		"[DAÑO ENEMIGO - HURTBOX] ",
+		enemy_name,
+		" | Cantidad recibida: ", amount
+	)
 	take_direct_damage(amount, knockback)
 
 func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 	if health <= 0:
 		return
-		
+
+	var vida_anterior: int = health
 	health = max(0, health - amount)
+
+	print(
+		"[DAÑO ENEMIGO] ", enemy_name,
+		" | Daño recibido: ", amount,
+		" | Vida anterior: ", vida_anterior,
+		" | Vida actual: ", health
+	)
+
 	if health_bar:
 		health_bar.value = health
-		
-	# Aplicar knockback físico
+
 	if knockback != Vector2.ZERO:
 		velocity.x = knockback.x
 		velocity.y = min(velocity.y, knockback.y)
-		
-	# Cambiar a estado HURT o DEAD
+
 	if health <= 0:
 		_on_death()
 		if state_machine:
@@ -174,6 +186,7 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 	else:
 		if state_machine:
 			state_machine.transition_to("hurt")
+
 
 func _on_death() -> void:
 	# Sumar el puntaje y la baja al HUD
