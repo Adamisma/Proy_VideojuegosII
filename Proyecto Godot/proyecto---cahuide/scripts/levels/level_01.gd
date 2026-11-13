@@ -32,12 +32,22 @@ func _ready() -> void:
 	# Configurar y contar reliquias del nivel
 	_setup_relics()
 		
-	# Conectar enemigos del nivel
+	# Conectar enemigos del nivel mediante Patrón Observador
 	if enemies_container:
 		for child in enemies_container.get_children():
 			if child is Enemy:
-				child.enemy_defeated.connect(_on_enemy_defeated)
+				_register_enemy(child)
 		
+		# Soporte reactivo en caso de instanciación dinámica de enemigos
+		enemies_container.child_entered_tree.connect(func(node: Node) -> void:
+			if node is Enemy:
+				_register_enemy(node)
+		)
+		
+func _register_enemy(enemy_node: Enemy) -> void:
+	if not enemy_node.enemy_defeated.is_connected(_on_enemy_defeated):
+		enemy_node.enemy_defeated.connect(_on_enemy_defeated)
+
 func _setup_relics() -> void:
 	# Busca todos los nodos en el grupo "relics"
 	var relics = get_tree().get_nodes_in_group("relics")
@@ -86,8 +96,13 @@ func _update_relics_ui() -> void:
 	if hud and hud.has_method("update_relics_count"):
 		hud.update_relics_count(remaining, total_relics)
 
-func _on_enemy_defeated(_enemy: Enemy) -> void:
+func _on_enemy_defeated(enemy_node: Enemy) -> void:
+	## Patrón Observador (El nivel como Mediador del flujo de juego):
+	## 1. Otorga al jugador el puntaje correspondiente a la amenaza derrotada.
+	## 2. Registra la baja en el HUD exactamente una vez.
 	if hud:
+		if is_instance_valid(enemy_node) and "score_value" in enemy_node:
+			hud.add_score(enemy_node.score_value)
 		hud.add_enemy_defeated()
 
 func _on_restart_level() -> void:

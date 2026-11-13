@@ -142,16 +142,12 @@ func _update_sol_powerup(delta: float) -> void:
 		_remove_sol_powerup()
 
 func _remove_sol_powerup() -> void:
+	## Finalización del estado Power-Up del Sol
 	has_sol_powerup = false
 	
-	# Restablecer tono normal
+	# Restablecer tono normal del sprite si no está en invulnerabilidad de daño
 	if animated_sprite and not is_invulnerable:
 		animated_sprite.modulate = Color(1, 1, 1, 1)
-		
-	# Quitar la resistencia extra otorgada
-	max_health = max(1, max_health - 1)
-	health = min(health, max_health)
-	health_changed.emit(health, max_health)
 
 func _update_timers(delta: float) -> void:
 	_update_coyote_time(delta)
@@ -325,40 +321,39 @@ func _throw_stone() -> void:
 	var direction := facing_direction
 	get_tree().current_scene.add_child(stone)
 	stone.global_position = global_position + Vector2(direction * 25.0, -10.0)
+	
+	# Velocidad parabólica inicial: horizontal según dirección y vertical hacia arriba
 	stone.launch(Vector2(direction * stone_speed_x, stone_speed_y))
 	stone_timer = stone_cooldown
 
-	# Velocidad horizontal según la dirección de Cahuide.
-	# La velocidad vertical negativa hace que la piedra suba.
-	stone.launch(Vector2(
-		direction * stone_speed_x,
-		stone_speed_y
-	))
-
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
+	## Patrón Delegación: el callback del Hurtbox delega directamente en take_direct_damage
+	## evitando llamados duplicados o fragmentación de la lógica de salud.
 	take_direct_damage(amount, knockback)
 
-	# Si NO tiene el power-up activo, funciona normal:
-	var final_damage = clamp(amount, 1, 2)
-	take_direct_damage(final_damage, knockback)
+## Patrón Estrategia (Regla de Mitigación de Daño):
+## Encapsula la lógica de absorción de daño según los estados y power-ups activos.
+func _calculate_mitigated_damage(incoming_damage: int) -> int:
+	# Lógica del Power-Up del Sol
+	if has_sol_powerup:
+		# Daño melee leve (1 punto = medio corazón): Inmunidad total
+		if incoming_damage <= 1:
+			return 0
+		# Proyectiles o daño alto: Se mitiga a 1 punto (medio corazón)
+		return 1
+	
+	# Daño estándar del juego: acotado entre 1 y 2 puntos
+	return clampi(incoming_damage, 1, 2)
 
 func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if is_invulnerable or is_dead:
 		return
 		
-	var damage_to_apply = amount
+	var damage_to_apply := _calculate_mitigated_damage(amount)
 	
-	# --- LÓGICA REFORZADA DEL POWER-UP DEL SOL ---
-	if has_sol_powerup:
-		# Si el daño es de espada/cuerpo a cuerpo (1 punto), INMUNE (0 daño)
-		if amount <= 1:
-			return
-		# Si el daño es de flecha/proyectil (2 puntos o más), REDUCIR A MEDIO CORAZÓN (1 punto)
-		else:
-			damage_to_apply = 1
-	else:
-		# Daño normal del juego cuando no hay power-up
-		damage_to_apply = clamp(amount, 1, 2)
+	# Si la armadura o power-up absorbió el 100% del daño, no interrumpir al jugador
+	if damage_to_apply <= 0:
+		return
 		
 	health = max(0, health - damage_to_apply)
 	health_changed.emit(health, max_health)

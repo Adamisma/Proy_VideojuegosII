@@ -38,6 +38,8 @@ signal enemy_defeated(enemy_node: Enemy)
 var health: int = 40
 var direction: float = -1.0 # -1 izquierda, 1 derecha
 var player: CharacterBody2D = null
+var is_dead: bool = false
+var _defeat_signal_emitted: bool = false
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -159,7 +161,7 @@ func _on_received_damage(amount: int, knockback: Vector2) -> void:
 	take_direct_damage(amount, knockback)
 
 func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
-	if health <= 0:
+	if is_dead or health <= 0:
 		return
 
 	var vida_anterior: int = health
@@ -180,25 +182,12 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 		velocity.y = min(velocity.y, knockback.y)
 
 	if health <= 0:
-		_on_death()
+		is_dead = true
 		if state_machine:
 			state_machine.transition_to("dead")
 	else:
 		if state_machine:
 			state_machine.transition_to("hurt")
-
-
-func _on_death() -> void:
-	# Sumar el puntaje y la baja al HUD
-	var hud = get_tree().get_first_node_in_group("hud")
-	if not hud:
-		hud = get_tree().current_scene.get_node_or_null("HUD")
-		
-	if hud:
-		if hud.has_method("add_score"):
-			hud.add_score(score_value)
-		if hud.has_method("add_enemy_defeated"):
-			hud.add_enemy_defeated()
 
 func disable_collisions() -> void:
 	if collision_shape:
@@ -234,7 +223,13 @@ func play_animation(anim_name: String) -> void:
 		_:
 			animated_sprite.modulate = Color(1, 1, 1, 1)
 
+## Patrón Observador (Observer Pattern):
+## El enemigo notifica su derrota mediante la señal 'enemy_defeated' sin acoplarse
+## directamente a la UI o al HUD. Los controladores (Nivel o GameManager) se encargan del puntaje y bajas.
 func emit_defeat() -> void:
+	if _defeat_signal_emitted:
+		return
+	_defeat_signal_emitted = true
 	enemy_defeated.emit(self)
 
 func _on_player_entered_detection(body: Node2D) -> void:
