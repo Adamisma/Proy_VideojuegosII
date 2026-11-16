@@ -19,11 +19,12 @@ script = ExtResource("1_player")
 stone_projectile_scene = ExtResource("2_p47bc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
-position = Vector2(-0.49999917, -6.499999)
-scale = Vector2(0.60747665, 0.546875)
+position = Vector2(-1.0000005, -6.0000005)
+scale = Vector2(0.89288896, 0.8308389)
 sprite_frames = ExtResource("2_frames")
-animation = &"dead"
+animation = &"walk"
 autoplay = "idle"
+frame_progress = 0.21989274
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1381535601]
 position = Vector2(0, 4)
