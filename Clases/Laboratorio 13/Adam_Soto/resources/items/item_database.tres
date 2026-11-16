@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemDatabase" load_steps=5 format=3 uid="uid://itemdb13res"]
+
+[ext_resource type="Script" path="res://core/data/item_database.gd" id="1_idb"]
+[ext_resource type="Resource" uid="uid://itempotion13" path="res://resources/items/potion_small.tres" id="2_potion"]
+[ext_resource type="Resource" uid="uid://itemkey13" path="res://resources/items/key_blue.tres" id="3_key"]
+[ext_resource type="Resource" uid="uid://itemcoinb13" path="res://resources/items/coin_bundle.tres" id="4_coinb"]
+
+[resource]
+script = ExtResource("1_idb")
+items = [ExtResource("2_potion"), ExtResource("3_key"), ExtResource("4_coinb")]

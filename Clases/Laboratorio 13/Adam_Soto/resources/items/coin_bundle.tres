@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://itemcoinb13"]
+
+[ext_resource type="Script" path="res://core/data/item_data.gd" id="1_idata"]
+[ext_resource type="Texture2D" uid="uid://bdj6jnylhj65b" path="res://icon.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_idata")
+item_id = &"coin_bundle"
+display_name = "Bolsa de Monedas"
+description = "Contiene 100 monedas de oro que se añaden a la puntuación."
+icon = ExtResource("2_icon")
+max_stack = 20
+consumable = true
+heal_amount = 0
+score_amount = 100

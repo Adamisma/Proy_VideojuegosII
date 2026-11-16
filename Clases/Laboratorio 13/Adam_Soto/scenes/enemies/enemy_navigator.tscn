@@ -1,0 +1,145 @@
+[gd_scene format=3 uid="uid://cx4m8k3p5n7xa"]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_navigator.gd" id="1_nav"]
+[ext_resource type="SpriteFrames" uid="uid://c8q4v7n2m9pxe" path="res://scenes/enemies/enemy_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://components/health/health_component.gd" id="3_health"]
+[ext_resource type="Script" path="res://components/combat/hurtbox_component.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://components/combat/hitbox_component.gd" id="5_hitbox"]
+[ext_resource type="Resource" path="res://resources/combat/enemy_contact_attack.tres" id="6_attack_data"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 16.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detect"]
+radius = 260.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hit"]
+radius = 24.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.12, 0.12, 0.14, 0.8)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.9, 0.2, 0.2, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="EnemyNavigator" type="CharacterBody2D" groups=["enemies", "enemy"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_nav")
+
+[node name="DebugPathLine" type="Line2D" parent="."]
+top_level = false
+width = 3.0
+default_color = Color(1, 0.45, 0.15, 0.7)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals"]
+modulate = Color(1, 0.55, 0.55, 1)
+position = Vector2(0, -6)
+scale = Vector2(0.4, 0.4)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+
+[node name="AlertLabel" type="Label" parent="Visuals"]
+visible = false
+offset_left = -15.0
+offset_top = -48.0
+offset_right = 15.0
+offset_bottom = -22.0
+theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)
+theme_override_font_sizes/font_size = 18
+text = "!"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 12.0
+target_desired_distance = 18.0
+radius = 18.0
+neighbor_distance = 150.0
+max_neighbors = 10
+avoidance_enabled = true
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_detect")
+
+[node name="SightRay" type="RayCast2D" parent="."]
+target_position = Vector2(240, 0)
+collision_mask = 3
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 100.0
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
+collision_layer = 64
+collision_mask = 8
+script = ExtResource("4_hurtbox")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+shape = SubResource("CircleShape2D_hurt")
+
+[node name="HitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("source")]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("5_hitbox")
+attack_data = ExtResource("6_attack_data")
+source = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_hit")
+
+[node name="StateDebugLabel" type="Label" parent="."]
+offset_left = -60.0
+offset_top = -46.0
+offset_right = 60.0
+offset_bottom = -28.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 11
+text = "IDLE"
+horizontal_alignment = 1
+
+[node name="OverheadHUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -20.0
+offset_top = -26.0
+offset_right = 20.0
+offset_bottom = -20.0
+
+[node name="HealthBar" type="ProgressBar" parent="OverheadHUD"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+value = 100.0
+show_percentage = false

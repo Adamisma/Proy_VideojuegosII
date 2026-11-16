@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://c7k9k3p5n7xg6"]
+
+[ext_resource type="Material" uid="uid://e9m8distmat1" path="res://materials/mat_distortion.tres" id="1_distmat"]
+[ext_resource type="Texture2D" uid="uid://dryrma8bi20n" path="res://assets/images.jpg" id="2_tex"]
+
+[node name="VFXDistortionZone" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource("1_distmat")
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_tex")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -70.0
+offset_top = 40.0
+offset_right = 70.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 0.8)
+theme_override_font_sizes/font_size = 10
+text = "SHADER: DISTORSIÓN UV"
+horizontal_alignment = 1

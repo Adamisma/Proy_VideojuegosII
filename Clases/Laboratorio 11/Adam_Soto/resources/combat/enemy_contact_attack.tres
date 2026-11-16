@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/attack_data.gd" id="1_atk"]
+
+[resource]
+script = ExtResource("1_atk")
+attack_name = "Mordisco Enemigo"
+damage = 15.0
+knockback_force = 260.0
+hitstun_time = 0.2
+invulnerability_time = 0.4

@@ -1,0 +1,152 @@
+[gd_scene load_steps=10 format=3 uid="uid://lvl01scene12"]
+
+[ext_resource type="Script" path="res://scripts/levels/level_controller.gd" id="1_controller"]
+[ext_resource type="PackedScene" uid="uid://cie28t1csn1wt" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c6hudlab11scene" path="res://scenes/ui/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://cpcomponent12scene" path="res://components/checkpoint/checkpoint.tscn" id="4_cp"]
+[ext_resource type="PackedScene" uid="uid://coinpersistent12scene" path="res://scenes/environment/persistent_coin.tscn" id="5_coin"]
+[ext_resource type="PackedScene" uid="uid://goaldoor12scene" path="res://scenes/environment/level_goal.tscn" id="6_goal"]
+[ext_resource type="PackedScene" uid="uid://dmv7gq4n6x9ks" path="res://scenes/enemies/enemy_dummy.tscn" id="7_dummy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1600, 60)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(240, 24)
+
+[node name="Level01" type="Node2D"]
+script = ExtResource("1_controller")
+level_id = &"level_01"
+next_level_id = &"level_02"
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.35, 0.4, 0.45, 1)
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_right = 1600.0
+offset_bottom = 800.0
+color = Color(0.09, 0.11, 0.15, 1)
+
+[node name="Ground" type="StaticBody2D" parent="World"]
+position = Vector2(800, 600)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Visual" type="ColorRect" parent="World/Ground"]
+offset_left = -800.0
+offset_top = -30.0
+offset_right = 800.0
+offset_bottom = 30.0
+color = Color(0.2, 0.25, 0.32, 1)
+
+[node name="WallLeft" type="StaticBody2D" parent="World"]
+position = Vector2(20, 350)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/WallLeft"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Visual" type="ColorRect" parent="World/WallLeft"]
+offset_left = -20.0
+offset_top = -400.0
+offset_right = 20.0
+offset_bottom = 400.0
+color = Color(0.14, 0.17, 0.22, 1)
+
+[node name="WallRight" type="StaticBody2D" parent="World"]
+position = Vector2(1580, 350)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/WallRight"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Visual" type="ColorRect" parent="World/WallRight"]
+offset_left = -20.0
+offset_top = -400.0
+offset_right = 20.0
+offset_bottom = 400.0
+color = Color(0.14, 0.17, 0.22, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="World"]
+position = Vector2(480, 470)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platform1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="World/Platform1"]
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+color = Color(0.26, 0.32, 0.42, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="World"]
+position = Vector2(920, 410)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="World/Platform2"]
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+color = Color(0.26, 0.32, 0.42, 1)
+
+[node name="DefaultSpawn" type="Marker2D" parent="."]
+position = Vector2(120, 520)
+
+[node name="Checkpoints" type="Node2D" parent="."]
+
+[node name="CP01_A" parent="Checkpoints" instance=ExtResource("4_cp")]
+position = Vector2(580, 530)
+checkpoint_id = &"cp_01_a"
+
+[node name="CP01_B" parent="Checkpoints" instance=ExtResource("4_cp")]
+position = Vector2(920, 360)
+checkpoint_id = &"cp_01_b"
+
+[node name="Collectibles" type="Node2D" parent="."]
+
+[node name="Coin1" parent="Collectibles" instance=ExtResource("5_coin")]
+position = Vector2(380, 520)
+item_id = &"coin_01_1"
+points = 25
+
+[node name="Coin2" parent="Collectibles" instance=ExtResource("5_coin")]
+position = Vector2(480, 420)
+item_id = &"coin_01_2"
+points = 25
+
+[node name="Coin3" parent="Collectibles" instance=ExtResource("5_coin")]
+position = Vector2(920, 310)
+item_id = &"coin_01_3"
+points = 50
+
+[node name="Goal" parent="." instance=ExtResource("6_goal")]
+position = Vector2(1480, 530)
+next_level_id = &"level_02"
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="EnemyDummy1" parent="Enemies" instance=ExtResource("7_dummy")]
+position = Vector2(720, 540)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(120, 520)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]

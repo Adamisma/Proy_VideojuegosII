@@ -1,17 +1,27 @@
 [gd_scene format=3 uid="uid://cie28t1csn1wt"]
 
 [ext_resource type="Texture2D" uid="uid://bdj6jnylhj65b" path="res://icon.svg" id="1_8afob"]
-[ext_resource type="Script" uid="uid://pm6ule82ilms" path="res://scripts/player.gd" id="1_dovo2"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_dovo2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
-size = Vector2(120, 121)
+size = Vector2(80, 80)
 
-[node name="Player" type="CharacterBody2D" unique_id=1816121793 groups=["player"]]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 2
+collision_mask = 1
 script = ExtResource("1_dovo2")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1483084249]
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.625, 0.625)
 texture = ExtResource("1_8afob")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=447605681]
-position = Vector2(0, -0.5)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_dovo2")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+limit_left = 0
+limit_top = -400
+limit_right = 2600
+limit_bottom = 850

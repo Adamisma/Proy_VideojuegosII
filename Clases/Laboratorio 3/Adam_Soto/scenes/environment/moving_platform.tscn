@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cmovplat03adam"]
+
+[ext_resource type="Script" path="res://scripts/moving_platform.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Piedra_platform.jpg" id="2_tex"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_plat"]
+size = Vector2(160, 40)
+
+[node name="MovingPlatform" type="AnimatableBody2D"]
+collision_layer = 1
+collision_mask = 0
+sync_to_physics = true
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.163265, 0.0408163)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_plat")

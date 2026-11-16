@@ -1,0 +1,329 @@
+[gd_scene load_steps=12 format=3 uid="uid://darchlab11scene"]
+
+[ext_resource type="Script" path="res://scripts/levels/architecture_lab.gd" id="1_lab"]
+[ext_resource type="Script" path="res://scripts/vfx/vfx_spawner.gd" id="2_spawner"]
+[ext_resource type="PackedScene" uid="uid://cie28t1csn1wt" path="res://scenes/player/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://dmv7gq4n6x9ks" path="res://scenes/enemies/enemy_dummy.tscn" id="4_dummy"]
+[ext_resource type="PackedScene" uid="uid://c6hudlab11scene" path="res://scenes/ui/hud.tscn" id="5_hud"]
+[ext_resource type="Script" path="res://scripts/checkpoint.gd" id="6_cp"]
+[ext_resource type="Script" path="res://scripts/collectible.gd" id="7_coin"]
+[ext_resource type="Script" path="res://components/combat/hitbox_component.gd" id="8_hitbox"]
+[ext_resource type="Resource" path="res://resources/combat/hazard_attack.tres" id="9_hazatk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1600, 60)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(40, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(240, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cp_trigger"]
+size = Vector2(48, 64)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_coin"]
+radius = 14.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spikes"]
+size = Vector2(140, 20)
+
+[sub_resource type="Gradient" id="Gradient_light"]
+offsets = PackedFloat32Array(0, 0.3, 0.7, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 0.85, 0.5, 0.8, 0.7, 0.35, 0.1, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lamp"]
+gradient = SubResource("Gradient_light")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.95, 0.5)
+
+[node name="ArchitectureLab" type="Node2D"]
+script = ExtResource("1_lab")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.24, 0.26, 0.36, 1)
+
+[node name="VFXSpawner" type="Node2D" parent="."]
+script = ExtResource("2_spawner")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_right = 1600.0
+offset_bottom = 800.0
+color = Color(0.08, 0.09, 0.13, 1)
+
+[node name="Ground" type="StaticBody2D" parent="World"]
+position = Vector2(800, 600)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Visual" type="ColorRect" parent="World/Ground"]
+offset_left = -800.0
+offset_top = -30.0
+offset_right = 800.0
+offset_bottom = 30.0
+color = Color(0.16, 0.2, 0.26, 1)
+
+[node name="WallLeft" type="StaticBody2D" parent="World"]
+position = Vector2(20, 350)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/WallLeft"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Visual" type="ColorRect" parent="World/WallLeft"]
+offset_left = -20.0
+offset_top = -400.0
+offset_right = 20.0
+offset_bottom = 400.0
+color = Color(0.12, 0.15, 0.2, 1)
+
+[node name="WallRight" type="StaticBody2D" parent="World"]
+position = Vector2(1580, 350)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/WallRight"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Visual" type="ColorRect" parent="World/WallRight"]
+offset_left = -20.0
+offset_top = -400.0
+offset_right = 20.0
+offset_bottom = 400.0
+color = Color(0.12, 0.15, 0.2, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="World"]
+position = Vector2(400, 460)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platform1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="World/Platform1"]
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="World"]
+position = Vector2(820, 420)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="World/Platform2"]
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="Platform3" type="StaticBody2D" parent="World"]
+position = Vector2(1200, 360)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platform3"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Visual" type="ColorRect" parent="World/Platform3"]
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+color = Color(0.22, 0.28, 0.38, 1)
+
+[node name="Lights" type="Node2D" parent="."]
+
+[node name="Light1" type="PointLight2D" parent="Lights"]
+position = Vector2(400, 380)
+color = Color(1, 0.85, 0.6, 1)
+energy = 1.3
+texture = SubResource("GradientTexture2D_lamp")
+texture_scale = 1.8
+
+[node name="Light2" type="PointLight2D" parent="Lights"]
+position = Vector2(820, 340)
+color = Color(0.4, 0.9, 1, 1)
+energy = 1.3
+texture = SubResource("GradientTexture2D_lamp")
+texture_scale = 1.8
+
+[node name="Light3" type="PointLight2D" parent="Lights"]
+position = Vector2(1200, 280)
+color = Color(0.9, 0.4, 1, 1)
+energy = 1.3
+texture = SubResource("GradientTexture2D_lamp")
+texture_scale = 1.8
+
+[node name="Checkpoints" type="Node2D" parent="."]
+
+[node name="InitialSpawn" type="Marker2D" parent="Checkpoints"]
+position = Vector2(120, 520)
+
+[node name="CheckpointA" type="Area2D" parent="Checkpoints"]
+position = Vector2(600, 530)
+collision_layer = 256
+collision_mask = 2
+script = ExtResource("6_cp")
+checkpoint_id = &"cp_alfa"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoints/CheckpointA"]
+shape = SubResource("RectangleShape2D_cp_trigger")
+
+[node name="Sprite2D" type="Sprite2D" parent="Checkpoints/CheckpointA"]
+position = Vector2(0, -6)
+scale = Vector2(0.2, 0.3)
+
+[node name="SpawnPoint" type="Marker2D" parent="Checkpoints/CheckpointA"]
+position = Vector2(0, 10)
+
+[node name="Label" type="Label" parent="Checkpoints/CheckpointA"]
+offset_left = -30.0
+offset_top = -48.0
+offset_right = 30.0
+offset_bottom = -28.0
+theme_override_font_sizes/font_size = 10
+text = "CP ALFA"
+horizontal_alignment = 1
+
+[node name="CheckpointB" type="Area2D" parent="Checkpoints"]
+position = Vector2(1200, 310)
+collision_layer = 256
+collision_mask = 2
+script = ExtResource("6_cp")
+checkpoint_id = &"cp_beta"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoints/CheckpointB"]
+shape = SubResource("RectangleShape2D_cp_trigger")
+
+[node name="Sprite2D" type="Sprite2D" parent="Checkpoints/CheckpointB"]
+position = Vector2(0, -6)
+scale = Vector2(0.2, 0.3)
+
+[node name="SpawnPoint" type="Marker2D" parent="Checkpoints/CheckpointB"]
+position = Vector2(0, 10)
+
+[node name="Label" type="Label" parent="Checkpoints/CheckpointB"]
+offset_left = -30.0
+offset_top = -48.0
+offset_right = 30.0
+offset_bottom = -28.0
+theme_override_font_sizes/font_size = 10
+text = "CP BETA"
+horizontal_alignment = 1
+
+[node name="Collectibles" type="Node2D" parent="."]
+
+[node name="Coin1" type="Area2D" parent="Collectibles"]
+position = Vector2(320, 420)
+collision_layer = 512
+collision_mask = 2
+script = ExtResource("7_coin")
+points = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collectibles/Coin1"]
+shape = SubResource("CircleShape2D_coin")
+
+[node name="Visual" type="ColorRect" parent="Collectibles/Coin1"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(1, 0.85, 0.2, 1)
+
+[node name="Coin2" type="Area2D" parent="Collectibles"]
+position = Vector2(400, 420)
+collision_layer = 512
+collision_mask = 2
+script = ExtResource("7_coin")
+points = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collectibles/Coin2"]
+shape = SubResource("CircleShape2D_coin")
+
+[node name="Visual" type="ColorRect" parent="Collectibles/Coin2"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(1, 0.85, 0.2, 1)
+
+[node name="Coin3" type="Area2D" parent="Collectibles"]
+position = Vector2(480, 420)
+collision_layer = 512
+collision_mask = 2
+script = ExtResource("7_coin")
+points = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collectibles/Coin3"]
+shape = SubResource("CircleShape2D_coin")
+
+[node name="Visual" type="ColorRect" parent="Collectibles/Coin3"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(1, 0.85, 0.2, 1)
+
+[node name="Coin4" type="Area2D" parent="Collectibles"]
+position = Vector2(820, 370)
+collision_layer = 512
+collision_mask = 2
+script = ExtResource("7_coin")
+points = 30
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collectibles/Coin4"]
+shape = SubResource("CircleShape2D_coin")
+
+[node name="Visual" type="ColorRect" parent="Collectibles/Coin4"]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(1, 0.85, 0.2, 1)
+
+[node name="Hazards" type="Node2D" parent="."]
+
+[node name="Spikes1" type="Area2D" parent="Hazards"]
+position = Vector2(1000, 560)
+collision_layer = 128
+collision_mask = 16
+script = ExtResource("8_hitbox")
+attack_data = ExtResource("9_hazatk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Spikes1"]
+shape = SubResource("RectangleShape2D_spikes")
+
+[node name="Visual" type="ColorRect" parent="Hazards/Spikes1"]
+offset_left = -70.0
+offset_top = -10.0
+offset_right = 70.0
+offset_bottom = 10.0
+color = Color(0.85, 0.2, 0.25, 0.8)
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="EnemyDummy1" parent="Enemies" instance=ExtResource("4_dummy")]
+position = Vector2(760, 540)
+
+[node name="EnemyDummy2" parent="Enemies" instance=ExtResource("4_dummy")]
+position = Vector2(850, 390)
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(120, 520)
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]
