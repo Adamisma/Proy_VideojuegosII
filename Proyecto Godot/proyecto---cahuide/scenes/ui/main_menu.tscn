@@ -69,17 +69,30 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
 theme_override_font_sizes/font_size = 24
 text = "🌅 El Despertar de la Resistencia (Sacsayhuamán)"
 
+[node name="SaveInfoLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=927937605]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
+theme_override_font_sizes/font_size = 14
+text = "Buscando datos de guardado..."
+
 [node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=707957283]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 14
 
+[node name="BtnContinue" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=365865459]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "🌟 Continuar Partida"
+
 [node name="BtnPlay" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=365865460]
 custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "⚔️ Iniciar Nivel 1"
+text = "⚔️ Nueva Partida"
 
 [node name="BtnControls" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1222730709]
 custom_minimum_size = Vector2(260, 48)
@@ -122,17 +135,18 @@ horizontal_alignment = 1
 
 [node name="ControlsBody" type="Label" parent="ControlsDialog/VBoxContainer" unique_id=456218614]
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 14
 text = "• Moverse: [A / D] o Flechas [← / →]
-• Saltar: [Espacio] (Soporta salto contra pared)
+• Saltar: [Espacio] (Soporta salto y deslizamiento en muro)
 • Dash / Esquivar: [Shift]
 • Ataque Cuerpo a Cuerpo: [J] o [Click Izquierdo]
-• Ataque a Distancia (HU04): [K] o [Click Derecho]
-• Reiniciar nivel: [R]
+• Ataque a Distancia: [K] o [Click Derecho]
+• Alternar Arma (Piedra / Lanza): [E]
+• Pausa: [Escape]
+• Reinicio rápido: [R]
 
-Objetivo: Derrota a los soldados invasores, supera
-los obstáculos y recupera la Reliquia Ancestral de
-Sacsayhuamán."
+Objetivo: Supera los obstáculos, combate a los invasores
+y alcanza el Trofeo Sagrado al final del nivel para triunfar."
 
 [node name="BtnCloseControls" type="Button" parent="ControlsDialog/VBoxContainer" unique_id=1240547313]
 custom_minimum_size = Vector2(160, 40)

@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cah_flash_mat"]
+
+[ext_resource type="Shader" path="res://shaders/damage_flash.gdshader" id="1_flash"]
+
+[resource]
+shader = ExtResource("1_flash")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_amount = 0.0

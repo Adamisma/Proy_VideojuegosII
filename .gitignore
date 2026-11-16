@@ -1,0 +1,32 @@
+# ==========================================
+# GODOT 4+ ENGINE IGNORES
+# ==========================================
+# Caché local y assets reimportados (Godot los reconstruye automáticamente)
+.godot/
+*/.godot/
+*/*/.godot/
+*/*/*/.godot/
+*/*/*/*/.godot/
+
+# Archivos de traducción generados
+*.translation
+
+# Archivos temporales o de volcado
+*.tmp
+*.log
+
+# ==========================================
+# ARCHIVOS DEL SISTEMA OPERATIVO
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ==========================================
+# EDITORES E IDES
+# ==========================================
+.vs/
+.idea/
+*.suo
+*.user

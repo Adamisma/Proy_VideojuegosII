@@ -5,7 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://bnglppk25p2xo" path="res://assets/backgrounds/fondo_principal1.png" id="2_svp4f"]
 [ext_resource type="Texture2D" uid="uid://d4nb8bldc8rdf" path="res://assets/backgrounds/fondo_cielo.png" id="3_1b0o8"]
 [ext_resource type="PackedScene" uid="uid://cvplh7rg30cf6" path="res://scenes/environment/relic.tscn" id="3_relic"]
-[ext_resource type="PackedScene" uid="uid://bnfwoh1seu4db" path="res://scenes/ui/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/environment/checkpoint.tscn" id="4_cp"]
+[ext_resource type="PackedScene" path="res://scenes/environment/level_goal.tscn" id="4_goal"]
+[ext_resource type="PackedScene" path="res://ui/ui_controller.tscn" id="4_uic"]
 [ext_resource type="PackedScene" uid="uid://yeaboep172mi" path="res://scenes/enemies/enemy_melee.tscn" id="5_soldado"]
 [ext_resource type="PackedScene" uid="uid://bn0sjcnrrpdj3" path="res://scenes/enemies/enemy_ranged.tscn" id="6_ballestero"]
 [ext_resource type="Texture2D" uid="uid://uahdpunhxt2" path="res://assets/tiles/tileset_inca_nivel1.png" id="8_tileset_atlas"]
@@ -108,6 +110,7 @@ script = ExtResource("1_level_script")
 
 [node name="ParallaxLayer_Cielo" type="ParallaxLayer" parent="ParallaxBackground" unique_id=249637946]
 motion_scale = Vector2(0.25, 1)
+motion_mirroring = Vector2(1500, 0)
 
 [node name="FondoCielo" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer_Cielo" unique_id=108520720]
 position = Vector2(1023.5, 364.5)
@@ -210,6 +213,7 @@ scale = Vector2(0.54031557, 0.3564705)
 texture = ExtResource("13_torch")
 
 [node name="BannerBastionRight" type="Sprite2D" parent="SceneryProps" unique_id=1916550868]
+visible = false
 position = Vector2(2725.0002, 516)
 scale = Vector2(0.55199975, 0.59610116)
 texture = ExtResource("14_banner")
@@ -313,6 +317,7 @@ position = Vector2(120, 604)
 position = Vector2(182, 616)
 
 [node name="Relic" parent="." unique_id=1625584188 groups=["relics"] instance=ExtResource("3_relic")]
+visible = false
 position = Vector2(4080, 553)
 
 [node name="Relic2" parent="." unique_id=1166347455 groups=["relics"] instance=ExtResource("3_relic")]
@@ -350,4 +355,12 @@ position = Vector2(3215, 609)
 [node name="SoldadoValle2" parent="Enemies" unique_id=2071436326 instance=ExtResource("5_soldado")]
 position = Vector2(3828, 606)
 
-[node name="HUD" parent="." unique_id=1579635593 instance=ExtResource("4_hud")]
+[node name="CheckpointMid" parent="." unique_id=1405506590 groups=["checkpoint"] instance=ExtResource("4_cp")]
+position = Vector2(2720, 564)
+checkpoint_id = &"cp_terraza"
+
+[node name="LevelGoal" parent="." unique_id=1405506591 instance=ExtResource("4_goal")]
+position = Vector2(4069, 344)
+scale = Vector2(0.6, 0.6)
+
+[node name="UIController" parent="." unique_id=1579635593 instance=ExtResource("4_uic")]

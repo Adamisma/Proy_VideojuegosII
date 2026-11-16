@@ -1,0 +1,175 @@
+[gd_scene load_steps=8 format=3 uid="uid://c83mqk5vypu42"]
+
+[ext_resource type="Script" path="res://multiplayer/game_lan.gd" id="1_gamelan"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(1300, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(30, 800)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pillar"]
+size = Vector2(80, 80)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.1, 0.12, 0.16, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="GameLAN" type="Node2D"]
+script = ExtResource("1_gamelan")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Floor" type="ColorRect" parent="World"]
+offset_left = -600.0
+offset_top = -350.0
+offset_right = 600.0
+offset_bottom = 350.0
+color = Color(0.12, 0.15, 0.2, 1)
+
+[node name="ArenaBorder" type="ReferenceRect" parent="World"]
+offset_left = -600.0
+offset_top = -350.0
+offset_right = 600.0
+offset_bottom = 350.0
+border_color = Color(0.3, 0.45, 0.7, 0.6)
+border_width = 3.0
+editor_only = false
+
+[node name="Boundaries" type="StaticBody2D" parent="World"]
+collision_layer = 1
+collision_mask = 2
+
+[node name="WallNorth" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(0, -365)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="WallSouth" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(0, 365)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="WallWest" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(-615, 0)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="WallEast" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(615, 0)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="PillarLeft" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(-150, 0)
+shape = SubResource("RectangleShape2D_pillar")
+
+[node name="PillarLeftVisual" type="ColorRect" parent="World/Boundaries/PillarLeft"]
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.2, 0.26, 0.35, 1)
+
+[node name="PillarRight" type="CollisionShape2D" parent="World/Boundaries"]
+position = Vector2(150, 0)
+shape = SubResource("RectangleShape2D_pillar")
+
+[node name="PillarRightVisual" type="ColorRect" parent="World/Boundaries/PillarRight"]
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.2, 0.26, 0.35, 1)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Spawn1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-360, -180)
+
+[node name="Spawn2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(360, -180)
+
+[node name="Spawn3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-360, 180)
+
+[node name="Spawn4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(360, 180)
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://multiplayer/player_net.tscn")
+spawn_path = NodePath("../Players")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="HUD/MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RoleBadge" type="Label" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 14
+text = "[HOST - Servidor]"
+
+[node name="VSeparator" type="VSeparator" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="PeerIdLabel" type="Label" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Mi ID: 1"
+
+[node name="VSeparator2" type="VSeparator" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="PlayersCountLabel" type="Label" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Jugadores: 1"
+
+[node name="VSeparator3" type="VSeparator" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="PeersListLabel" type="Label" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 12
+text = "Peers: [1]"
+
+[node name="Spacer" type="Control" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HelpLabel" type="Label" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "WASD / Flechas para desplazarse"
+
+[node name="DisconnectBtn" type="Button" parent="HUD/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Desconectar"

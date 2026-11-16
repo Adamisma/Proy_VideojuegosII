@@ -6,6 +6,11 @@ extends CharacterBody2D
 
 signal enemy_defeated(enemy_node: Enemy)
 
+const DAMAGE_FLASH_MAT: Material = preload("res://materials/mat_damage_flash.tres")
+const DISSOLVE_MAT: Material = preload("res://materials/mat_dissolve.tres")
+const DEATH_BURST_SCENE: PackedScene = preload("res://scenes/vfx/fx_death_burst.tscn")
+const HIT_SPARKS_SCENE: PackedScene = preload("res://scenes/vfx/fx_hit_sparks.tscn")
+
 @export_category("Enemy Stats (HU03)")
 @export var enemy_name: String = "Soldado Español"
 @export var max_health: int = 40
@@ -40,10 +45,19 @@ var direction: float = -1.0 # -1 izquierda, 1 derecha
 var player: CharacterBody2D = null
 var is_dead: bool = false
 var _defeat_signal_emitted: bool = false
+var flash_material: ShaderMaterial
+var dissolve_material: ShaderMaterial
 
 func _ready() -> void:
 	add_to_group("enemies")
 	health = max_health
+
+	if DAMAGE_FLASH_MAT:
+		flash_material = DAMAGE_FLASH_MAT.duplicate() as ShaderMaterial
+		if animated_sprite:
+			animated_sprite.material = flash_material
+	if DISSOLVE_MAT:
+		dissolve_material = DISSOLVE_MAT.duplicate() as ShaderMaterial
 	
 	if health_bar:
 		health_bar.max_value = max_health
@@ -177,17 +191,44 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 	if health_bar:
 		health_bar.value = health
 
+	_play_damage_flash()
+	_spawn_hit_sparks(knockback)
+
 	if knockback != Vector2.ZERO:
 		velocity.x = knockback.x
 		velocity.y = min(velocity.y, knockback.y)
 
 	if health <= 0:
 		is_dead = true
+		_spawn_death_burst()
 		if state_machine:
 			state_machine.transition_to("dead")
 	else:
 		if state_machine:
 			state_machine.transition_to("hurt")
+
+func _play_damage_flash() -> void:
+	if flash_material:
+		flash_material.set_shader_parameter("flash_amount", 1.0)
+		var tween := create_tween()
+		tween.tween_method(
+			func(val: float): flash_material.set_shader_parameter("flash_amount", val),
+			1.0, 0.0, 0.15
+		)
+
+func _spawn_hit_sparks(dir: Vector2) -> void:
+	if HIT_SPARKS_SCENE:
+		var sparks := HIT_SPARKS_SCENE.instantiate() as Node2D
+		get_tree().current_scene.add_child(sparks)
+		sparks.global_position = global_position + Vector2(0, -12)
+		if sparks.has_method("orient_to_direction"):
+			sparks.orient_to_direction(dir.normalized() if dir != Vector2.ZERO else Vector2.UP)
+
+func _spawn_death_burst() -> void:
+	if DEATH_BURST_SCENE:
+		var burst := DEATH_BURST_SCENE.instantiate() as Node2D
+		get_tree().current_scene.add_child(burst)
+		burst.global_position = global_position + Vector2(0, -16)
 
 func disable_collisions() -> void:
 	if collision_shape:
@@ -231,6 +272,10 @@ func emit_defeat() -> void:
 		return
 	_defeat_signal_emitted = true
 	enemy_defeated.emit(self)
+	if GameState:
+		GameState.register_enemy_kill(score_value)
+	elif EventBus:
+		EventBus.enemy_defeated.emit(score_value)
 
 func _on_player_entered_detection(body: Node2D) -> void:
 	if body.is_in_group("player") and body is CharacterBody2D:

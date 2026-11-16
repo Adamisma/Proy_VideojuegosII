@@ -1,114 +1,136 @@
 class_name Player
 extends CharacterBody2D
 
-## Controlador de Cahuide con AnimatedSprite2D y animaciones fluidas
+## ====================================================================
+## Proyecto Cahuide - Controlador Principal Refactorizado
+## ====================================================================
+## - Arquitectura por componentes (MovementComponent, HealthComponent).
+## - Armas a distancia alternables: Piedra Ancestral vs. Lanza Inca (tecla E).
+## - Power-Up del Sol con soporte para intercambio de SpriteFrames (skins) y aura solar.
+## - VFX: Flash de daño por shader, ghost trail en Dash y polvo al caer.
+## - Cámara con sacudida paramétrica (solo al recibir daño y activar Power-Up).
+## - Desacoplamiento total mediante EventBus.
 
 signal health_changed(new_health: int, max_health: int)
 signal player_died
+signal respawn_requested
 
-@export_category("Health & Stats")
-# 20 de salud total = 10 corazones (cada corazón maneja 2 puntos: vacío, medio, lleno)
+const LAND_DUST_SCENE: PackedScene = preload("res://scenes/vfx/fx_land_dust.tscn")
+const DAMAGE_FLASH_MAT: Material = preload("res://materials/mat_damage_flash.tres")
+
+# --- SKINS Y ANIMACIONES ---
+@export_category("Skins & Animations")
+@export var normal_frames: SpriteFrames = preload("res://scenes/player/player_frames.tres")
+@export var sol_frames: SpriteFrames # Opcional: SpriteFrames con uniforme alternativo
+
+# --- ESTADÍSTICAS Y SALUD ---
+@export_category("Health")
 @export var max_health: int = 20
 var health: int = 20
 
-@export_category("Horizontal Movement")
+# --- FÍSICAS Y LOCOMOCIÓN ---
+@export_category("Locomotion")
 @export var max_speed: float = 260.0
 @export var acceleration: float = 1600.0
 @export var deceleration: float = 1900.0
-
-@export_category("Jump")
 @export var gravity: float = 1350.0
 @export var jump_velocity: float = -570.0
 @export var coyote_time: float = 0.12
 @export var jump_buffer_time: float = 0.12
 @export var jump_cut_multiplier: float = 0.5
 
-var coyote_timer: float = 0.0
-var jump_buffer_timer: float = 0.0
-
-@export_category("Wall")
+# --- PARED Y SALTO ---
+@export_category("Wall Mechanics")
 @export var wall_slide_speed: float = 110.0
 @export var wall_jump_horizontal_speed: float = 310.0
 @export var wall_jump_vertical_speed: float = -620.0
 
+# --- DASH ---
 @export_category("Dash")
 @export var dash_speed: float = 650.0
 @export var dash_duration: float = 0.16
 @export var dash_cooldown: float = 0.45
 
-var is_dashing: bool = false
-var dash_timer: float = 0.0
-var dash_cooldown_timer: float = 0.0
-
+# --- COMBATE MELEE Y A DISTANCIA ---
 @export_category("Combat")
 @export var melee_damage: int = 25
-@export var shoot_damage: int = 20
-@export var projectile_scene: PackedScene = preload("res://scenes/projectiles/projectile.tscn")
-@export var attack_cooldown: float = 0.4
-@export var shoot_cooldown: float = 0.5
-
-var attack_timer: float = 0.0
-var shoot_timer: float = 0.0
-var facing_direction: float = 1.0 # 1 derecha, -1 izquierda
-var is_invulnerable: bool = false
-var is_attacking: bool = false
-var is_dead: bool = false
+@export var stone_projectile_scene: PackedScene = preload("res://scenes/projectiles/stone_projectile.tscn")
+@export var spear_projectile_scene: PackedScene = preload("res://scenes/projectiles/spear_projectile.tscn")
+@export var stone_speed_x: float = 430.0
+@export var stone_speed_y: float = -380.0
+@export var attack_cooldown: float = 0.38
+@export var shoot_cooldown: float = 0.45
 
 # --- POWER-UP DEL SOL ---
+@export_category("Power-Up Sol")
+@export var sol_duration: float = 15.0
 var has_sol_powerup: bool = false
-@export var sol_duration: float = 15.0 # Duración actualizada a 15 segundos
 var sol_timer: float = 0.0
 
+# --- REFERENCIAS A NODOS ---
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var melee_hitbox: Hitbox = $MeleeHitbox
-@onready var hurtbox: Hurtbox = $Hurtbox
+@onready var melee_hitbox: Area2D = $MeleeHitbox
+@onready var hurtbox: Area2D = $Hurtbox
+@onready var camera: Camera2D = get_node_or_null("Camera2D")
 
-# PROYECTIL - PIEDRA #
-@export var stone_projectile_scene: PackedScene
-@export var stone_speed_x: float = 420.0
-@export var stone_speed_y: float = -380.0
-@export var stone_cooldown: float = 0.8
+# Componentes desacoplados (opcionales por inspección segura)
+@onready var movement: MovementComponent = get_node_or_null("MovementComponent")
+@onready var health_comp: HealthComponent = get_node_or_null("HealthComponent")
 
-var stone_timer: float = 0.0
+# --- VARIABLES DE ESTADO ---
+var coyote_timer: float = 0.0
+var jump_buffer_timer: float = 0.0
+var dash_timer: float = 0.0
+var dash_cooldown_timer: float = 0.0
+var attack_timer: float = 0.0
+var shoot_timer: float = 0.0
+var ghost_trail_timer: float = 0.0
+
+var is_dashing: bool = false
+var is_attacking: bool = false
+var is_invulnerable: bool = false
+var is_dead: bool = false
+var was_on_floor: bool = false
+var facing_direction: float = 1.0 # 1 derecha, -1 izquierda
+
+# 0 = Piedra, 1 = Lanza
+var current_ranged_weapon: int = 0
+var flash_material: ShaderMaterial
 
 func _ready() -> void:
 	add_to_group("player")
 	health = max_health
 	health_changed.emit(health, max_health)
-	
+
+	if EventBus:
+		EventBus.player_damaged.emit(health, max_health)
+
+	if normal_frames and animated_sprite:
+		animated_sprite.sprite_frames = normal_frames
+
+	# Inicializar material de flash blanco
+	if DAMAGE_FLASH_MAT:
+		flash_material = DAMAGE_FLASH_MAT.duplicate() as ShaderMaterial
+		if animated_sprite:
+			animated_sprite.material = flash_material
+
+	# Conexiones de combate
 	if melee_hitbox:
-		melee_hitbox.damage = melee_damage
-		melee_hitbox.is_enemy_hitbox = false
 		melee_hitbox.monitoring = false
-		
-	if hurtbox:
-		hurtbox.is_enemy_hurtbox = false
-		hurtbox.received_damage.connect(_on_received_damage)
-		
+	if hurtbox and hurtbox.has_signal("received_damage"):
+		hurtbox.connect("received_damage", _on_received_damage)
+
 	if animated_sprite:
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 		animated_sprite.play("idle")
 
-func apply_powerup_sol() -> void:
-	has_sol_powerup = true
-	sol_timer = sol_duration
-	
-	# Curamos 2 puntos (1 corazón) si está herido, pero sin alterar max_health para no romper el HUD
-	health = min(health + 2, max_health)
-	health_changed.emit(health, max_health)
-	
-	# Modulación dorada resplandeciente
-	if animated_sprite:
-		animated_sprite.modulate = Color(2.2, 1.8, 0.4, 1.0)
-
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		return
-		
+
 	_update_timers(delta)
 	_update_sol_powerup(delta)
-	
 	_update_dash(delta)
 	_try_start_dash()
 
@@ -121,103 +143,61 @@ func _physics_process(delta: float) -> void:
 		_apply_wall_slide()
 
 	move_and_slide()
-	
+
+	_check_landing_dust()
 	_handle_combat_inputs()
 	_update_animations()
 
-func _update_sol_powerup(delta: float) -> void:
-	if not has_sol_powerup:
-		return
-		
-	sol_timer -= delta
-	
-	# Parpadeo de advertencia cuando quedan 3 segundos o menos
-	if sol_timer <= 3.0 and sol_timer > 0.0:
-		var blink = fmod(sol_timer * 10.0, 2.0) > 1.0
-		if animated_sprite and not is_invulnerable:
-			animated_sprite.modulate = Color(2.5, 2.0, 0.5, 1.0) if blink else Color(1, 1, 1, 1)
-	
-	# Fin del efecto al llegar a 0
-	if sol_timer <= 0.0:
-		_remove_sol_powerup()
+	if is_dashing:
+		_process_dash_ghost_trail(delta)
 
-func _remove_sol_powerup() -> void:
-	## Finalización del estado Power-Up del Sol
-	has_sol_powerup = false
-	
-	# Restablecer tono normal del sprite si no está en invulnerabilidad de daño
-	if animated_sprite and not is_invulnerable:
-		animated_sprite.modulate = Color(1, 1, 1, 1)
+# ====================================================================
+# LOCOMOCIÓN Y FÍSICAS
+# ====================================================================
+func _update_horizontal_movement(delta: float) -> void:
+	var direction := Input.get_axis("move_left", "move_right")
 
-func _update_timers(delta: float) -> void:
-	_update_coyote_time(delta)
-	_update_jump_buffer(delta)
-	attack_timer = max(0.0, attack_timer - delta)
-	shoot_timer = max(0.0, shoot_timer - delta)
-	stone_timer = maxf(0.0, stone_timer - delta)
+	if movement:
+		velocity.x = movement.calculate_horizontal_velocity(velocity.x, direction, delta)
+	else:
+		var target_speed := direction * max_speed
+		var rate: float = acceleration if direction != 0.0 else deceleration
+		velocity.x = move_toward(velocity.x, target_speed, rate * delta)
+
+	if direction != 0.0 and not is_attacking:
+		facing_direction = sign(direction)
+		_update_facing()
+
+func _update_facing() -> void:
+	if animated_sprite:
+		animated_sprite.flip_h = (facing_direction < 0.0)
+	if melee_hitbox:
+		melee_hitbox.position.x = facing_direction * 38.0
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-func _update_horizontal_movement(delta: float) -> void:
-	var direction := Input.get_axis("move_left", "move_right")
-	var target_speed := direction * max_speed
-	
-	if direction != 0.0:
-		velocity.x = move_toward(velocity.x, target_speed, acceleration * delta)
-		facing_direction = sign(direction)
-		_update_facing()
-	else:
-		velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
-
-func _update_facing() -> void:
-	if animated_sprite:
-		animated_sprite.flip_h = (facing_direction < 0)
-	if melee_hitbox:
-		melee_hitbox.position.x = facing_direction * 38.0
-
-func _update_animations() -> void:
-	if is_dead or is_attacking:
-		return
-		
-	if not is_on_floor():
-		if animated_sprite.animation != "jump":
-			animated_sprite.play("jump")
-	elif abs(velocity.x) > 180.0:
-		if animated_sprite.animation != "run":
-			animated_sprite.play("run")
-	elif abs(velocity.x) > 10.0:
-		if animated_sprite.animation != "walk":
-			animated_sprite.play("walk")
-	else:
-		if animated_sprite.animation != "idle":
-			animated_sprite.play("idle")
-
-func _on_animation_finished() -> void:
-	if animated_sprite.animation == "attack":
-		is_attacking = false
-	elif animated_sprite.animation == "hurt":
-		is_attacking = false
-
-func _update_coyote_time(delta: float) -> void:
+func _update_timers(delta: float) -> void:
 	if is_on_floor():
 		coyote_timer = coyote_time
 	else:
 		coyote_timer = max(0.0, coyote_timer - delta)
 
-func _update_jump_buffer(delta: float) -> void:
 	if Input.is_action_just_pressed("jump"):
 		jump_buffer_timer = jump_buffer_time
 	else:
 		jump_buffer_timer = max(0.0, jump_buffer_timer - delta)
+
+	attack_timer = max(0.0, attack_timer - delta)
+	shoot_timer = max(0.0, shoot_timer - delta)
 
 func _try_jump() -> void:
 	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 		velocity.y = jump_velocity
 		jump_buffer_timer = 0.0
 		coyote_timer = 0.0
-		if not is_attacking:
+		if not is_attacking and animated_sprite:
 			animated_sprite.play("jump")
 
 func _apply_wall_slide() -> void:
@@ -237,151 +217,298 @@ func _apply_jump_cut() -> void:
 	if Input.is_action_just_released("jump") and velocity.y < 0.0:
 		velocity.y *= jump_cut_multiplier
 
+func _check_landing_dust() -> void:
+	if is_on_floor() and not was_on_floor:
+		_spawn_land_dust()
+	was_on_floor = is_on_floor()
+
+func _spawn_land_dust() -> void:
+	if LAND_DUST_SCENE:
+		var dust := LAND_DUST_SCENE.instantiate() as Node2D
+		get_parent().add_child(dust)
+		dust.global_position = global_position + Vector2(0, 38)
+
+# ====================================================================
+# DASH CON GHOST TRAIL
+# ====================================================================
 func _try_start_dash() -> void:
 	if Input.is_action_just_pressed("dash") and dash_cooldown_timer <= 0.0 and not is_dashing and not is_dead:
 		is_dashing = true
 		dash_timer = dash_duration
 		dash_cooldown_timer = dash_cooldown
-		
-		var tween = create_tween()
-		tween.tween_property(animated_sprite, "modulate", Color(1.8, 1.8, 2.0, 0.5), 0.08)
-		var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
-		tween.tween_property(animated_sprite, "modulate", restore_color, 0.08)
 
 func _update_dash(delta: float) -> void:
 	dash_cooldown_timer = max(0.0, dash_cooldown_timer - delta)
 	if not is_dashing:
 		return
-	
+
 	dash_timer -= delta
 	velocity.x = facing_direction * dash_speed
 	velocity.y = 0.0
-	
+
 	if dash_timer <= 0.0:
 		is_dashing = false
 
+func _process_dash_ghost_trail(delta: float) -> void:
+	ghost_trail_timer -= delta
+	if ghost_trail_timer <= 0.0 and animated_sprite:
+		ghost_trail_timer = 0.04
+		_spawn_ghost_sprite()
+
+func _spawn_ghost_sprite() -> void:
+	var ghost := Sprite2D.new()
+	var current_tex: Texture2D = animated_sprite.sprite_frames.get_frame_texture(animated_sprite.animation, animated_sprite.frame)
+	if current_tex == null:
+		return
+	ghost.texture = current_tex
+	ghost.global_position = animated_sprite.global_position
+	ghost.scale = animated_sprite.global_scale
+	ghost.flip_h = animated_sprite.flip_h
+	ghost.modulate = Color(1.0, 0.85, 0.3, 0.6) if has_sol_powerup else Color(0.4, 0.7, 1.0, 0.5)
+	ghost.z_index = z_index - 1
+	get_parent().add_child(ghost)
+
+	var tween := ghost.create_tween()
+	tween.tween_property(ghost, "modulate:a", 0.0, 0.22)
+	tween.tween_callback(ghost.queue_free)
+
+# ====================================================================
+# COMBATE Y ARMAS A DISTANCIA (Piedra vs. Lanza)
+# ====================================================================
 func _handle_combat_inputs() -> void:
+	# Alternar arma a distancia con [E]
+	if Input.is_action_just_pressed("switch_weapon"):
+		_swap_ranged_weapon()
+
+	# Ataque cuerpo a cuerpo [J] / Clic Izquierdo
 	if Input.is_action_just_pressed("attack") and attack_timer <= 0.0 and not is_attacking:
 		_execute_melee_attack()
-		
-	if Input.is_action_just_pressed("shoot"):
-		if has_sol_powerup:
-			_shoot_projectile()
-		elif shoot_timer <= 0.0:
-			_shoot_projectile()
-			
-	if Input.is_action_just_pressed("stone_shoot") and stone_timer <= 0.0:
+
+	# Ataque a distancia [K] / Clic Derecho
+	if Input.is_action_just_pressed("shoot") and shoot_timer <= 0.0:
+		_execute_ranged_attack()
+
+	# Atajo secundario de piedra directa [L]
+	if Input.is_action_just_pressed("stone_shoot") and shoot_timer <= 0.0:
 		_throw_stone()
-		
+
+func _swap_ranged_weapon() -> void:
+	current_ranged_weapon = 1 if current_ranged_weapon == 0 else 0
+	var w_name: String = "Lanza Inca" if current_ranged_weapon == 1 else "Piedra Ancestral"
+	if EventBus:
+		EventBus.ranged_weapon_swapped.emit(w_name)
+
 func _execute_melee_attack() -> void:
 	attack_timer = attack_cooldown
 	is_attacking = true
-	animated_sprite.play("attack")
-	
+	if animated_sprite:
+		animated_sprite.play("attack")
+
 	if melee_hitbox:
 		melee_hitbox.monitoring = true
 		await get_tree().create_timer(0.22).timeout
 		if is_instance_valid(melee_hitbox):
 			melee_hitbox.monitoring = false
 
-func _shoot_projectile() -> void:
-	if not projectile_scene:
-		return
-		
-	shoot_timer = shoot_cooldown
-	
-	var proj = projectile_scene.instantiate() as Projectile
-	if not proj:
-		return
-		
-	proj.is_enemy_projectile = false
-	proj.damage = shoot_damage
-	proj.speed = 520.0
-	
-	var shoot_dir = Vector2(facing_direction, 0.0)
-	proj.set_direction(shoot_dir)
-	
-	proj.global_position = global_position + Vector2(facing_direction * 30.0, -10.0)
-	get_tree().current_scene.add_child(proj)
-	
-	var tween = create_tween()
-	tween.tween_property(animated_sprite, "modulate", Color(2.8, 2.2, 0.8, 1), 0.08)
-	var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
-	tween.tween_property(animated_sprite, "modulate", restore_color, 0.12)
-
+func _execute_ranged_attack() -> void:
+	if current_ranged_weapon == 0:
+		_throw_stone()
+	else:
+		_throw_spear()
 
 func _throw_stone() -> void:
 	if stone_projectile_scene == null:
 		return
+	shoot_timer = shoot_cooldown
 
 	var stone := stone_projectile_scene.instantiate() as StoneProjectile
 	if stone == null:
 		return
 
-	var direction := facing_direction
 	get_tree().current_scene.add_child(stone)
-	stone.global_position = global_position + Vector2(direction * 25.0, -10.0)
-	
-	# Velocidad parabólica inicial: horizontal según dirección y vertical hacia arriba
-	stone.launch(Vector2(direction * stone_speed_x, stone_speed_y))
-	stone_timer = stone_cooldown
+	stone.global_position = global_position + Vector2(facing_direction * 28.0, -10.0)
 
+	var bonus_dmg: int = 10 if has_sol_powerup else 0
+	stone.damage += bonus_dmg
+	stone.launch(Vector2(facing_direction * stone_speed_x, stone_speed_y))
+
+func _throw_spear() -> void:
+	if spear_projectile_scene == null:
+		return
+	shoot_timer = shoot_cooldown + 0.15
+
+	var spear := spear_projectile_scene.instantiate() as SpearProjectile
+	if spear == null:
+		return
+
+	get_tree().current_scene.add_child(spear)
+	spear.global_position = global_position + Vector2(facing_direction * 32.0, -8.0)
+
+	var bonus_dmg: int = 15 if has_sol_powerup else 0
+	spear.damage += bonus_dmg
+	spear.launch(Vector2(facing_direction, 0.0))
+
+# ====================================================================
+# POWER-UP DEL SOL Y SKINS DINÁMICOS
+# ====================================================================
+func apply_powerup_sol() -> void:
+	has_sol_powerup = true
+	sol_timer = sol_duration
+
+	# Curación de 2 puntos (1 corazón)
+	health = mini(health + 2, max_health)
+	health_changed.emit(health, max_health)
+	if EventBus:
+		EventBus.player_damaged.emit(health, max_health)
+		EventBus.player_powerup_activated.emit(sol_duration)
+
+	# Sacudida de cámara al activar el Power-Up según especificación
+	_trigger_camera_shake(0.65)
+
+	# Intercambio de skin si existe sol_frames
+	if sol_frames and animated_sprite:
+		animated_sprite.sprite_frames = sol_frames
+	elif animated_sprite:
+		animated_sprite.modulate = Color(2.2, 1.8, 0.4, 1.0)
+
+func _update_sol_powerup(delta: float) -> void:
+	if not has_sol_powerup:
+		return
+
+	sol_timer -= delta
+
+	# Parpadeo de advertencia en los últimos 3 segundos
+	if sol_timer <= 3.0 and sol_timer > 0.0:
+		var blink := fmod(sol_timer * 10.0, 2.0) > 1.0
+		if animated_sprite and not is_invulnerable:
+			animated_sprite.modulate = Color(2.5, 2.0, 0.5, 1.0) if blink else Color(1, 1, 1, 1)
+
+	if sol_timer <= 0.0:
+		_remove_sol_powerup()
+
+func _remove_sol_powerup() -> void:
+	has_sol_powerup = false
+	if normal_frames and animated_sprite:
+		animated_sprite.sprite_frames = normal_frames
+	if animated_sprite and not is_invulnerable:
+		animated_sprite.modulate = Color(1, 1, 1, 1)
+	if EventBus:
+		EventBus.player_powerup_ended.emit()
+
+# ====================================================================
+# GESTIÓN DE DAÑO, SHADERS Y MUERTE
+# ====================================================================
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
-	## Patrón Delegación: el callback del Hurtbox delega directamente en take_direct_damage
-	## evitando llamados duplicados o fragmentación de la lógica de salud.
 	take_direct_damage(amount, knockback)
 
-## Patrón Estrategia (Regla de Mitigación de Daño):
-## Encapsula la lógica de absorción de daño según los estados y power-ups activos.
-func _calculate_mitigated_damage(incoming_damage: int) -> int:
-	# Lógica del Power-Up del Sol
+func _calculate_mitigated_damage(incoming: int) -> int:
 	if has_sol_powerup:
-		# Daño melee leve (1 punto = medio corazón): Inmunidad total
-		if incoming_damage <= 1:
-			return 0
-		# Proyectiles o daño alto: Se mitiga a 1 punto (medio corazón)
-		return 1
-	
-	# Daño estándar del juego: acotado entre 1 y 2 puntos
-	return clampi(incoming_damage, 1, 2)
+		return 0 if incoming <= 1 else 1
+	return clampi(incoming, 1, 2)
 
 func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
 	if is_invulnerable or is_dead:
 		return
-		
-	var damage_to_apply := _calculate_mitigated_damage(amount)
-	
-	# Si la armadura o power-up absorbió el 100% del daño, no interrumpir al jugador
-	if damage_to_apply <= 0:
+
+	var applied := _calculate_mitigated_damage(amount)
+	if applied <= 0:
 		return
-		
-	health = max(0, health - damage_to_apply)
+
+	health = maxi(0, health - applied)
 	health_changed.emit(health, max_health)
-	
+
+	if EventBus:
+		EventBus.player_damaged.emit(health, max_health)
+
 	if knockback != Vector2.ZERO:
 		velocity = knockback
-		
+
+	# Sacudida paramétrica de cámara al recibir daño según especificación
+	_trigger_camera_shake(0.55)
+
+	# Flash blanco instantáneo por shader
+	_play_damage_flash()
+
 	if health <= 0:
 		_die()
 		return
-		
+
 	is_attacking = false
-	animated_sprite.play("hurt")
-	
+	if animated_sprite:
+		animated_sprite.play("hurt")
+
+	_start_invulnerability(0.45)
+
+func _play_damage_flash() -> void:
+	if flash_material:
+		flash_material.set_shader_parameter("flash_amount", 1.0)
+		var tween := create_tween()
+		tween.tween_method(
+			func(val: float): flash_material.set_shader_parameter("flash_amount", val),
+			1.0, 0.0, 0.16
+		)
+
+func _trigger_camera_shake(intensity: float) -> void:
+	if camera and camera.has_method("trigger_shake"):
+		camera.trigger_shake(intensity)
+
+func _start_invulnerability(duration: float) -> void:
 	is_invulnerable = true
-	var tween = create_tween()
-	tween.tween_property(animated_sprite, "modulate", Color(2.5, 0.3, 0.3, 0.7), 0.1)
-	tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1, 1), 0.1)
-	tween.tween_property(animated_sprite, "modulate", Color(2.5, 0.3, 0.3, 0.7), 0.1)
-	
-	var restore_color = Color(2.2, 1.8, 0.4, 1.0) if has_sol_powerup else Color(1, 1, 1, 1)
-	tween.tween_property(animated_sprite, "modulate", restore_color, 0.1)
-	
-	await get_tree().create_timer(0.45).timeout
+	var elapsed := 0.0
+	while elapsed < duration and not is_dead:
+		if animated_sprite:
+			animated_sprite.visible = not animated_sprite.visible
+		await get_tree().create_timer(0.06).timeout
+		elapsed += 0.06
+
+	if animated_sprite:
+		animated_sprite.visible = true
 	is_invulnerable = false
 
 func _die() -> void:
 	is_dead = true
-	player_died.emit()
 	velocity = Vector2.ZERO
-	animated_sprite.play("dead")
+	player_died.emit()
+	if EventBus:
+		EventBus.player_died.emit()
+	if animated_sprite:
+		animated_sprite.play("dead")
+
+func respawn_at(new_position: Vector2) -> void:
+	global_position = new_position
+	velocity = Vector2.ZERO
+	is_dead = false
+	is_attacking = false
+	is_invulnerable = false
+	health = max_health
+	health_changed.emit(health, max_health)
+	if EventBus:
+		EventBus.player_damaged.emit(health, max_health)
+	if animated_sprite:
+		animated_sprite.visible = true
+		animated_sprite.modulate = Color(1, 1, 1, 1)
+		animated_sprite.play("idle")
+
+# ====================================================================
+# ANIMACIONES
+# ====================================================================
+func _update_animations() -> void:
+	if is_dead or is_attacking or animated_sprite == null:
+		return
+
+	if not is_on_floor():
+		if animated_sprite.animation != "jump":
+			animated_sprite.play("jump")
+	elif abs(velocity.x) > 180.0:
+		if animated_sprite.animation != "run":
+			animated_sprite.play("run")
+	elif abs(velocity.x) > 10.0:
+		if animated_sprite.animation != "walk":
+			animated_sprite.play("walk")
+	else:
+		if animated_sprite.animation != "idle":
+			animated_sprite.play("idle")
+
+func _on_animation_finished() -> void:
+	if animated_sprite and (animated_sprite.animation == "attack" or animated_sprite.animation == "hurt"):
+		is_attacking = false

@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cah_dissolve_mat"]
+
+[ext_resource type="Shader" path="res://shaders/dissolve.gdshader" id="1_diss"]
+
+[resource]
+shader = ExtResource("1_diss")
+shader_parameter/threshold = 0.0
+shader_parameter/burn_color = Color(1, 0.45, 0.1, 1)
+shader_parameter/burn_size = 0.06

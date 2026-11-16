@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CharacterStats" load_steps=2 format=3 uid="uid://cah_player_stats"]
+
+[ext_resource type="Script" path="res://core/data/character_stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+max_health = 20
+move_speed = 260.0
+acceleration = 1600.0
+deceleration = 1900.0
+melee_damage = 25
+ranged_damage = 20
