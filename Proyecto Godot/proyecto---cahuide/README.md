@@ -2,7 +2,7 @@
 
 **Proyecto Principal de Curso:** Desarrollo de Videojuegos 2D con Godot  
 **Motor:** Godot Engine 4 (v4.4+ / v4.6+ con renderizador GL Compatibility)  
-**Estudiante / Desarrollador:** Adam Soto  
+**Estudiante / Desarrollador:** Adam Soto, Leonardo Morales y Johann Napa
 **Género:** Plataformas de Acción 2D / Aventura Histórica (*Action Platformer*)  
 
 ---
