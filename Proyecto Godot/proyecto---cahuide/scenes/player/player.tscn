@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="SpriteFrames" uid="uid://ddh1a8uvf6fkt" path="res://scenes/player/player_frames.tres" id="2_frames"]
-[ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="3_hitbox"]
-[ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
-[ext_resource type="Script" uid="uid://cywuxwike5i7y" path="res://scripts/utils/camera_shake.gd" id="5_shake"]
-[ext_resource type="Script" uid="uid://bewgt8qimpuff" path="res://components/movement/movement_component.gd" id="6_mov"]
-[ext_resource type="Script" uid="uid://blsjjtdfk4v4f" path="res://components/health/health_component.gd" id="7_health"]
+[ext_resource type="AudioStream" uid="uid://cmiw4b467827h" path="res://assets/sounds/efectos/golpe.mp3" id="4_sfx_atk"]
+[ext_resource type="AudioStream" uid="uid://nut5ipknlcmm" path="res://assets/sounds/efectos/transformacion.mp3" id="5_sfx_trans"]
+[ext_resource type="AudioStream" uid="uid://b1efqmb3y2tt3" path="res://assets/sounds/efectos/pisada.mp3" id="6_sfx_step"]
+[ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="7_hitbox"]
+[ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="8_hurtbox"]
+[ext_resource type="Script" uid="uid://cywuxwike5i7y" path="res://scripts/utils/camera_shake.gd" id="9_shake"]
+[ext_resource type="Script" uid="uid://bewgt8qimpuff" path="res://components/movement/movement_component.gd" id="10_mov"]
+[ext_resource type="Script" uid="uid://blsjjtdfk4v4f" path="res://components/health/health_component.gd" id="11_health"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 radius = 23.0
@@ -20,16 +23,29 @@ collision_layer = 2
 script = ExtResource("1_player")
 
 [node name="MovementComponent" type="Node" parent="." unique_id=983409238]
-script = ExtResource("6_mov")
+script = ExtResource("10_mov")
 
 [node name="HealthComponent" type="Node" parent="." unique_id=490622636]
-script = ExtResource("7_health")
+script = ExtResource("11_health")
+
+[node name="SolarSparks" type="CPUParticles2D" parent="." unique_id=551182727]
+emitting = false
+amount = 14
+lifetime = 0.75
+emission_shape = 3
+emission_rect_extents = Vector2(16, 28)
+gravity = Vector2(0, -60)
+initial_velocity_min = 8.0
+initial_velocity_max = 24.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(1, 0.88, 0.22, 0.85)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
 position = Vector2(-1.0000005, -6.0000005)
 scale = Vector2(0.89288896, 0.8308389)
 sprite_frames = ExtResource("2_frames")
-animation = &"transformacion"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1381535601]
@@ -40,7 +56,7 @@ shape = SubResource("CapsuleShape2D_player")
 position = Vector2(38, 0)
 collision_layer = 8
 collision_mask = 16
-script = ExtResource("3_hitbox")
+script = ExtResource("7_hitbox")
 damage = 25
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MeleeHitbox" unique_id=241218600]
@@ -50,7 +66,7 @@ shape = SubResource("RectangleShape2D_atk")
 [node name="Hurtbox" type="Area2D" parent="." unique_id=213927214]
 collision_layer = 64
 collision_mask = 32
-script = ExtResource("4_hurtbox")
+script = ExtResource("8_hurtbox")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=2055499754]
 position = Vector2(0, 4)
@@ -65,4 +81,16 @@ limit_right = 4200
 limit_bottom = 728
 position_smoothing_enabled = true
 position_smoothing_speed = 7.0
-script = ExtResource("5_shake")
+script = ExtResource("9_shake")
+
+[node name="SFXAttack" type="AudioStreamPlayer2D" parent="." unique_id=1775258964]
+stream = ExtResource("4_sfx_atk")
+volume_db = -2.0
+
+[node name="SFXTransform" type="AudioStreamPlayer2D" parent="." unique_id=1368028316]
+stream = ExtResource("5_sfx_trans")
+volume_db = -2.0
+
+[node name="SFXFootsteps" type="AudioStreamPlayer2D" parent="." unique_id=373787872]
+stream = ExtResource("6_sfx_step")
+volume_db = -5.0

@@ -72,6 +72,26 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("30_t5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_t4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_t3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_t1")
+}],
+"loop": false,
+"name": &"detransform",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("10_7laxs")
 }, {
 "duration": 1.0,
@@ -153,6 +173,26 @@ animations = [{
 }],
 "loop": false,
 "name": &"transform",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("26_t1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_t3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_t4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_t5")
+}],
+"loop": false,
+"name": &"transformacion",
 "speed": 5.0
 }, {
 "frames": [{

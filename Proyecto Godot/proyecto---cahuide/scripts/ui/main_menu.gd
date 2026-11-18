@@ -7,14 +7,20 @@ extends Control
 
 @export var level_01_scene: PackedScene = preload("res://scenes/levels/level_01.tscn")
 
+@export_group("Audio")
+@export var menu_music: AudioStream = preload("res://assets/sounds/ambiental/Menu.mp3")
+@export var music_volume_db: float = -6.0
+
 @onready var btn_play: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnPlay
 @onready var btn_continue: Button = get_node_or_null("MarginContainer/VBoxContainer/ButtonsContainer/BtnContinue")
 @onready var btn_controls: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnControls
 @onready var btn_quit: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnQuit
 @onready var controls_dialog: PanelContainer = $ControlsDialog
 @onready var save_info_label: Label = get_node_or_null("MarginContainer/VBoxContainer/SaveInfoLabel")
+@onready var ambient_music_player: AudioStreamPlayer = get_node_or_null("AmbientMusic")
 
 func _ready() -> void:
+	_setup_menu_music()
 	controls_dialog.visible = false
 	btn_play.pressed.connect(_on_btn_play_pressed)
 	btn_controls.pressed.connect(_on_btn_controls_pressed)
@@ -79,3 +85,22 @@ func _on_close_controls_pressed() -> void:
 
 func _on_btn_quit_pressed() -> void:
 	get_tree().quit()
+
+func _setup_menu_music() -> void:
+	if menu_music == null:
+		return
+
+	if menu_music is AudioStreamMP3:
+		(menu_music as AudioStreamMP3).loop = true
+
+	if ambient_music_player == null:
+		ambient_music_player = AudioStreamPlayer.new()
+		ambient_music_player.name = "AmbientMusic"
+		ambient_music_player.bus = &"Master"
+		ambient_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(ambient_music_player)
+
+	ambient_music_player.stream = menu_music
+	ambient_music_player.volume_db = music_volume_db
+	if not ambient_music_player.playing:
+		ambient_music_player.play()

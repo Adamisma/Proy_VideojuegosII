@@ -16,6 +16,10 @@ extends Node2D
 @export var is_final_level: bool = false
 @export var transition_delay: float = 1.2
 
+@export_group("Audio Ambiental")
+@export var ambient_music: AudioStream
+@export var ambient_volume_db: float = -6.0
+
 var level_finished: bool = false
 
 @onready var player: Player = get_node_or_null("Player")
@@ -25,6 +29,7 @@ var level_finished: bool = false
 @onready var enemies_container: Node2D = get_node_or_null("Enemies")
 @onready var sky_layer: ParallaxLayer = get_node_or_null("ParallaxBackground/ParallaxLayer_Cielo")
 @onready var goal: LevelGoal = get_node_or_null("LevelGoal")
+@onready var ambient_music_player: AudioStreamPlayer = get_node_or_null("AmbientMusic")
 
 var checkpoint_positions: Dictionary = {}
 var total_relics: int = 0
@@ -35,6 +40,7 @@ func _ready() -> void:
 	if GameState:
 		GameState.current_level_id = level_id
 
+	_setup_ambient_music()
 	_register_checkpoints()
 	_spawn_player_from_state()
 
@@ -235,3 +241,22 @@ func _on_return_main_menu() -> void:
 		SceneFlow.change_to("res://scenes/ui/main_menu.tscn", 0.35)
 	else:
 		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+
+func _setup_ambient_music() -> void:
+	if ambient_music == null:
+		return
+
+	if ambient_music is AudioStreamMP3:
+		(ambient_music as AudioStreamMP3).loop = true
+
+	if ambient_music_player == null:
+		ambient_music_player = AudioStreamPlayer.new()
+		ambient_music_player.name = "AmbientMusic"
+		ambient_music_player.bus = &"Master"
+		ambient_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(ambient_music_player)
+
+	ambient_music_player.stream = ambient_music
+	ambient_music_player.volume_db = ambient_volume_db
+	if not ambient_music_player.playing:
+		ambient_music_player.play()

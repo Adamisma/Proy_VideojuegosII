@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" path="res://scenes/environment/checkpoint.tscn" id="22_yaytp"]
 [ext_resource type="PackedScene" path="res://scenes/environment/level_goal.tscn" id="23_pxyx3"]
 [ext_resource type="PackedScene" path="res://ui/ui_controller.tscn" id="24_i1ekr"]
+[ext_resource type="AudioStream" uid="uid://tamgrfsqh1ft" path="res://assets/sounds/ambiental/lvl2.mp3" id="25_bgm_lvl2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(4400, 76)
@@ -108,6 +109,8 @@ script = ExtResource("1_ies7a")
 level_id = &"level_02"
 level_objective = "🌄 Misión: Defiende los Baluartes Superiores y asegura el Bastión Sagrado"
 is_final_level = true
+ambient_music = ExtResource("25_bgm_lvl2")
+ambient_volume_db = -10.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 

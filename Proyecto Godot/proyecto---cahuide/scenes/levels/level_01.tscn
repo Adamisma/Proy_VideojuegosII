@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://c5wughuk537nr" path="res://scenes/environment/hazard.tscn" id="18_hazard"]
 [ext_resource type="PackedScene" uid="uid://b7q84nxiuvemp" path="res://scenes/environment/power_up_sol.tscn" id="19_powerup_sol"]
 [ext_resource type="Texture2D" uid="uid://c3rpitlt1idw7" path="res://assets/tiles/tileset_pasto.png" id="20_tileset_pasto"]
+[ext_resource type="AudioStream" uid="uid://b3a4yp0em1x8b" path="res://assets/sounds/ambiental/lvl1.mp3" id="21_bgm_lvl1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(4400, 76)
@@ -105,10 +106,10 @@ sources/0 = SubResource("TileSetAtlasSource_inca")
 
 [node name="Level_01" type="Node2D" unique_id=15217208]
 script = ExtResource("1_level_script")
-level_id = &"level_01"
 level_objective = "🌅 Misión: Atraviesa Sacsayhuamán y recupera la Reliquia Ancestral"
 next_level_path = "res://scenes/levels/level_02.tscn"
-is_final_level = false
+ambient_music = ExtResource("21_bgm_lvl1")
+ambient_volume_db = -10.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 

@@ -18,11 +18,12 @@ signal respawn_requested
 
 const LAND_DUST_SCENE: PackedScene = preload("res://scenes/vfx/fx_land_dust.tscn")
 const DAMAGE_FLASH_MAT: Material = preload("res://materials/mat_damage_flash.tres")
+const FX_ATTACK_WAVE_SCENE: PackedScene = preload("res://scenes/vfx/fx_attack_wave.tscn")
 
 # --- SKINS Y ANIMACIONES ---
 @export_category("Skins & Animations")
 @export var normal_frames: SpriteFrames = preload("res://scenes/player/player_frames.tres")
-@export var sol_frames: SpriteFrames # Opcional: SpriteFrames con uniforme alternativo
+@export var sol_frames: SpriteFrames = preload("res://scenes/player/player_sol_frames.tres")
 
 # --- ESTADÍSTICAS Y SALUD ---
 @export_category("Health")
@@ -79,6 +80,12 @@ var sol_timer: float = 0.0
 @onready var movement: MovementComponent = get_node_or_null("MovementComponent")
 @onready var health_comp: HealthComponent = get_node_or_null("HealthComponent")
 
+# Efectos visuales y audio
+@onready var solar_sparks: CPUParticles2D = get_node_or_null("SolarSparks")
+@onready var sfx_attack: AudioStreamPlayer2D = get_node_or_null("SFXAttack")
+@onready var sfx_transform: AudioStreamPlayer2D = get_node_or_null("SFXTransform")
+@onready var sfx_footsteps: AudioStreamPlayer2D = get_node_or_null("SFXFootsteps")
+
 # --- VARIABLES DE ESTADO ---
 var coyote_timer: float = 0.0
 var jump_buffer_timer: float = 0.0
@@ -127,12 +134,21 @@ func _ready() -> void:
 		animated_sprite.animation_finished.connect(_on_animation_finished)
 		animated_sprite.play("idle")
 
+	# Configurar loop en pisadas y apagar chispas iniciales
+	if sfx_footsteps and sfx_footsteps.stream is AudioStreamMP3:
+		(sfx_footsteps.stream as AudioStreamMP3).loop = true
+
+	if solar_sparks:
+		solar_sparks.emitting = false
+
 func _physics_process(delta: float) -> void:
 	if is_dead:
+		_stop_footsteps()
 		return
 
 	if is_transforming:
 		velocity = Vector2.ZERO
+		_stop_footsteps()
 		return
 
 	_update_timers(delta)
@@ -153,6 +169,7 @@ func _physics_process(delta: float) -> void:
 	_check_landing_dust()
 	_handle_combat_inputs()
 	_update_animations()
+	_update_footsteps()
 
 	if is_dashing:
 		_process_dash_ghost_trail(delta)
@@ -279,6 +296,26 @@ func _spawn_ghost_sprite() -> void:
 	tween.tween_callback(ghost.queue_free)
 
 # ====================================================================
+# CONTROL DE PISADAS Y MOVIMIENTO SONORO
+# ====================================================================
+func _update_footsteps() -> void:
+	if sfx_footsteps == null:
+		return
+
+	# Las pisadas acompañan al movimiento en suelo excepto cuando se encuentra en el aire
+	if is_on_floor() and abs(velocity.x) > 20.0 and not is_dashing and not is_attacking and not is_dead and not is_transforming:
+		sfx_footsteps.pitch_scale = 1.15 if abs(velocity.x) > 180.0 else 0.95
+		if not sfx_footsteps.playing:
+			sfx_footsteps.play()
+	else:
+		if sfx_footsteps.playing:
+			sfx_footsteps.stop()
+
+func _stop_footsteps() -> void:
+	if sfx_footsteps and sfx_footsteps.playing:
+		sfx_footsteps.stop()
+
+# ====================================================================
 # COMBATE Y ARMAS A DISTANCIA (Piedra vs. Lanza)
 # ====================================================================
 func _handle_combat_inputs() -> void:
@@ -310,11 +347,26 @@ func _execute_melee_attack() -> void:
 	if animated_sprite:
 		animated_sprite.play("attack")
 
+	# Sonido de golpe acoplado a la acción
+	if sfx_attack:
+		sfx_attack.play()
+
+	# Trazo / onda amarilla que acompaña al golpe
+	_spawn_attack_wave()
+
 	if melee_hitbox:
 		melee_hitbox.monitoring = true
 		await get_tree().create_timer(0.22).timeout
 		if is_instance_valid(melee_hitbox):
 			melee_hitbox.monitoring = false
+
+func _spawn_attack_wave() -> void:
+	if FX_ATTACK_WAVE_SCENE:
+		var wave := FX_ATTACK_WAVE_SCENE.instantiate() as Node2D
+		get_parent().add_child(wave)
+		wave.global_position = global_position + Vector2(facing_direction * 36.0, -4.0)
+		if wave.has_method("setup"):
+			wave.setup(facing_direction)
 
 func _execute_ranged_attack() -> void:
 	if current_ranged_weapon == 0:
@@ -367,6 +419,7 @@ func apply_powerup_sol() -> void:
 	is_dashing = false
 	is_attacking = false
 	velocity = Vector2.ZERO
+	_stop_footsteps()
 
 	if melee_hitbox:
 		melee_hitbox.monitoring = false
@@ -376,6 +429,10 @@ func apply_powerup_sol() -> void:
 	health_changed.emit(health, max_health)
 	if EventBus:
 		EventBus.player_damaged.emit(health, max_health)
+
+	# Sonido de transformación al transformarse
+	if sfx_transform:
+		sfx_transform.play()
 
 	# Asegurar parámetros limpios en material para que la animación sea nítida
 	if flash_material:
@@ -395,6 +452,14 @@ func apply_powerup_sol() -> void:
 	if is_dead:
 		return
 
+	# Asignar skin y sprites del modo Power Up Sol durante la duración activa
+	if sol_frames and animated_sprite:
+		animated_sprite.sprite_frames = sol_frames
+
+	# Activar ligeras chispas amarillas como aura de poder activo
+	if solar_sparks:
+		solar_sparks.emitting = true
+
 	# Culminar estado de transformación y reactivar control
 	is_transforming = false
 	is_invulnerable = false
@@ -407,13 +472,8 @@ func apply_powerup_sol() -> void:
 	# Sacudida de cámara al completar la transformación solar
 	_trigger_camera_shake(0.65)
 
-	# Los sprites vuelven a la skin default de Cahuide con aura solar brillante
-	if sol_frames and animated_sprite:
-		animated_sprite.sprite_frames = sol_frames
-	elif animated_sprite:
-		animated_sprite.modulate = Color(2.2, 1.8, 0.4, 1.0)
-
 	if animated_sprite:
+		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
 		animated_sprite.play("idle")
 
 ## Alias de compatibilidad por si se invoca como activate_power_up_sol
@@ -428,21 +488,66 @@ func _update_sol_powerup(delta: float) -> void:
 
 	sol_timer -= delta
 
-	# Parpadeo de advertencia en los últimos 3 segundos
+	# Parpadeo sutil de advertencia en los últimos 3 segundos
 	if sol_timer <= 3.0 and sol_timer > 0.0:
 		var blink := fmod(sol_timer * 10.0, 2.0) > 1.0
 		if animated_sprite and not is_invulnerable:
-			animated_sprite.modulate = Color(2.5, 2.0, 0.5, 1.0) if blink else Color(1, 1, 1, 1)
+			animated_sprite.modulate = Color(1.8, 1.6, 0.8, 1.0) if blink else Color(1, 1, 1, 1)
 
 	if sol_timer <= 0.0:
 		_remove_sol_powerup()
 
 func _remove_sol_powerup() -> void:
-	has_sol_powerup = false
+	if is_transforming or is_dead:
+		return
+
+	# Pausa de movimiento estilo Mario durante la des-transformación
+	is_transforming = true
+	is_invulnerable = true
+	is_dashing = false
+	is_attacking = false
+	velocity = Vector2.ZERO
+	_stop_footsteps()
+
+	if melee_hitbox:
+		melee_hitbox.monitoring = false
+
+	# Desactivar chispas del aura solar
+	if solar_sparks:
+		solar_sparks.emitting = false
+
+	# Sonido de transformación al volver a la normalidad
+	if sfx_transform:
+		sfx_transform.play()
+
+	# Asegurar colores limpios para reproducir la animación inversa
+	if flash_material:
+		flash_material.set_shader_parameter("flash_amount", 0.0)
+
+	if animated_sprite:
+		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("detransform"):
+			animated_sprite.play("detransform")
+			await animated_sprite.animation_finished
+		else:
+			await get_tree().create_timer(1.0).timeout
+	else:
+		await get_tree().create_timer(1.0).timeout
+
+	if is_dead:
+		return
+
+	# Volver a los sprites default de Cahuide
 	if normal_frames and animated_sprite:
 		animated_sprite.sprite_frames = normal_frames
-	if animated_sprite and not is_invulnerable:
+	if animated_sprite:
 		animated_sprite.modulate = Color(1, 1, 1, 1)
+		animated_sprite.play("idle")
+
+	has_sol_powerup = false
+	is_transforming = false
+	is_invulnerable = false
+
 	if EventBus:
 		EventBus.player_powerup_ended.emit()
 
@@ -518,7 +623,11 @@ func _start_invulnerability(duration: float) -> void:
 
 func _die() -> void:
 	is_dead = true
+	is_transforming = false
 	velocity = Vector2.ZERO
+	_stop_footsteps()
+	if solar_sparks:
+		solar_sparks.emitting = false
 	player_died.emit()
 	if EventBus:
 		EventBus.player_died.emit()
@@ -532,6 +641,12 @@ func respawn_at(new_position: Vector2) -> void:
 	is_attacking = false
 	is_invulnerable = false
 	is_transforming = false
+	has_sol_powerup = false
+	_stop_footsteps()
+	if solar_sparks:
+		solar_sparks.emitting = false
+	if normal_frames and animated_sprite:
+		animated_sprite.sprite_frames = normal_frames
 	health = max_health
 	health_changed.emit(health, max_health)
 	if EventBus:
