@@ -1,0 +1,118 @@
+[gd_scene load_steps=18 format=3 uid="uid://cah_touch_controls_scn"]
+
+[ext_resource type="Script" path="res://ui/mobile/touch_controls.gd" id="1_touch"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_left.svg" id="2_left"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_left_pressed.svg" id="3_left_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_right.svg" id="4_right"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_right_pressed.svg" id="5_right_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_jump.svg" id="6_jump"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_jump_pressed.svg" id="7_jump_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_attack.svg" id="8_atk"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_attack_pressed.svg" id="9_atk_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_shoot.svg" id="10_shoot"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_shoot_pressed.svg" id="11_shoot_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_dash.svg" id="12_dash"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_dash_pressed.svg" id="13_dash_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_swap.svg" id="14_swap"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_swap_pressed.svg" id="15_swap_p"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_pause.svg" id="16_pause"]
+[ext_resource type="Texture2D" path="res://assets/ui/touch/btn_pause_pressed.svg" id="17_pause_p"]
+
+[node name="TouchControls" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_touch")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="MovementGroup" type="Control" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+mouse_filter = 2
+
+[node name="BtnLeft" type="TouchScreenButton" parent="MarginContainer/MovementGroup"]
+position = Vector2(0, -95)
+texture_normal = ExtResource("2_left")
+texture_pressed = ExtResource("3_left_p")
+passby_press = true
+action = "move_left"
+visibility_mode = 0
+
+[node name="BtnRight" type="TouchScreenButton" parent="MarginContainer/MovementGroup"]
+position = Vector2(105, -95)
+texture_normal = ExtResource("4_right")
+texture_pressed = ExtResource("5_right_p")
+passby_press = true
+action = "move_right"
+visibility_mode = 0
+
+[node name="ActionGroup" type="Control" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+mouse_filter = 2
+
+[node name="BtnJump" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-105, -110)
+texture_normal = ExtResource("6_jump")
+texture_pressed = ExtResource("7_jump_p")
+action = "jump"
+visibility_mode = 0
+
+[node name="BtnAttack" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-205, -100)
+texture_normal = ExtResource("8_atk")
+texture_pressed = ExtResource("9_atk_p")
+action = "attack"
+visibility_mode = 0
+
+[node name="BtnShoot" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-200, -195)
+texture_normal = ExtResource("10_shoot")
+texture_pressed = ExtResource("11_shoot_p")
+action = "shoot"
+visibility_mode = 0
+
+[node name="BtnDash" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-295, -90)
+texture_normal = ExtResource("12_dash")
+texture_pressed = ExtResource("13_dash_p")
+action = "dash"
+visibility_mode = 0
+
+[node name="BtnSwap" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-100, -195)
+texture_normal = ExtResource("14_swap")
+texture_pressed = ExtResource("15_swap_p")
+action = "switch_weapon"
+visibility_mode = 0
+
+[node name="TopGroup" type="Control" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="BtnPause" type="TouchScreenButton" parent="MarginContainer/TopGroup"]
+position = Vector2(-60, 0)
+texture_normal = ExtResource("16_pause")
+texture_pressed = ExtResource("17_pause_p")
+action = "pause"
+visibility_mode = 0

@@ -105,7 +105,10 @@ sources/0 = SubResource("TileSetAtlasSource_inca")
 
 [node name="Level_01" type="Node2D" unique_id=15217208]
 script = ExtResource("1_level_script")
+level_id = &"level_01"
+level_objective = "🌅 Misión: Atraviesa Sacsayhuamán y recupera la Reliquia Ancestral"
 next_level_path = "res://scenes/levels/level_02.tscn"
+is_final_level = false
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 

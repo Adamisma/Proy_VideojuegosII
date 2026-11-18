@@ -4,6 +4,44 @@
 [ext_resource type="Texture2D" uid="uid://vu1356xkhd7a" path="res://assets/environment/vida_vacia.png" id="2_bo48s"]
 [ext_resource type="Texture2D" uid="uid://bq7a1ka14gdax" path="res://assets/environment/vida.png" id="2_hqnrr"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_objective"]
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+bg_color = Color(0.06, 0.08, 0.12, 0.85)
+border_width_left = 2
+border_width_top = 1
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.78, 0.25, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_victory_panel"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.08, 0.09, 0.14, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1.0, 0.84, 0.2, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
 [node name="HUD" type="CanvasLayer" unique_id=226852910]
 script = ExtResource("1_hud")
 
@@ -136,10 +174,18 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Reliquias Faltantes: 0"
 
-[node name="ObjectiveLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1725408371]
+[node name="ObjectiveBox" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1725408371]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-theme_override_font_sizes/font_size = 16
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_objective")
+
+[node name="ObjectiveLabel" type="Label" parent="MarginContainer/VBoxContainer/ObjectiveBox" unique_id=1725408372]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 14
 text = "🌅 Objetivo: Atraviesa Sacsayhuamán y recupera la Reliquia Ancestral"
 
 [node name="ControlsHint" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1630032419]
@@ -203,30 +249,35 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -150.0
-offset_right = 240.0
-offset_bottom = 150.0
+offset_left = -260.0
+offset_top = -155.0
+offset_right = 260.0
+offset_bottom = 155.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_victory_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VictoryPanel" unique_id=922536262]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 alignment = 1
 
 [node name="Title" type="Label" parent="VictoryPanel/VBoxContainer" unique_id=295190797]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
-theme_override_font_sizes/font_size = 28
-text = "¡VICTORIA EN SACSAYHUAMÁN!"
+theme_override_colors/font_color = Color(1, 0.88, 0.25, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 26
+text = "👑 ¡VICTORIA DE LA RESISTENCIA!"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="VictoryPanel/VBoxContainer" unique_id=759410002]
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
-text = "¡Has recuperado la Reliquia Ancestral!
-El Poder del Sol ha sido despertado para la resistencia."
+theme_override_colors/font_color = Color(0.92, 0.92, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "¡Bajo el coraje de Cahuide, la Fortaleza ha sido defendida!
+Los invasores han sido repelidos del bastión sagrado."
 horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VictoryPanel/VBoxContainer" unique_id=1475832389]

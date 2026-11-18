@@ -30,3 +30,16 @@ desktop.ini
 .idea/
 *.suo
 *.user
+
+# ==========================================
+# BUILDS Y EJECUTABLES (Binarios pesados)
+# ==========================================
+Builds/
+builds/
+*.apk
+*.aab
+*.exe
+*.pck
+*.aar
+android/
+**/android/

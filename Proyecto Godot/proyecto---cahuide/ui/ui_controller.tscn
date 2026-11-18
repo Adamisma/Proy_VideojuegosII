@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cah_uicontroller_scn"]
+[gd_scene load_steps=6 format=3 uid="uid://cah_uicontroller_scn"]
 
 [ext_resource type="Script" path="res://ui/ui_controller.gd" id="1_uic"]
 [ext_resource type="PackedScene" uid="uid://bnfwoh1seu4db" path="res://scenes/ui/hud.tscn" id="2_hud"]
-[ext_resource type="PackedScene" uid="uid://cah_pause_menu_scn" path="res://ui/pause/pause_menu.tscn" id="3_pause"]
-[ext_resource type="PackedScene" uid="uid://cah_notif_layer_scn" path="res://ui/notifications/notification_layer.tscn" id="4_notif"]
+[ext_resource type="PackedScene" uid="uid://cah_touch_controls_scn" path="res://ui/mobile/touch_controls.tscn" id="3_touch"]
+[ext_resource type="PackedScene" uid="uid://cah_pause_menu_scn" path="res://ui/pause/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" uid="uid://cah_notif_layer_scn" path="res://ui/notifications/notification_layer.tscn" id="5_notif"]
 
 [node name="UIController" type="CanvasLayer"]
 process_mode = 3
@@ -12,6 +13,8 @@ script = ExtResource("1_uic")
 
 [node name="HUD" parent="." instance=ExtResource("2_hud")]
 
-[node name="PauseMenu" parent="." instance=ExtResource("3_pause")]
+[node name="TouchControls" parent="." instance=ExtResource("3_touch")]
 
-[node name="NotificationLayer" parent="." instance=ExtResource("4_notif")]
+[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
+
+[node name="NotificationLayer" parent="." instance=ExtResource("5_notif")]

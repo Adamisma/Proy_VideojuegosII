@@ -283,7 +283,7 @@ func _on_player_entered_detection(body: Node2D) -> void:
 		if state_machine and (state_machine.current_state is EnemyStateIdle or state_machine.current_state is EnemyStatePatrol):
 			state_machine.transition_to("chase")
 
-func _on_player_exited_detection(body: Node2D) -> void:
+func _on_player_exited_detection(_body: Node2D) -> void:
 	pass
 
 func _on_player_entered_attack(body: Node2D) -> void:
@@ -291,5 +291,5 @@ func _on_player_entered_attack(body: Node2D) -> void:
 		if state_machine and state_machine.current_state is EnemyStateChase:
 			state_machine.transition_to("attack")
 
-func _on_player_exited_attack(body: Node2D) -> void:
+func _on_player_exited_attack(_body: Node2D) -> void:
 	pass

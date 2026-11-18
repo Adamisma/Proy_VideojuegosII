@@ -2,37 +2,66 @@ class_name PauseMenu
 extends Control
 
 ## ====================================================================
-## Proyecto Cahuide - Menú de Pausa Seguro
+## Proyecto Cahuide - Menú de Pausa Seguro y Táctil
 ## ====================================================================
+## Se muestra sobre la pantalla cuando el juego se pausa (Escape, P o botón táctil).
+## Es totalmente independiente de los controles táctiles de la UI.
 
 signal resumed
+signal saved
 
-@onready var resume_btn: Button = $CenterContainer/PanelContainer/VBoxContainer/ResumeButton
-@onready var restart_cp_btn: Button = $CenterContainer/PanelContainer/VBoxContainer/RestartCheckpointButton
-@onready var main_menu_btn: Button = $CenterContainer/PanelContainer/VBoxContainer/MainMenuButton
-@onready var quit_btn: Button = $CenterContainer/PanelContainer/VBoxContainer/QuitButton
+@onready var resume_btn: Button = get_node_or_null("CenterContainer/PanelContainer/VBoxContainer/ResumeButton")
+@onready var save_btn: Button = get_node_or_null("CenterContainer/PanelContainer/VBoxContainer/SaveButton")
+@onready var restart_cp_btn: Button = get_node_or_null("CenterContainer/PanelContainer/VBoxContainer/RestartCheckpointButton")
+@onready var main_menu_btn: Button = get_node_or_null("CenterContainer/PanelContainer/VBoxContainer/MainMenuButton")
+@onready var quit_btn: Button = get_node_or_null("CenterContainer/PanelContainer/VBoxContainer/QuitButton")
+
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 
-	resume_btn.pressed.connect(_on_resume_pressed)
-	restart_cp_btn.pressed.connect(_on_restart_checkpoint_pressed)
-	main_menu_btn.pressed.connect(_on_main_menu_pressed)
-	quit_btn.pressed.connect(_on_quit_pressed)
+	if resume_btn:
+		resume_btn.pressed.connect(_on_resume_pressed)
+	if save_btn:
+		save_btn.pressed.connect(_on_save_pressed)
+	if restart_cp_btn:
+		restart_cp_btn.pressed.connect(_on_restart_checkpoint_pressed)
+	if main_menu_btn:
+		main_menu_btn.pressed.connect(_on_main_menu_pressed)
+	if quit_btn:
+		quit_btn.pressed.connect(_on_quit_pressed)
+
 
 func open_menu() -> void:
 	get_tree().paused = true
 	visible = true
-	resume_btn.grab_focus()
+	if resume_btn:
+		resume_btn.grab_focus()
+	if EventBus and EventBus.has_signal("game_paused"):
+		EventBus.game_paused.emit(true)
+
 
 func close_menu() -> void:
 	visible = false
 	get_tree().paused = false
 	resumed.emit()
+	if EventBus and EventBus.has_signal("game_paused"):
+		EventBus.game_paused.emit(false)
+
 
 func _on_resume_pressed() -> void:
 	close_menu()
+
+
+func _on_save_pressed() -> void:
+	if SaveManager:
+		SaveManager.save_game()
+		saved.emit()
+		var ui_ctrl := get_parent() as UIController
+		if ui_ctrl:
+			ui_ctrl.show_toast("¡Partida Guardada con Éxito!", Color(0.3, 1.0, 0.5))
+
 
 func _on_restart_checkpoint_pressed() -> void:
 	close_menu()
@@ -40,10 +69,15 @@ func _on_restart_checkpoint_pressed() -> void:
 	if current_scene and current_scene.has_method("respawn_player_at_checkpoint"):
 		current_scene.respawn_player_at_checkpoint()
 
+
 func _on_main_menu_pressed() -> void:
 	get_tree().paused = false
+	if EventBus and EventBus.has_signal("game_paused"):
+		EventBus.game_paused.emit(false)
 	if SceneFlow:
 		SceneFlow.change_to("res://scenes/ui/main_menu.tscn", 0.3)
 
+
 func _on_quit_pressed() -> void:
+	get_tree().paused = false
 	get_tree().quit()

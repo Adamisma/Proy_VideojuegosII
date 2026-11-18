@@ -2,13 +2,11 @@
 
 [ext_resource type="Script" uid="uid://bygx1den7rjk6" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="SpriteFrames" uid="uid://ddh1a8uvf6fkt" path="res://scenes/player/player_frames.tres" id="2_frames"]
-[ext_resource type="PackedScene" uid="uid://b053hgvqgwfru" path="res://scenes/projectiles/stone_projectile.tscn" id="2_p47bc"]
-[ext_resource type="PackedScene" uid="uid://cah_spear_proj" path="res://scenes/projectiles/spear_projectile.tscn" id="2_spear"]
 [ext_resource type="Script" uid="uid://cyqkxxhk7nn4o" path="res://scripts/combat/hitbox.gd" id="3_hitbox"]
 [ext_resource type="Script" uid="uid://bxac8uhl7g8wu" path="res://scripts/combat/hurtbox.gd" id="4_hurtbox"]
-[ext_resource type="Script" path="res://scripts/utils/camera_shake.gd" id="5_shake"]
-[ext_resource type="Script" path="res://components/movement/movement_component.gd" id="6_mov"]
-[ext_resource type="Script" path="res://components/health/health_component.gd" id="7_health"]
+[ext_resource type="Script" uid="uid://cywuxwike5i7y" path="res://scripts/utils/camera_shake.gd" id="5_shake"]
+[ext_resource type="Script" uid="uid://bewgt8qimpuff" path="res://components/movement/movement_component.gd" id="6_mov"]
+[ext_resource type="Script" uid="uid://blsjjtdfk4v4f" path="res://components/health/health_component.gd" id="7_health"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 radius = 23.0
@@ -20,23 +18,19 @@ size = Vector2(65, 104.5)
 [node name="Player" type="CharacterBody2D" unique_id=156458254 groups=["player"]]
 collision_layer = 2
 script = ExtResource("1_player")
-stone_projectile_scene = ExtResource("2_p47bc")
-spear_projectile_scene = ExtResource("2_spear")
 
-[node name="MovementComponent" type="Node" parent="."]
+[node name="MovementComponent" type="Node" parent="." unique_id=983409238]
 script = ExtResource("6_mov")
 
-[node name="HealthComponent" type="Node" parent="."]
+[node name="HealthComponent" type="Node" parent="." unique_id=490622636]
 script = ExtResource("7_health")
-max_health = 20
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=822031195]
 position = Vector2(-1.0000005, -6.0000005)
 scale = Vector2(0.89288896, 0.8308389)
 sprite_frames = ExtResource("2_frames")
-animation = &"walk"
+animation = &"transformacion"
 autoplay = "idle"
-frame_progress = 0.21989274
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1381535601]
 position = Vector2(0, 4)

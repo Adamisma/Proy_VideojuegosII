@@ -13,6 +13,7 @@ extends CharacterBody2D
 
 signal health_changed(new_health: int, max_health: int)
 signal player_died
+@warning_ignore("unused_signal")
 signal respawn_requested
 
 const LAND_DUST_SCENE: PackedScene = preload("res://scenes/vfx/fx_land_dust.tscn")
@@ -91,6 +92,7 @@ var is_dashing: bool = false
 var is_attacking: bool = false
 var is_invulnerable: bool = false
 var is_dead: bool = false
+var is_transforming: bool = false
 var was_on_floor: bool = false
 var facing_direction: float = 1.0 # 1 derecha, -1 izquierda
 
@@ -127,6 +129,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
+		return
+
+	if is_transforming:
+		velocity = Vector2.ZERO
 		return
 
 	_update_timers(delta)
@@ -352,24 +358,69 @@ func _throw_spear() -> void:
 # POWER-UP DEL SOL Y SKINS DINÁMICOS
 # ====================================================================
 func apply_powerup_sol() -> void:
-	has_sol_powerup = true
-	sol_timer = sol_duration
+	if is_transforming or is_dead:
+		return
+
+	# Pausa de movimiento e inmunidad estilo Super Mario durante la transformación
+	is_transforming = true
+	is_invulnerable = true
+	is_dashing = false
+	is_attacking = false
+	velocity = Vector2.ZERO
+
+	if melee_hitbox:
+		melee_hitbox.monitoring = false
 
 	# Curación de 2 puntos (1 corazón)
 	health = mini(health + 2, max_health)
 	health_changed.emit(health, max_health)
 	if EventBus:
 		EventBus.player_damaged.emit(health, max_health)
+
+	# Asegurar parámetros limpios en material para que la animación sea nítida
+	if flash_material:
+		flash_material.set_shader_parameter("flash_amount", 0.0)
+
+	# Reproducción de la animación de transformación (a velocidad moderada)
+	if animated_sprite:
+		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("transform"):
+			animated_sprite.play("transform")
+			await animated_sprite.animation_finished
+		else:
+			await get_tree().create_timer(1.0).timeout
+	else:
+		await get_tree().create_timer(1.0).timeout
+
+	if is_dead:
+		return
+
+	# Culminar estado de transformación y reactivar control
+	is_transforming = false
+	is_invulnerable = false
+	has_sol_powerup = true
+	sol_timer = sol_duration
+
+	if EventBus:
 		EventBus.player_powerup_activated.emit(sol_duration)
 
-	# Sacudida de cámara al activar el Power-Up según especificación
+	# Sacudida de cámara al completar la transformación solar
 	_trigger_camera_shake(0.65)
 
-	# Intercambio de skin si existe sol_frames
+	# Los sprites vuelven a la skin default de Cahuide con aura solar brillante
 	if sol_frames and animated_sprite:
 		animated_sprite.sprite_frames = sol_frames
 	elif animated_sprite:
 		animated_sprite.modulate = Color(2.2, 1.8, 0.4, 1.0)
+
+	if animated_sprite:
+		animated_sprite.play("idle")
+
+## Alias de compatibilidad por si se invoca como activate_power_up_sol
+func activate_power_up_sol(duration: float = -1.0) -> void:
+	if duration > 0.0:
+		sol_duration = duration
+	apply_powerup_sol()
 
 func _update_sol_powerup(delta: float) -> void:
 	if not has_sol_powerup:
@@ -407,7 +458,7 @@ func _calculate_mitigated_damage(incoming: int) -> int:
 	return clampi(incoming, 1, 2)
 
 func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> void:
-	if is_invulnerable or is_dead:
+	if is_invulnerable or is_dead or is_transforming:
 		return
 
 	var applied := _calculate_mitigated_damage(amount)
@@ -480,6 +531,7 @@ func respawn_at(new_position: Vector2) -> void:
 	is_dead = false
 	is_attacking = false
 	is_invulnerable = false
+	is_transforming = false
 	health = max_health
 	health_changed.emit(health, max_health)
 	if EventBus:
@@ -493,7 +545,7 @@ func respawn_at(new_position: Vector2) -> void:
 # ANIMACIONES
 # ====================================================================
 func _update_animations() -> void:
-	if is_dead or is_attacking or animated_sprite == null:
+	if is_dead or is_attacking or is_transforming or animated_sprite == null:
 		return
 
 	if not is_on_floor():

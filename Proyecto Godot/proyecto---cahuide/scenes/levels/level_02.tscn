@@ -106,6 +106,7 @@ sources/0 = SubResource("TileSetAtlasSource_inca")
 [node name="Level_02" type="Node2D" unique_id=15217208]
 script = ExtResource("1_ies7a")
 level_id = &"level_02"
+level_objective = "🌄 Misión: Defiende los Baluartes Superiores y asegura el Bastión Sagrado"
 is_final_level = true
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]

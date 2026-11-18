@@ -6,7 +6,8 @@ extends Node
 ## Administra cambios de escena con cortinilla de fundido suave y protección de inputs.
 
 const LEVELS: Dictionary = {
-	&"level_01": "res://scenes/levels/level_01.tscn"
+	&"level_01": "res://scenes/levels/level_01.tscn",
+	&"level_02": "res://scenes/levels/level_02.tscn"
 }
 
 var is_changing_scene: bool = false

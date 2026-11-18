@@ -1,30 +1,35 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://ddh1a8uvf6fkt"]
 
-[ext_resource type="Texture2D" uid="uid://duvycpihqe527" path="res://assets/characters/player/Ataque/Ataque 1.png" id="1_g1ugw"]
-[ext_resource type="Texture2D" uid="uid://b7lkelcqvogtj" path="res://assets/characters/player/Ataque/Ataque 2.png" id="2_slq0w"]
-[ext_resource type="Texture2D" uid="uid://jihvjv1wvtlq" path="res://assets/characters/player/Ataque/Ataque 4.png" id="3_qvwe1"]
-[ext_resource type="Texture2D" uid="uid://5jyp4h8q0t2i" path="res://assets/characters/player/Ataque/Ataque 3.png" id="4_2eba5"]
-[ext_resource type="Texture2D" uid="uid://d4j1lqtgavdc2" path="res://assets/characters/player/Ataque/Ataquye 5.png" id="5_w6ehv"]
-[ext_resource type="Texture2D" uid="uid://dtfr3smukfofx" path="res://assets/characters/player/Muerte/1.png" id="6_6konw"]
-[ext_resource type="Texture2D" uid="uid://c560itrggqggo" path="res://assets/characters/player/Muerte/2.png" id="7_lea3m"]
-[ext_resource type="Texture2D" uid="uid://ck5c8pix2qebo" path="res://assets/characters/player/Muerte/3.png" id="8_pvgcy"]
-[ext_resource type="Texture2D" uid="uid://bjckrbaxgd7as" path="res://assets/characters/player/Salto/1.png" id="8_qvwe1"]
-[ext_resource type="Texture2D" uid="uid://cskrtmi55m1e7" path="res://assets/characters/player/Idle/1.png" id="8_slq0w"]
-[ext_resource type="Texture2D" uid="uid://o64aijifo46m" path="res://assets/characters/player/Salto/2.png" id="9_2eba5"]
-[ext_resource type="Texture2D" uid="uid://c2uv5exu37r01" path="res://assets/characters/player/Idle/2.png" id="9_qvwe1"]
-[ext_resource type="Texture2D" uid="uid://c2c3lhmebhxjg" path="res://assets/characters/player/Muerte/4.png" id="9_s7jo2"]
-[ext_resource type="Texture2D" uid="uid://3vq66wsm6gj1" path="res://assets/characters/player/Hurt/1.png" id="10_7laxs"]
-[ext_resource type="Texture2D" uid="uid://rw4jppr08jeg" path="res://assets/characters/player/Correr/1.png" id="10_vs037"]
-[ext_resource type="Texture2D" uid="uid://bhvdcoto5ri3n" path="res://assets/characters/player/Salto/3.png" id="10_w6ehv"]
-[ext_resource type="Texture2D" uid="uid://dgvkks7eckgev" path="res://assets/characters/player/Salto/4.png" id="11_il41j"]
-[ext_resource type="Texture2D" uid="uid://pg1qhgwo72ni" path="res://assets/characters/player/Correr/2.png" id="11_kbp0u"]
-[ext_resource type="Texture2D" uid="uid://b65vr0j7sqe1r" path="res://assets/characters/player/Hurt/2.png" id="11_rt54j"]
-[ext_resource type="Texture2D" uid="uid://dbs4u6vrlvswf" path="res://assets/characters/player/Correr/3.png" id="12_6konw"]
-[ext_resource type="Texture2D" uid="uid://bg5n4gshpusw4" path="res://assets/characters/player/Hurt/3.png" id="12_cq5j7"]
-[ext_resource type="Texture2D" uid="uid://bmognnb3lam8x" path="res://assets/characters/player/Correr/4.png" id="13_lea3m"]
-[ext_resource type="Texture2D" uid="uid://dq345ginfkvoh" path="res://assets/characters/player/Walk/1.png" id="23_s7jo2"]
-[ext_resource type="Texture2D" uid="uid://cxke0yqd5mscb" path="res://assets/characters/player/Walk/2.png" id="24_7laxs"]
-[ext_resource type="Texture2D" uid="uid://8qkdj8yb3gkb" path="res://assets/characters/player/Walk/3.png" id="25_rt54j"]
+[ext_resource type="Texture2D" uid="uid://duvycpihqe527" path="res://assets/characters/player/Default/Ataque/Ataque 1.png" id="1_g1ugw"]
+[ext_resource type="Texture2D" uid="uid://b7lkelcqvogtj" path="res://assets/characters/player/Default/Ataque/Ataque 2.png" id="2_slq0w"]
+[ext_resource type="Texture2D" uid="uid://jihvjv1wvtlq" path="res://assets/characters/player/Default/Ataque/Ataque 4.png" id="3_qvwe1"]
+[ext_resource type="Texture2D" uid="uid://5jyp4h8q0t2i" path="res://assets/characters/player/Default/Ataque/Ataque 3.png" id="4_2eba5"]
+[ext_resource type="Texture2D" uid="uid://d4j1lqtgavdc2" path="res://assets/characters/player/Default/Ataque/Ataquye 5.png" id="5_w6ehv"]
+[ext_resource type="Texture2D" uid="uid://dtfr3smukfofx" path="res://assets/characters/player/Default/Muerte/1.png" id="6_6konw"]
+[ext_resource type="Texture2D" uid="uid://c560itrggqggo" path="res://assets/characters/player/Default/Muerte/2.png" id="7_lea3m"]
+[ext_resource type="Texture2D" uid="uid://ck5c8pix2qebo" path="res://assets/characters/player/Default/Muerte/3.png" id="8_pvgcy"]
+[ext_resource type="Texture2D" uid="uid://bjckrbaxgd7as" path="res://assets/characters/player/Default/Salto/1.png" id="8_qvwe1"]
+[ext_resource type="Texture2D" uid="uid://cskrtmi55m1e7" path="res://assets/characters/player/Default/Idle/1.png" id="8_slq0w"]
+[ext_resource type="Texture2D" uid="uid://o64aijifo46m" path="res://assets/characters/player/Default/Salto/2.png" id="9_2eba5"]
+[ext_resource type="Texture2D" uid="uid://c2uv5exu37r01" path="res://assets/characters/player/Default/Idle/2.png" id="9_qvwe1"]
+[ext_resource type="Texture2D" uid="uid://c2c3lhmebhxjg" path="res://assets/characters/player/Default/Muerte/4.png" id="9_s7jo2"]
+[ext_resource type="Texture2D" uid="uid://3vq66wsm6gj1" path="res://assets/characters/player/Default/Hurt/1.png" id="10_7laxs"]
+[ext_resource type="Texture2D" uid="uid://rw4jppr08jeg" path="res://assets/characters/player/Default/Correr/1.png" id="10_vs037"]
+[ext_resource type="Texture2D" uid="uid://bhvdcoto5ri3n" path="res://assets/characters/player/Default/Salto/3.png" id="10_w6ehv"]
+[ext_resource type="Texture2D" uid="uid://dgvkks7eckgev" path="res://assets/characters/player/Default/Salto/4.png" id="11_il41j"]
+[ext_resource type="Texture2D" uid="uid://pg1qhgwo72ni" path="res://assets/characters/player/Default/Correr/2.png" id="11_kbp0u"]
+[ext_resource type="Texture2D" uid="uid://b65vr0j7sqe1r" path="res://assets/characters/player/Default/Hurt/2.png" id="11_rt54j"]
+[ext_resource type="Texture2D" uid="uid://dbs4u6vrlvswf" path="res://assets/characters/player/Default/Correr/3.png" id="12_6konw"]
+[ext_resource type="Texture2D" uid="uid://bg5n4gshpusw4" path="res://assets/characters/player/Default/Hurt/3.png" id="12_cq5j7"]
+[ext_resource type="Texture2D" uid="uid://bmognnb3lam8x" path="res://assets/characters/player/Default/Correr/4.png" id="13_lea3m"]
+[ext_resource type="Texture2D" uid="uid://dq345ginfkvoh" path="res://assets/characters/player/Default/Walk/1.png" id="23_s7jo2"]
+[ext_resource type="Texture2D" uid="uid://cxke0yqd5mscb" path="res://assets/characters/player/Default/Walk/2.png" id="24_7laxs"]
+[ext_resource type="Texture2D" uid="uid://8qkdj8yb3gkb" path="res://assets/characters/player/Default/Walk/3.png" id="25_rt54j"]
+[ext_resource type="Texture2D" uid="uid://c4y8x1lnsjy3h" path="res://assets/characters/player/Default/Transformación/1.png" id="26_t1"]
+[ext_resource type="Texture2D" uid="uid://d2ms80vg2c1tn" path="res://assets/characters/player/Default/Transformación/2.png" id="27_t2"]
+[ext_resource type="Texture2D" uid="uid://cibr26pes67l0" path="res://assets/characters/player/Default/Transformación/3.png" id="28_t3"]
+[ext_resource type="Texture2D" uid="uid://b7f3gmokpxb4k" path="res://assets/characters/player/Default/Transformación/4.png" id="29_t4"]
+[ext_resource type="Texture2D" uid="uid://b0ind8qhk75eg" path="res://assets/characters/player/Default/Transformación/5.png" id="30_t5"]
 
 [resource]
 animations = [{
@@ -129,6 +134,26 @@ animations = [{
 "loop": true,
 "name": &"run",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("26_t1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_t2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_t3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_t4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_t5")
+}],
+"loop": false,
+"name": &"transform",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.4,

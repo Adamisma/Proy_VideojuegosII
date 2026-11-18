@@ -3,52 +3,54 @@
 [ext_resource type="Script" path="res://ui/pause/pause_menu.gd" id="1_pause"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 24.0
-content_margin_top = 20.0
-content_margin_right = 24.0
-content_margin_bottom = 20.0
+content_margin_left = 28.0
+content_margin_top = 22.0
+content_margin_right = 28.0
+content_margin_bottom = 22.0
 bg_color = Color(0.08, 0.09, 0.12, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.85, 0.7, 0.25, 0.9)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_norm"]
-content_margin_left = 12.0
-content_margin_top = 8.0
-content_margin_right = 12.0
-content_margin_bottom = 8.0
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
 bg_color = Color(0.14, 0.16, 0.22, 0.9)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.35, 0.45, 0.6, 0.7)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-content_margin_left = 12.0
-content_margin_top = 8.0
-content_margin_right = 12.0
-content_margin_bottom = 8.0
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
 bg_color = Color(0.22, 0.26, 0.35, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(1.0, 0.85, 0.3, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="PauseMenu" type="Control"]
 process_mode = 2
@@ -78,7 +80,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
@@ -100,28 +102,35 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="ResumeButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Reanudar"
 
+[node name="SaveButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_norm")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "Guardar Partida"
+
 [node name="RestartCheckpointButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Reiniciar en Checkpoint"
 
 [node name="MainMenuButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_norm")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "Menú Principal"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.35, 0.35, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_norm")
