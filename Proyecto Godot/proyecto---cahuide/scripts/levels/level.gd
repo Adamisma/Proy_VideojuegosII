@@ -1,4 +1,4 @@
-class_name Level01
+class_name Level
 extends Node2D
 
 ## ====================================================================
@@ -12,6 +12,13 @@ extends Node2D
 
 @export var level_id: StringName = &"level_01"
 @export var sky_speed: float = 15.0
+
+@export_group("Configuración de niveles")
+@export var next_level_path: String = ""
+@export var is_final_level: bool = false
+@export var transition_delay: float = 3.0
+
+var level_finished: bool = false
 
 @onready var player: Player = $Player
 @onready var player_spawn: Marker2D = $PlayerSpawn
@@ -64,12 +71,7 @@ func _ready() -> void:
 				_register_enemy(node)
 		)
 
-	# Suscripción a eventos de completitud
-	if EventBus:
-		EventBus.level_completed.connect(func(_id: StringName):
-			if active_hud:
-				active_hud.show_victory()
-		)
+	
 
 func _register_checkpoints() -> void:
 	checkpoint_positions.clear()
@@ -143,9 +145,25 @@ func _update_relics_ui() -> void:
 		active_hud.update_relics_count(remaining, total_relics)
 
 func _on_goal_reached() -> void:
+	if level_finished:
+		return
+
+	level_finished = true
+
 	var active_hud: HUD = hud if hud else (ui_controller.get_node_or_null("HUD") as HUD if ui_controller else null)
+
+	if is_final_level:
+		if active_hud:
+			active_hud.show_victory(true)
+		return
+
 	if active_hud:
-		active_hud.show_victory()
+		active_hud.show_victory(false)
+
+	await get_tree().create_timer(transition_delay).timeout
+
+	if next_level_path != "":
+		get_tree().change_scene_to_file(next_level_path)
 
 func _register_enemy(enemy_node: Enemy) -> void:
 	if not enemy_node.enemy_defeated.is_connected(_on_enemy_defeated):

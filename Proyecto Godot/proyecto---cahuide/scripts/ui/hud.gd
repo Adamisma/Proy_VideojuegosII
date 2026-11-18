@@ -43,7 +43,6 @@ func _ready() -> void:
 		EventBus.score_changed.connect(update_score)
 		EventBus.enemy_defeated.connect(func(_pts: int): add_enemy_defeated())
 		EventBus.relic_collected.connect(update_relics_count)
-		EventBus.level_completed.connect(func(_id: StringName): show_victory())
 		EventBus.ranged_weapon_swapped.connect(update_weapon_display)
 
 	# Inicializar con GameState si existe
@@ -63,10 +62,13 @@ func _ready() -> void:
 	# Botones de Victoria
 	var btn_v_restart := get_node_or_null("VictoryPanel/VBoxContainer/HBoxContainer/BtnVictoryRestart") as Button
 	if btn_v_restart:
-		btn_v_restart.pressed.connect(_on_restart_pressed)
+		btn_v_restart.pressed.connect(_on_victory_restart_pressed)
 	var btn_v_menu := get_node_or_null("VictoryPanel/VBoxContainer/HBoxContainer/BtnVictoryMenu") as Button
 	if btn_v_menu:
 		btn_v_menu.pressed.connect(_on_menu_pressed)
+
+func _on_victory_restart_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/levels/level_01.tscn")
 
 func bind_player(player: Node) -> void:
 	if player == null:
@@ -119,9 +121,20 @@ func show_game_over() -> void:
 	if game_over_panel:
 		game_over_panel.visible = true
 
-func show_victory() -> void:
-	if victory_panel:
-		victory_panel.visible = true
+func show_victory(show_buttons: bool = true) -> void:
+	if not victory_panel:
+		return
+
+	victory_panel.visible = true
+
+	var btn_restart := get_node_or_null("VictoryPanel/VBoxContainer/HBoxContainer/BtnVictoryRestart")
+	var btn_menu := get_node_or_null("VictoryPanel/VBoxContainer/HBoxContainer/BtnVictoryMenu")
+
+	if btn_restart:
+		btn_restart.visible = show_buttons
+
+	if btn_menu:
+		btn_menu.visible = show_buttons
 
 func _on_restart_pressed() -> void:
 	restart_requested.emit()

@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://bvx1jatya50es"]
 
-[ext_resource type="Script" uid="uid://b1lfwhgurqok6" path="res://scripts/levels/level_01.gd" id="1_level_script"]
+[ext_resource type="Script" uid="uid://b1lfwhgurqok6" path="res://scripts/levels/level.gd" id="1_level_script"]
 [ext_resource type="PackedScene" uid="uid://c73f8jejiqg5t" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="Texture2D" uid="uid://bnglppk25p2xo" path="res://assets/backgrounds/fondo_principal1.png" id="2_svp4f"]
 [ext_resource type="Texture2D" uid="uid://d4nb8bldc8rdf" path="res://assets/backgrounds/fondo_cielo.png" id="3_1b0o8"]
@@ -105,6 +105,7 @@ sources/0 = SubResource("TileSetAtlasSource_inca")
 
 [node name="Level_01" type="Node2D" unique_id=15217208]
 script = ExtResource("1_level_script")
+next_level_path = "res://scenes/levels/level_02.tscn"
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 
