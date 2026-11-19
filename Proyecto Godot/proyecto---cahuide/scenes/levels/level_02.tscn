@@ -110,7 +110,7 @@ level_id = &"level_02"
 level_objective = "🌄 Misión: Defiende los Baluartes Superiores y asegura el Bastión Sagrado"
 is_final_level = true
 ambient_music = ExtResource("25_bgm_lvl2")
-ambient_volume_db = -10.0
+ambient_volume_db = -15.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 

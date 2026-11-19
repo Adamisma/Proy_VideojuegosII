@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cah_touch_controls_scn"]
+[gd_scene load_steps=20 format=3 uid="uid://cah_touch_controls_scn"]
 
 [ext_resource type="Script" path="res://ui/mobile/touch_controls.gd" id="1_touch"]
 [ext_resource type="Texture2D" path="res://assets/ui/touch/btn_left.svg" id="2_left"]
@@ -17,6 +17,12 @@
 [ext_resource type="Texture2D" path="res://assets/ui/touch/btn_swap_pressed.svg" id="15_swap_p"]
 [ext_resource type="Texture2D" path="res://assets/ui/touch/btn_pause.svg" id="16_pause"]
 [ext_resource type="Texture2D" path="res://assets/ui/touch/btn_pause_pressed.svg" id="17_pause_p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_std"]
+radius = 44.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pause"]
+radius = 26.0
 
 [node name="TouchControls" type="Control"]
 layout_mode = 3
@@ -51,14 +57,18 @@ mouse_filter = 2
 position = Vector2(0, -95)
 texture_normal = ExtResource("2_left")
 texture_pressed = ExtResource("3_left_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 passby_press = true
 action = "move_left"
 visibility_mode = 0
 
 [node name="BtnRight" type="TouchScreenButton" parent="MarginContainer/MovementGroup"]
-position = Vector2(105, -95)
+position = Vector2(110, -95)
 texture_normal = ExtResource("4_right")
 texture_pressed = ExtResource("5_right_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 passby_press = true
 action = "move_right"
 visibility_mode = 0
@@ -70,37 +80,48 @@ size_flags_vertical = 8
 mouse_filter = 2
 
 [node name="BtnJump" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
-position = Vector2(-105, -110)
+position = Vector2(-110, -105)
 texture_normal = ExtResource("6_jump")
 texture_pressed = ExtResource("7_jump_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 action = "jump"
 visibility_mode = 0
 
 [node name="BtnAttack" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
-position = Vector2(-205, -100)
+position = Vector2(-230, -115)
 texture_normal = ExtResource("8_atk")
 texture_pressed = ExtResource("9_atk_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 action = "attack"
 visibility_mode = 0
 
-[node name="BtnShoot" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
-position = Vector2(-200, -195)
-texture_normal = ExtResource("10_shoot")
-texture_pressed = ExtResource("11_shoot_p")
-action = "shoot"
-visibility_mode = 0
-
 [node name="BtnDash" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
-position = Vector2(-295, -90)
+position = Vector2(-345, -135)
 texture_normal = ExtResource("12_dash")
 texture_pressed = ExtResource("13_dash_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 action = "dash"
 visibility_mode = 0
 
+[node name="BtnShoot" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
+position = Vector2(-220, -235)
+texture_normal = ExtResource("10_shoot")
+texture_pressed = ExtResource("11_shoot_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
+action = "shoot"
+visibility_mode = 0
+
 [node name="BtnSwap" type="TouchScreenButton" parent="MarginContainer/ActionGroup"]
-position = Vector2(-100, -195)
+position = Vector2(-330, -250)
+scale = Vector2(0.85, 0.85)
 texture_normal = ExtResource("14_swap")
 texture_pressed = ExtResource("15_swap_p")
+shape = SubResource("CircleShape2D_std")
+shape_centered = true
 action = "switch_weapon"
 visibility_mode = 0
 
@@ -114,5 +135,7 @@ mouse_filter = 2
 position = Vector2(-60, 0)
 texture_normal = ExtResource("16_pause")
 texture_pressed = ExtResource("17_pause_p")
+shape = SubResource("CircleShape2D_pause")
+shape_centered = true
 action = "pause"
 visibility_mode = 0

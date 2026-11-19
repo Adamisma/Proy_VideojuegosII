@@ -32,8 +32,9 @@ func _ready() -> void:
 		get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 	# Notificación cuando se activa o desactiva la pausa
-	if EventBus and EventBus.has_signal("game_paused"):
-		EventBus.game_paused.connect(_on_game_paused)
+	var bus = get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("game_paused"):
+		bus.game_paused.connect(_on_game_paused)
 
 	# Inicializar visibilidad según la plataforma de ejecución
 	update_controls_visibility()
@@ -105,10 +106,14 @@ func _apply_safe_area() -> void:
 	var safe_area: Rect2i = DisplayServer.get_display_safe_area()
 	var screen_size: Vector2i = DisplayServer.screen_get_size()
 	if screen_size.x > 0 and screen_size.y > 0 and safe_area != Rect2i():
-		var safe_left: int = safe_area.position.x
-		var safe_top: int = safe_area.position.y
-		var safe_right: int = screen_size.x - (safe_area.position.x + safe_area.size.x)
-		var safe_bottom: int = screen_size.y - (safe_area.position.y + safe_area.size.y)
+		var vp := get_viewport()
+		var vp_size: Vector2 = vp.get_visible_rect().size if vp else Vector2.ZERO
+		var scale_x: float = (vp_size.x / float(screen_size.x)) if (vp_size.x > 0.0 and screen_size.x > 0) else 1.0
+		var scale_y: float = (vp_size.y / float(screen_size.y)) if (vp_size.y > 0.0 and screen_size.y > 0) else 1.0
+		var safe_left: int = int(round(safe_area.position.x * scale_x))
+		var safe_top: int = int(round(safe_area.position.y * scale_y))
+		var safe_right: int = int(round((screen_size.x - (safe_area.position.x + safe_area.size.x)) * scale_x))
+		var safe_bottom: int = int(round((screen_size.y - (safe_area.position.y + safe_area.size.y)) * scale_y))
 
 		left_m = maxi(left_m, safe_left)
 		right_m = maxi(right_m, safe_right)

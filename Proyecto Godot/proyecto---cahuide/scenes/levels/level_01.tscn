@@ -109,7 +109,7 @@ script = ExtResource("1_level_script")
 level_objective = "🌅 Misión: Atraviesa Sacsayhuamán y recupera la Reliquia Ancestral"
 next_level_path = "res://scenes/levels/level_02.tscn"
 ambient_music = ExtResource("21_bgm_lvl1")
-ambient_volume_db = -10.0
+ambient_volume_db = -15.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="." unique_id=1920355337]
 
