@@ -61,6 +61,14 @@ func _ready() -> void:
 	btn_start.pressed.connect(_on_start_pressed)
 	btn_leave_room.pressed.connect(_on_leave_room_pressed)
 
+	# Soporte táctil directo para móviles
+	_make_touch_friendly(btn_host)
+	_make_touch_friendly(btn_join)
+	_make_touch_friendly(btn_back_menu)
+	_make_touch_friendly(btn_ready)
+	_make_touch_friendly(btn_start)
+	_make_touch_friendly(btn_leave_room)
+
 	if NetworkManager:
 		NetworkManager.lobby_updated.connect(_refresh_room_ui)
 		NetworkManager.connection_status_changed.connect(_set_status)
@@ -108,7 +116,7 @@ func _refresh_local_ips() -> void:
 	if NetworkManager == null:
 		return
 	var ips := NetworkManager.get_local_lan_ips()
-	local_ip_label.text = "Tu IP LAN: %s  (Local: 127.0.0.1)" % ", ".join(ips)
+	local_ip_label.text = "Tu IP LAN: %s  (Misma PC: 127.0.0.1)" % ", ".join(ips)
 
 
 func _show_connection_view() -> void:
@@ -160,8 +168,12 @@ func _on_join_pressed() -> void:
 		player_name = "Jugador 2"
 
 	if ip.is_empty():
-		_set_status("Ingresa la IP LAN del Host (ej: 192.168.X.X) que aparece en el otro celular.", true)
+		var example_ip: String = NetworkManager.get_local_lan_ips()[0] if NetworkManager else "192.168.0.X"
+		_set_status("Ingresa la IP LAN del Host (ej: %s) o 127.0.0.1 si juegas en la misma PC." % example_ip, true)
 		return
+
+	if ip.begins_with("192.168.56."):
+		_set_status("Aviso: 192.168.56.X es de VirtualBox. Para jugar en red usa la IP de tu Wi-Fi (ej: 192.168.0.X). Conectando...", true)
 
 	btn_host.disabled = true
 	btn_join.disabled = true
@@ -195,7 +207,13 @@ func _on_options_changed(_index: int) -> void:
 	NetworkManager.set_game_options(map_key, diff_key)
 
 
+var _last_ready_btn_ticks: int = -99999
+
 func _on_ready_pressed() -> void:
+	var now := Time.get_ticks_msec()
+	if now - _last_ready_btn_ticks < 300:
+		return
+	_last_ready_btn_ticks = now
 	if NetworkManager:
 		NetworkManager.request_toggle_ready()
 
@@ -232,7 +250,7 @@ func _refresh_room_ui() -> void:
 	var my_id := NetworkManager.get_local_peer_id()
 	var ips := NetworkManager.get_local_lan_ips()
 	if is_srv:
-		room_info_label.text = "👑 SALA HOST  |  IP LAN: %s  |  Puerto: %d  (Local: 127.0.0.1)" % [ips[0], NetworkManager.current_port]
+		room_info_label.text = "👑 SALA HOST  |  IP LAN: %s  |  Puerto: %d  (Misma PC: 127.0.0.1)" % [ips[0], NetworkManager.current_port]
 	else:
 		room_info_label.text = "🔗 CONECTADO COMO CLIENTE  |  Puerto: %d" % NetworkManager.current_port
 
@@ -311,3 +329,27 @@ func _refresh_room_ui() -> void:
 			btn_start.text = "⚔️ Iniciar Partida LAN"
 
 	_updating_ui = false
+
+var _last_press_ticks: Dictionary = {}
+
+func _make_touch_friendly(btn: Button) -> void:
+	if btn == null:
+		return
+	# En PC de escritorio los botones operan nativamente con ratón/teclado.
+	# Evita dobles llamadas cuando emulate_touch_from_mouse está activo.
+	if not (OS.has_feature("mobile") or OS.has_feature("android") or OS.has_feature("ios")):
+		return
+
+	btn.pressed.connect(func() -> void:
+		_last_press_ticks[btn] = Time.get_ticks_msec()
+	)
+	btn.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventScreenTouch and not event.pressed:
+			var now := Time.get_ticks_msec()
+			var last: int = _last_press_ticks.get(btn, -99999)
+			if now - last > 300:
+				_last_press_ticks[btn] = now
+				if not btn.disabled and Rect2(Vector2.ZERO, btn.size).has_point(event.position):
+					btn.accept_event()
+					btn.pressed.emit()
+	)

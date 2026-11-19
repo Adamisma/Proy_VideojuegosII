@@ -32,6 +32,12 @@ func _ready() -> void:
 	if quit_btn:
 		quit_btn.pressed.connect(_on_quit_pressed)
 
+	_make_touch_friendly(resume_btn)
+	_make_touch_friendly(save_btn)
+	_make_touch_friendly(restart_cp_btn)
+	_make_touch_friendly(main_menu_btn)
+	_make_touch_friendly(quit_btn)
+
 
 func open_menu() -> void:
 	# En partida LAN no congelamos el árbol para mantener viva la red ENet
@@ -85,3 +91,24 @@ func _on_main_menu_pressed() -> void:
 func _on_quit_pressed() -> void:
 	get_tree().paused = false
 	get_tree().quit()
+
+var _last_press_ticks: Dictionary = {}
+
+func _make_touch_friendly(btn: Button) -> void:
+	if btn == null:
+		return
+	if not (OS.has_feature("mobile") or OS.has_feature("android") or OS.has_feature("ios")):
+		return
+	btn.pressed.connect(func() -> void:
+		_last_press_ticks[btn] = Time.get_ticks_msec()
+	)
+	btn.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventScreenTouch and not event.pressed:
+			var now := Time.get_ticks_msec()
+			var last: int = _last_press_ticks.get(btn, -99999)
+			if now - last > 300:
+				_last_press_ticks[btn] = now
+				if not btn.disabled and Rect2(Vector2.ZERO, btn.size).has_point(event.position):
+					btn.accept_event()
+					btn.pressed.emit()
+	)

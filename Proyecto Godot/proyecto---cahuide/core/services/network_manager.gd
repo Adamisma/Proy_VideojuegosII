@@ -10,7 +10,7 @@ extends Node
 
 const DEFAULT_PORT: int = 7777
 const MAX_PLAYERS: int = 2
-const CONNECTION_TIMEOUT_SEC: float = 6.0
+const CONNECTION_TIMEOUT_SEC: float = 8.0
 
 const CHARACTERS: Dictionary = {
 	"cahuide": {
@@ -173,22 +173,60 @@ func get_ordered_peer_ids() -> Array[int]:
 
 
 func get_local_lan_ips() -> PackedStringArray:
-	var wifi_ips := PackedStringArray()
-	var other_ips := PackedStringArray()
+	var preferred_ips := PackedStringArray()
+	var other_private_ips := PackedStringArray()
+	var virtual_ips := PackedStringArray()
+
+	# Identificar adapters virtuales conocidos por nombre de interfaz
+	var virtual_detected_addrs: Dictionary = {}
+	var interfaces: Array = IP.get_local_interfaces()
+	for iface in interfaces:
+		if not iface is Dictionary:
+			continue
+		var iface_name: String = str(iface.get("name", "")).to_lower()
+		var friendly: String = str(iface.get("friendly", "")).to_lower()
+		var is_virtual_iface := false
+		for v_keyword in ["virtual", "vbox", "vmware", "radmin", "hamachi", "vethernet", "hyper-v", "wsl", "tailscale", "zerotier", "tap", "pseudo", "loopback"]:
+			if v_keyword in iface_name or v_keyword in friendly:
+				is_virtual_iface = true
+				break
+		if is_virtual_iface:
+			var addrs = iface.get("addresses", [])
+			for a in addrs:
+				virtual_detected_addrs[str(a)] = true
+
 	for addr in IP.get_local_addresses():
 		if addr.find(":") != -1:
 			continue # Ignorar IPv6 para simplicidad en LAN
-		if addr.begins_with("192.168."):
-			if not wifi_ips.has(addr):
-				wifi_ips.append(addr)
+		if addr.begins_with("127."):
+			continue # Loopback se maneja explícitamente
+
+		# Filtrar o clasificar IPs de adaptadores virtuales o no enrutables
+		var is_virtual: bool = virtual_detected_addrs.has(addr)
+		if addr.begins_with("192.168.56.") or addr.begins_with("192.168.99.") or addr.begins_with("26.") or addr.begins_with("25.") or addr.begins_with("169.254."):
+			is_virtual = true
+
+		if is_virtual:
+			if not virtual_ips.has(addr):
+				virtual_ips.append(addr)
+		elif addr.begins_with("192.168."):
+			if not preferred_ips.has(addr):
+				preferred_ips.append(addr)
 		elif addr.begins_with("10.") or _is_private_172(addr):
-			if not other_ips.has(addr):
-				other_ips.append(addr)
+			if not other_private_ips.has(addr):
+				other_private_ips.append(addr)
+
 	var result := PackedStringArray()
-	result.append_array(wifi_ips)
-	result.append_array(other_ips)
+	result.append_array(preferred_ips)
+	result.append_array(other_private_ips)
+
+	# Si no se encontró ninguna IP física real, entonces se permite la virtual como último recurso
+	if result.is_empty():
+		result.append_array(virtual_ips)
+
 	if result.is_empty():
 		result.append("127.0.0.1")
+
 	return result
 
 
@@ -399,9 +437,16 @@ func request_set_character(character_id: String) -> void:
 		_rpc_set_character.rpc_id(1, character_id)
 
 
+var _last_ready_toggle_ticks: int = -99999
+
 func request_toggle_ready() -> void:
 	if not is_multiplayer_active():
 		return
+	var now := Time.get_ticks_msec()
+	if now - _last_ready_toggle_ticks < 300:
+		return
+	_last_ready_toggle_ticks = now
+
 	var my_id := multiplayer.get_unique_id()
 	var current_ready: bool = bool(players.get(my_id, {}).get("ready", false))
 	var next_ready := not current_ready
