@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://cie28t1csn1wt"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_dovo2"]
+[ext_resource type="SpriteFrames" uid="uid://dd8f7g5k1s9pa" path="res://scenes/player/player_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://scripts/components/health_component.gd" id="3_health"]
+[ext_resource type="Script" path="res://scripts/components/hurtbox_component.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://scripts/components/hitbox_component.gd" id="5_hitbox"]
+[ext_resource type="Resource" path="res://resources/combat/player_sword_attack.tres" id="6_attack_data"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+radius = 16.0
+height = 54.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hurtbox"]
+radius = 18.0
+height = 56.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sword"]
+size = Vector2(48, 42)
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Visuals:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_land_squash"]
+resource_name = "land_squash"
+length = 0.12
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.12),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.18, 0.82), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jump_stretch"]
+resource_name = "jump_stretch"
+length = 0.15
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0.85, 1.18), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_hurt_flash"]
+resource_name = "hurt_flash"
+length = 0.2
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 0.25, 0.25, 0.5), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_player"]
+_data = {
+&"RESET": SubResource("Animation_reset"),
+&"hurt_flash": SubResource("Animation_hurt_flash"),
+&"jump_stretch": SubResource("Animation_jump_stretch"),
+&"land_squash": SubResource("Animation_land_squash")
+}
+
+[node name="Player" type="CharacterBody2D" unique_id=1816121793 groups=["player"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_dovo2")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals"]
+position = Vector2(0, -6)
+scale = Vector2(0.42, 0.42)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=447605681]
+position = Vector2(0, -3)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 100.0
+
+[node name="HurtboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxComponent"]
+position = Vector2(0, -3)
+shape = SubResource("CapsuleShape2D_hurtbox")
+
+[node name="AttackOrigin" type="Node2D" parent="."]
+
+[node name="SwordHitbox" type="Area2D" parent="AttackOrigin" node_paths=PackedStringArray("source")]
+collision_layer = 8
+collision_mask = 64
+script = ExtResource("5_hitbox")
+attack_data = ExtResource("6_attack_data")
+source = NodePath("../..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackOrigin/SwordHitbox"]
+position = Vector2(26, -6)
+shape = SubResource("RectangleShape2D_sword")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+limit_left = 0
+limit_top = 0
+limit_right = 1600
+limit_bottom = 720
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_player")
+}
+
+[node name="DebugLayer" type="CanvasLayer" parent="."]
+
+[node name="Margin" type="MarginContainer" parent="DebugLayer"]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 260.0
+offset_bottom = 110.0
+
+[node name="Panel" type="PanelContainer" parent="DebugLayer/Margin"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="DebugLayer/Margin/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Prefix" type="Label" parent="DebugLayer/Margin/Panel/HBox"]
+layout_mode = 2
+text = " FSM STATE: "
+
+[node name="StateLabel" type="Label" parent="DebugLayer/Margin/Panel/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "IDLE"
