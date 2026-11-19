@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d8m8pulsemat1"]
+
+[ext_resource type="Shader" path="res://shaders/pulse.gdshader" id="1_shader"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_shader")
+shader_parameter/speed = 3.0
+shader_parameter/intensity = 0.35
