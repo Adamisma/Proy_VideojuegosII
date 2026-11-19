@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://df7w8k3p5n7xc"]
+
+[ext_resource type="Script" path="res://scripts/environment/dynamic_crate.gd" id="1_crate"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_box"]
+size = Vector2(56, 56)
+
+[node name="DynamicCrate" type="AnimatableBody2D"]
+collision_layer = 1
+collision_mask = 6
+script = ExtResource("1_crate")
+move_distance = 140.0
+move_speed = 45.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_box")
+
+[node name="VisualBox" type="ColorRect" parent="."]
+offset_left = -28.0
+offset_top = -28.0
+offset_right = 28.0
+offset_bottom = 28.0
+color = Color(0.82, 0.55, 0.22, 1)
+
+[node name="InnerBox" type="ColorRect" parent="VisualBox"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 52.0
+offset_bottom = 52.0
+color = Color(0.65, 0.4, 0.15, 1)
+
+[node name="Label" type="Label" parent="VisualBox"]
+layout_mode = 0
+offset_top = 18.0
+offset_right = 56.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "CRATE"
+horizontal_alignment = 1
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+radius = 36.0
+avoidance_enabled = true

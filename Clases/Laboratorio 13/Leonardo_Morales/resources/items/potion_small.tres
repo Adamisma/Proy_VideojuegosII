@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://itempotion13"]
+
+[ext_resource type="Script" path="res://core/data/item_data.gd" id="1_idata"]
+[ext_resource type="Texture2D" uid="uid://bdj6jnylhj65b" path="res://icon.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_idata")
+item_id = &"potion_small"
+display_name = "Poción Menor"
+description = "Restaura 35 puntos de salud instantáneamente."
+icon = ExtResource("2_icon")
+max_stack = 10
+consumable = true
+heal_amount = 35
+score_amount = 0

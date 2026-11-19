@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://e4m8dag11d"]
+
+[ext_resource type="Script" path="res://core/data/weapon_data.gd" id="1_wdata"]
+[ext_resource type="PackedScene" uid="uid://c2k9k3p5n7xg1" path="res://scenes/vfx/fx_hit_sparks.tscn" id="2_sparks"]
+
+[resource]
+script = ExtResource("1_wdata")
+weapon_name = "Daga Ligera"
+damage = 15
+knockback_force = 140.0
+attack_cooldown = 0.2
+hit_vfx = ExtResource("2_sparks")

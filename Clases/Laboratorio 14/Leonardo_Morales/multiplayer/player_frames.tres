@@ -1,0 +1,59 @@
+[gd_resource type="SpriteFrames" load_steps=12 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/player/animations/idle_0.png" id="1_idle0"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/idle_1.png" id="2_idle1"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/idle_2.png" id="3_idle2"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/idle_3.png" id="4_idle3"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_0.png" id="5_run0"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_1.png" id="6_run1"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_2.png" id="7_run2"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_3.png" id="8_run3"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_4.png" id="9_run4"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_5.png" id="10_run5"]
+[ext_resource type="Texture2D" path="res://assets/player/animations/run_6.png" id="11_run6"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_idle0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_idle1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_idle2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_idle3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_run0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_run1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_run2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_run3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_run4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_run5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_run6")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
