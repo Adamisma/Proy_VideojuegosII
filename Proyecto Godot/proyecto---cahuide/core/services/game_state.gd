@@ -11,6 +11,23 @@ var score: int = 0
 var enemies_killed: int = 0
 var collected_relics: Array[StringName] = []
 
+func _ready() -> void:
+	_configure_mobile_inputs()
+
+func _configure_mobile_inputs() -> void:
+	# En móvil, desacoplar los clics emulados de mouse de las acciones 'attack' y 'shoot'
+	# para evitar ataques involuntarios al tocar el salto o la cruceta de movimiento.
+	# Los botones táctiles en pantalla (TouchScreenButton) emiten las acciones directamente.
+	if OS.has_feature("mobile") or OS.has_feature("android") or OS.has_feature("ios"):
+		strip_mouse_combat_events()
+
+## Desacopla los eventos de mouse de attack y shoot
+static func strip_mouse_combat_events() -> void:
+	for action in ["attack", "shoot"]:
+		for ev in InputMap.action_get_events(action):
+			if ev is InputEventMouseButton:
+				InputMap.action_erase_event(action, ev)
+
 func start_new_game() -> void:
 	current_level_id = &"level_01"
 	active_checkpoint_id = &""

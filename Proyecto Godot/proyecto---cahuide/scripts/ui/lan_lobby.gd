@@ -158,6 +158,11 @@ func _on_join_pressed() -> void:
 	var player_name := name_input.text.strip_edges()
 	if player_name.is_empty():
 		player_name = "Jugador 2"
+
+	if ip.is_empty():
+		_set_status("Ingresa la IP LAN del Host (ej: 192.168.X.X) que aparece en el otro celular.", true)
+		return
+
 	btn_host.disabled = true
 	btn_join.disabled = true
 	var err := NetworkManager.join_game(ip, port, player_name)

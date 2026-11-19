@@ -173,13 +173,20 @@ func get_ordered_peer_ids() -> Array[int]:
 
 
 func get_local_lan_ips() -> PackedStringArray:
-	var result := PackedStringArray()
+	var wifi_ips := PackedStringArray()
+	var other_ips := PackedStringArray()
 	for addr in IP.get_local_addresses():
 		if addr.find(":") != -1:
 			continue # Ignorar IPv6 para simplicidad en LAN
-		if addr.begins_with("192.168.") or addr.begins_with("10.") or _is_private_172(addr):
-			if not result.has(addr):
-				result.append(addr)
+		if addr.begins_with("192.168."):
+			if not wifi_ips.has(addr):
+				wifi_ips.append(addr)
+		elif addr.begins_with("10.") or _is_private_172(addr):
+			if not other_ips.has(addr):
+				other_ips.append(addr)
+	var result := PackedStringArray()
+	result.append_array(wifi_ips)
+	result.append_array(other_ips)
 	if result.is_empty():
 		result.append("127.0.0.1")
 	return result

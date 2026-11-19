@@ -80,6 +80,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	# Atajo de desarrollo: Tecla F1 alterna los controles táctiles en PC para pruebas
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
 		force_desktop_touch = not force_desktop_touch
+		if force_desktop_touch:
+			GameState.strip_mouse_combat_events()
 		update_controls_visibility()
 		var ui_ctrl := get_parent() as UIController
 		if ui_ctrl:
