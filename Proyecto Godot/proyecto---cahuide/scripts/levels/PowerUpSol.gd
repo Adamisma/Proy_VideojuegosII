@@ -24,10 +24,32 @@ func _start_floating_animation() -> void:
 	tween.tween_property(sprite, "position:y", start_y - float_distance, float_speed).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(sprite, "position:y", start_y, float_speed).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
+var _picked_up: bool = false
+
 func _on_body_entered(body: Node2D) -> void:
+	if _picked_up:
+		return
 	if body.is_in_group("player") and body.has_method("apply_powerup_sol"):
+		if NetworkManager and NetworkManager.is_multiplayer_active():
+			if not multiplayer.is_server():
+				return
+			var picker_id := body.get_multiplayer_authority()
+			_rpc_pickup_powerup.rpc(picker_id)
+			return
+		_picked_up = true
 		body.apply_powerup_sol()
 		_play_pickup_effect()
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_pickup_powerup(picker_peer_id: int) -> void:
+	if _picked_up:
+		return
+	_picked_up = true
+	for node in get_tree().get_nodes_in_group("player"):
+		if node is Player and node.get_multiplayer_authority() == picker_peer_id and node.is_local_controlled():
+			node.apply_powerup_sol()
+			break
+	_play_pickup_effect()
 
 func _play_pickup_effect() -> void:
 	# Deshabilitar colisiones para evitar doble recogida

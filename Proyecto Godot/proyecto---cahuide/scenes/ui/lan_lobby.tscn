@@ -1,0 +1,391 @@
+[gd_scene load_steps=3 format=3 uid="uid://cahuide_lan_lobby"]
+
+[ext_resource type="Script" path="res://scripts/ui/lan_lobby.gd" id="1_lobby"]
+[ext_resource type="Texture2D" uid="uid://lur55k020j4l" path="res://assets/backgrounds/escenario_dia.jpg" id="2_bg"]
+
+[node name="LanLobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.04, 0.06, 0.68)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HeaderBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
+theme_override_font_sizes/font_size = 38
+text = "🌐 MULTIJUGADOR LAN (COOPERATIVO 2 JUGADORES)"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer/HeaderBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 16
+text = "Conéctate en red local para defender Sacsayhuamán juntos"
+horizontal_alignment = 1
+
+[node name="ContentArea" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ConnectionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentArea"]
+custom_minimum_size = Vector2(880, 420)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="NameRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="NameLbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/NameRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Tu nombre:"
+
+[node name="NameInput" type="LineEdit" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/NameRow"]
+custom_minimum_size = Vector2(280, 38)
+layout_mode = 2
+text = "Guerrero"
+placeholder_text = "Ej: Cahuide"
+max_length = 18
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox"]
+layout_mode = 2
+
+[node name="Columns" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 28
+
+[node name="HostBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="HostTitle" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "👑 Crear Partida (Host)"
+horizontal_alignment = 1
+
+[node name="HostDesc" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Crea una sala LAN en tu equipo y comparte tu IP con el 2do jugador."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="LocalIpLabel" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Tu IP LAN: detectando..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HostPortRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Lbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox/HostPortRow"]
+layout_mode = 2
+text = "Puerto: "
+
+[node name="HostPortInput" type="LineEdit" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox/HostPortRow"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "7777"
+
+[node name="BtnHost" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/HostBox"]
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "👑 Crear Partida"
+
+[node name="VSeparator" type="VSeparator" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns"]
+layout_mode = 2
+
+[node name="JoinBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="JoinTitle" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "🔗 Unirse a Partida (Cliente)"
+horizontal_alignment = 1
+
+[node name="JoinDesc" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Ingresa la IP del Host (usa 127.0.0.1 para probar en esta misma PC)."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="JoinIpRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Lbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox/JoinIpRow"]
+layout_mode = 2
+text = "IP Host: "
+
+[node name="JoinIpInput" type="LineEdit" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox/JoinIpRow"]
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "Ej: 192.168.1.15"
+
+[node name="JoinPortRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Lbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox/JoinPortRow"]
+layout_mode = 2
+text = "Puerto:  "
+
+[node name="JoinPortInput" type="LineEdit" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox/JoinPortRow"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "7777"
+
+[node name="BtnJoin" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox/Columns/JoinBox"]
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "🔗 Unirse a Partida"
+
+[node name="BtnBackMenu" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/ConnectionPanel/VBox"]
+custom_minimum_size = Vector2(240, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "← Volver al Menú Principal"
+
+[node name="RoomPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentArea"]
+visible = false
+custom_minimum_size = Vector2(920, 460)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RoomInfoLabel" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "SALA LAN"
+horizontal_alignment = 1
+
+[node name="PlayersRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="P1Card" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P1Card"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P1Name" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P1Card/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
+theme_override_font_sizes/font_size = 20
+text = "P1 (Host)"
+
+[node name="P1Char" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P1Card/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Personaje: Cahuide"
+
+[node name="P1Ready" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P1Card/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "⏳ No listo"
+
+[node name="P2Card" type="PanelContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P2Card"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P2Name" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P2Card/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "P2 (Cliente): Esperando..."
+
+[node name="P2Char" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P2Card/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Sin conectar"
+
+[node name="P2Ready" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/PlayersRow/P2Card/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "— Sin conectar"
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox"]
+layout_mode = 2
+
+[node name="ConfigRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+
+[node name="CharBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="CharTitle" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/CharBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "🛡️ Tu Personaje"
+
+[node name="CharSelect" type="OptionButton" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/CharBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="CharDesc" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/CharBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.88, 0.88, 1)
+theme_override_font_sizes/font_size = 14
+text = "Descripción del personaje."
+autowrap_mode = 2
+
+[node name="OptionsBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="OptTitle" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "⚙️ Opciones de Partida"
+
+[node name="MapRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Lbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox/MapRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Mapa:"
+
+[node name="MapSelect" type="OptionButton" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox/MapRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DiffRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Lbl" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox/DiffRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Dificultad:"
+
+[node name="DiffSelect" type="OptionButton" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox/DiffRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionsHint" type="Label" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ConfigRow/OptionsBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+text = "Balance cooperativo estándar."
+autowrap_mode = 2
+
+[node name="ActionsRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnReady" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ActionsRow"]
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "✔ ¡Estoy Listo!"
+
+[node name="BtnStart" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ActionsRow"]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+disabled = true
+theme_override_font_sizes/font_size = 18
+text = "⚔️ Iniciar Partida LAN"
+
+[node name="BtnLeaveRoom" type="Button" parent="MarginContainer/VBoxContainer/ContentArea/RoomPanel/VBox/ActionsRow"]
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "🚪 Salir de Sala"
+
+[node name="StatusPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer/StatusPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Listo para conectar por red local (LAN)."
+horizontal_alignment = 1
+autowrap_mode = 2

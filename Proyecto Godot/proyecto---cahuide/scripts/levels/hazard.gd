@@ -18,13 +18,20 @@ func _on_body_entered(body: Node2D) -> void:
 	_apply_hazard_damage(body)
 
 func _apply_hazard_damage(body: Node2D) -> void:
-	if body and body.has_method("take_direct_damage"):
-		var dir_x: float = sign(body.global_position.x - global_position.x)
-		if dir_x == 0.0:
-			dir_x = -1.0
-		body.take_direct_damage(damage, Vector2(dir_x * 160.0, knockback_up))
+	if body == null or not body.has_method("take_direct_damage"):
+		return
+	# En multijugador, cada instancia procesa sus propias colisiones con trampas para evitar doble daño
+	if body is Player and not body.is_local_controlled():
+		return
+	var dir_x: float = sign(body.global_position.x - global_position.x)
+	if dir_x == 0.0:
+		dir_x = -1.0
+	body.take_direct_damage(damage, Vector2(dir_x * 160.0, knockback_up))
 
 func _on_area_entered(area: Area2D) -> void:
 	if area is Hurtbox:
+		var owner_node := area.get_parent()
+		if owner_node is Player and not owner_node.is_local_controlled():
+			return
 		var hurtbox := area as Hurtbox
 		hurtbox.take_damage(damage, Vector2(0, knockback_up))

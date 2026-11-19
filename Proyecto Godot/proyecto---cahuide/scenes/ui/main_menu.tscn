@@ -94,6 +94,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "⚔️ Nueva Partida"
 
+[node name="BtnMultiplayer" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "🌐 Multijugador LAN"
+
 [node name="BtnControls" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer" unique_id=1222730709]
 custom_minimum_size = Vector2(260, 48)
 layout_mode = 2

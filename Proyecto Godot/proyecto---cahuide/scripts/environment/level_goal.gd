@@ -27,14 +27,31 @@ func _on_body_entered(body: Node2D) -> void:
 	if is_reached or not body.is_in_group("player"):
 		return
 
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		if not multiplayer.is_server():
+			return
+		_rpc_trigger_goal.rpc()
+		return
+
+	_do_trigger_goal()
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_trigger_goal() -> void:
+	_do_trigger_goal()
+
+func _do_trigger_goal() -> void:
+	if is_reached:
+		return
 	is_reached = true
 	goal_reached.emit()
 
 	if GameState:
 		GameState.add_score(bonus_score)
 		GameState.active_checkpoint_id = &""
+		if NetworkManager and NetworkManager.is_multiplayer_active() and multiplayer.is_server():
+			NetworkManager.host_broadcast_score(GameState.score, GameState.enemies_killed)
 
-	if SaveManager:
+	if SaveManager and (NetworkManager == null or not NetworkManager.is_multiplayer_active()):
 		SaveManager.save_game()
 
 	if EventBus:

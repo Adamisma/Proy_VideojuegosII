@@ -13,6 +13,7 @@ extends Control
 
 @onready var btn_play: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnPlay
 @onready var btn_continue: Button = get_node_or_null("MarginContainer/VBoxContainer/ButtonsContainer/BtnContinue")
+@onready var btn_multiplayer: Button = get_node_or_null("MarginContainer/VBoxContainer/ButtonsContainer/BtnMultiplayer")
 @onready var btn_controls: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnControls
 @onready var btn_quit: Button = $MarginContainer/VBoxContainer/ButtonsContainer/BtnQuit
 @onready var controls_dialog: PanelContainer = $ControlsDialog
@@ -20,11 +21,15 @@ extends Control
 @onready var ambient_music_player: AudioStreamPlayer = get_node_or_null("AmbientMusic")
 
 func _ready() -> void:
+	if NetworkManager and NetworkManager.is_lan_session:
+		NetworkManager.disconnect_session(false)
 	_setup_menu_music()
 	controls_dialog.visible = false
 	btn_play.pressed.connect(_on_btn_play_pressed)
 	btn_controls.pressed.connect(_on_btn_controls_pressed)
 	btn_quit.pressed.connect(_on_btn_quit_pressed)
+	if btn_multiplayer:
+		btn_multiplayer.pressed.connect(_on_btn_multiplayer_pressed)
 
 	var close_btn := get_node_or_null("ControlsDialog/VBoxContainer/BtnCloseControls") as Button
 	if close_btn:
@@ -76,6 +81,12 @@ func _on_btn_continue_pressed() -> void:
 			get_tree().change_scene_to_file("res://scenes/levels/level_01.tscn")
 	else:
 		_on_btn_play_pressed()
+
+func _on_btn_multiplayer_pressed() -> void:
+	if SceneFlow:
+		SceneFlow.change_to("res://scenes/ui/lan_lobby.tscn", 0.3)
+	else:
+		get_tree().change_scene_to_file("res://scenes/ui/lan_lobby.tscn")
 
 func _on_btn_controls_pressed() -> void:
 	controls_dialog.visible = true

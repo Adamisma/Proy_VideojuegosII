@@ -10,6 +10,8 @@ const DAMAGE_FLASH_MAT: Material = preload("res://materials/mat_damage_flash.tre
 const DISSOLVE_MAT: Material = preload("res://materials/mat_dissolve.tres")
 const DEATH_BURST_SCENE: PackedScene = preload("res://scenes/vfx/fx_death_burst.tscn")
 const HIT_SPARKS_SCENE: PackedScene = preload("res://scenes/vfx/fx_hit_sparks.tscn")
+const ENEMY_ANIM_NAMES: PackedStringArray = ["idle", "walk", "run", "attack", "shoot", "hurt", "dead"]
+const ENEMY_SYNC_INTERVAL: float = 0.05 # 20 Hz ligero desde el Host
 
 @export_category("Enemy Stats (HU03)")
 @export var enemy_name: String = "Soldado Español"
@@ -48,9 +50,27 @@ var _defeat_signal_emitted: bool = false
 var flash_material: ShaderMaterial
 var dissolve_material: ShaderMaterial
 
+# Sincronización LAN (Host-Authoritative)
+var _net_sync_accum: float = 0.0
+var _net_target_pos: Vector2 = Vector2.ZERO
+var _net_target_refresh: float = 0.0
+
+func _is_network_client() -> bool:
+	return NetworkManager != null and NetworkManager.is_multiplayer_active() and not multiplayer.is_server()
+
 func _ready() -> void:
 	add_to_group("enemies")
+
+	# Aplicar multiplicadores de dificultad si estamos en partida LAN
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		var diff: Dictionary = NetworkManager.get_difficulty_data()
+		max_health = maxi(10, int(round(float(max_health) * float(diff.get("enemy_hp_mult", 1.0)))))
+		var spd_mult := float(diff.get("enemy_speed_mult", 1.0))
+		patrol_speed *= spd_mult
+		chase_speed *= spd_mult
+
 	health = max_health
+	_net_target_pos = global_position
 
 	if DAMAGE_FLASH_MAT:
 		flash_material = DAMAGE_FLASH_MAT.duplicate() as ShaderMaterial
@@ -73,6 +93,18 @@ func _ready() -> void:
 	if hurtbox:
 		hurtbox.is_enemy_hurtbox = true
 		hurtbox.received_damage.connect(_on_received_damage)
+
+	# En Cliente LAN: el Host es dueño de la IA, físicas y ataques; el Cliente solo interpola
+	if _is_network_client():
+		if state_machine:
+			state_machine.set_process(false)
+			state_machine.set_physics_process(false)
+		if detection_area:
+			detection_area.monitoring = false
+		if attack_area:
+			attack_area.monitoring = false
+		set_facing(direction)
+		return
 		
 	# Conectar áreas de detección
 	if detection_area:
@@ -89,6 +121,49 @@ func _ready() -> void:
 		
 	# Orientación inicial
 	set_facing(direction)
+
+func _physics_process(delta: float) -> void:
+	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+		return
+
+	if _is_network_client():
+		if is_dead:
+			return
+		if global_position.distance_to(_net_target_pos) > 160.0:
+			global_position = _net_target_pos
+		else:
+			global_position = global_position.lerp(_net_target_pos, clampf(delta * 16.0, 0.0, 1.0))
+		return
+
+	# En el Host: reevaluar jugador vivo más cercano y emitir snapshots ligeros
+	_net_target_refresh += delta
+	if _net_target_refresh >= 0.4 and not is_dead:
+		_net_target_refresh = 0.0
+		_refresh_closest_player()
+
+	_net_sync_accum += delta
+	if _net_sync_accum >= ENEMY_SYNC_INTERVAL:
+		_net_sync_accum = 0.0
+		var anim_idx := _get_enemy_anim_index()
+		_rpc_sync_enemy_state.rpc(global_position, direction, anim_idx, health, is_dead)
+
+func _refresh_closest_player() -> void:
+	var best_player: CharacterBody2D = null
+	var best_dist: float = 520.0 if is_ranged else 340.0
+	for node in get_tree().get_nodes_in_group("player"):
+		var p := node as CharacterBody2D
+		if p == null or not is_instance_valid(p):
+			continue
+		if "is_dead" in p and p.is_dead:
+			continue
+		var d := global_position.distance_to(p.global_position)
+		if d < best_dist:
+			best_dist = d
+			best_player = p
+	if best_player != null:
+		player = best_player
+	elif player != null and ("is_dead" in player and player.is_dead):
+		player = null
 
 func apply_gravity(delta: float) -> void:
 	if not is_on_floor():
@@ -148,25 +223,34 @@ func _execute_melee_attack() -> void:
 func _shoot_projectile() -> void:
 	if not projectile_scene or not can_see_player():
 		return
-		
-	var proj = projectile_scene.instantiate() as Projectile
+
+	var shoot_dir := (player.global_position - global_position).normalized()
+	var spawn_pos := global_position + Vector2(direction * 40.0, -10.0)
+	_spawn_enemy_projectile(spawn_pos, shoot_dir, projectile_speed, true)
+
+	if NetworkManager and NetworkManager.is_multiplayer_active() and multiplayer.is_server():
+		_rpc_spawn_enemy_projectile.rpc(spawn_pos, shoot_dir, projectile_speed)
+
+func _spawn_enemy_projectile(spawn_pos: Vector2, shoot_dir: Vector2, spd: float, authoritative: bool) -> void:
+	if not projectile_scene:
+		return
+	var proj := projectile_scene.instantiate() as Projectile
 	if not proj:
 		return
-		
 	proj.is_enemy_projectile = true
-	proj.damage = ranged_damage # Se asigna 2 de daño (1 corazón entero)
-	proj.speed = projectile_speed
-	
-	# Dirección apuntando hacia Cahuide
-	var shoot_dir = (player.global_position - global_position).normalized()
+	proj.damage = ranged_damage if authoritative else 0
+	proj.speed = spd
 	proj.set_direction(shoot_dir)
-	
-	# Aparecer delante del ballestero
-	proj.global_position = global_position + Vector2(direction * 40.0, -10.0)
-	
+	proj.global_position = spawn_pos
+	if not authoritative:
+		# Visual en cliente; el Host aplica el daño real para evitar impactos duplicados
+		proj.set_deferred("monitoring", false)
+		proj.set_deferred("monitorable", false)
 	get_tree().current_scene.add_child(proj)
 
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
+	if _is_network_client():
+		return
 	print(
 		"[DAÑO ENEMIGO - HURTBOX] ",
 		enemy_name,
@@ -175,6 +259,8 @@ func _on_received_damage(amount: int, knockback: Vector2) -> void:
 	take_direct_damage(amount, knockback)
 
 func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
+	if _is_network_client():
+		return
 	if is_dead or health <= 0:
 		return
 
@@ -206,6 +292,9 @@ func take_direct_damage(amount: int, knockback: Vector2 = Vector2.ZERO) -> void:
 	else:
 		if state_machine:
 			state_machine.transition_to("hurt")
+
+	if NetworkManager and NetworkManager.is_multiplayer_active() and multiplayer.is_server():
+		_rpc_enemy_damaged.rpc(health, is_dead, knockback)
 
 func _play_damage_flash() -> void:
 	if flash_material:
@@ -274,8 +363,53 @@ func emit_defeat() -> void:
 	enemy_defeated.emit(self)
 	if GameState:
 		GameState.register_enemy_kill(score_value)
+		if NetworkManager and NetworkManager.is_multiplayer_active() and multiplayer.is_server():
+			NetworkManager.host_broadcast_score(GameState.score, GameState.enemies_killed)
 	elif EventBus:
 		EventBus.enemy_defeated.emit(score_value)
+
+func _get_enemy_anim_index() -> int:
+	if animated_sprite == null:
+		return 0
+	var idx := ENEMY_ANIM_NAMES.find(String(animated_sprite.animation))
+	return idx if idx >= 0 else 0
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func _rpc_sync_enemy_state(pos: Vector2, dir: float, anim_idx: int, hp: int, dead_flag: bool) -> void:
+	_net_target_pos = pos
+	set_facing(dir)
+	health = hp
+	if health_bar:
+		health_bar.value = hp
+	if animated_sprite and anim_idx >= 0 and anim_idx < ENEMY_ANIM_NAMES.size():
+		var target_anim := ENEMY_ANIM_NAMES[anim_idx]
+		if animated_sprite.animation != target_anim and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(target_anim):
+			animated_sprite.play(target_anim)
+	if dead_flag and not is_dead:
+		is_dead = true
+		disable_collisions()
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_enemy_damaged(new_hp: int, dead_flag: bool, knockback: Vector2) -> void:
+	health = new_hp
+	if health_bar:
+		health_bar.value = new_hp
+	_play_damage_flash()
+	_spawn_hit_sparks(knockback)
+	if dead_flag and not is_dead:
+		is_dead = true
+		disable_collisions()
+		_spawn_death_burst()
+		play_animation("dead")
+		if EventBus:
+			EventBus.enemy_defeated.emit(score_value)
+		var tween := create_tween()
+		tween.tween_property(self, "modulate:a", 0.0, 0.7)
+		tween.tween_callback(queue_free)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_spawn_enemy_projectile(spawn_pos: Vector2, shoot_dir: Vector2, spd: float) -> void:
+	_spawn_enemy_projectile(spawn_pos, shoot_dir, spd, false)
 
 func _on_player_entered_detection(body: Node2D) -> void:
 	if body.is_in_group("player") and body is CharacterBody2D:

@@ -20,7 +20,11 @@ extends Node2D
 @export var ambient_music: AudioStream
 @export var ambient_volume_db: float = -6.0
 
+const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
+
 var level_finished: bool = false
+var local_player: Player = null
+var net_players: Dictionary = {} # peer_id: int -> Player
 
 @onready var player: Player = get_node_or_null("Player")
 @onready var player_spawn: Marker2D = get_node_or_null("PlayerSpawn")
@@ -42,13 +46,22 @@ func _ready() -> void:
 
 	_setup_ambient_music()
 	_register_checkpoints()
-	_spawn_player_from_state()
 
-	# Conexión del jugador
-	if player:
-		player.health_changed.connect(_on_player_health_changed)
-		player.player_died.connect(_on_player_died)
-		player.respawn_requested.connect(respawn_player_at_checkpoint)
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		_setup_multiplayer_players()
+		if not NetworkManager.peer_left_match.is_connected(_on_peer_left_match):
+			NetworkManager.peer_left_match.connect(_on_peer_left_match)
+		if not NetworkManager.host_disconnected_mid_match.is_connected(_on_host_disconnected_mid_match):
+			NetworkManager.host_disconnected_mid_match.connect(_on_host_disconnected_mid_match)
+	else:
+		_spawn_player_from_state()
+		local_player = player
+
+	# Conexión del jugador local
+	if local_player:
+		local_player.health_changed.connect(_on_player_health_changed)
+		local_player.player_died.connect(_on_player_died)
+		local_player.respawn_requested.connect(respawn_player_at_checkpoint)
 
 	# Conexión con HUD / UI
 	var active_hud: HUD = hud
@@ -58,8 +71,8 @@ func _ready() -> void:
 	if active_hud:
 		active_hud.restart_requested.connect(_on_restart_level)
 		active_hud.main_menu_requested.connect(_on_return_main_menu)
-		if player:
-			active_hud.bind_player(player)
+		if local_player:
+			active_hud.bind_player(local_player)
 		if level_objective != "":
 			active_hud.set_objective_text(level_objective)
 
@@ -83,6 +96,67 @@ func _ready() -> void:
 		)
 
 
+func _exit_tree() -> void:
+	if EventBus and EventBus.level_completed.is_connected(_on_eventbus_level_completed):
+		EventBus.level_completed.disconnect(_on_eventbus_level_completed)
+	if NetworkManager:
+		if NetworkManager.peer_left_match.is_connected(_on_peer_left_match):
+			NetworkManager.peer_left_match.disconnect(_on_peer_left_match)
+		if NetworkManager.host_disconnected_mid_match.is_connected(_on_host_disconnected_mid_match):
+			NetworkManager.host_disconnected_mid_match.disconnect(_on_host_disconnected_mid_match)
+
+
+func _get_active_spawn_pos() -> Vector2:
+	var spawn_pos: Vector2 = player_spawn.global_position if player_spawn else Vector2(180, 616)
+	var cp_id: StringName = GameState.active_checkpoint_id if GameState else &""
+	if cp_id != &"" and checkpoint_positions.has(cp_id):
+		spawn_pos = checkpoint_positions[cp_id]
+	return spawn_pos
+
+
+func _setup_multiplayer_players() -> void:
+	net_players.clear()
+	var spawn_pos := _get_active_spawn_pos()
+
+	# El nodo "Player" existente en la escena corresponde al Host (peer_id = 1)
+	if player:
+		var p1_info: Dictionary = NetworkManager.get_player_info(1)
+		player.configure_network_player(
+			1,
+			str(p1_info.get("name", "Jugador 1")),
+			str(p1_info.get("character", "cahuide")),
+			1
+		)
+		player.respawn_at(spawn_pos)
+		net_players[1] = player
+
+	# Instanciar al 2do jugador con el MISMO nombre de nodo en Host y Cliente para sincronía RPC
+	for pid in NetworkManager.get_ordered_peer_ids():
+		if pid == 1:
+			continue
+		var p2 := PLAYER_SCENE.instantiate() as Player
+		if p2 == null:
+			continue
+		p2.name = "Player_%d" % pid
+		var p2_info: Dictionary = NetworkManager.get_player_info(pid)
+		p2.configure_network_player(
+			pid,
+			str(p2_info.get("name", "Jugador 2")),
+			str(p2_info.get("character", "chasqui")),
+			2
+		)
+		add_child(p2)
+		p2.respawn_at(spawn_pos + Vector2(56.0, 0.0))
+		net_players[pid] = p2
+
+	var my_id := NetworkManager.get_local_peer_id()
+	local_player = net_players.get(my_id, player)
+	var ui_ctrl := ui_controller if ui_controller else (get_node_or_null("UIController") as UIController)
+	if ui_ctrl:
+		var diff_name := str(NetworkManager.get_difficulty_data().get("name", "Normal"))
+		ui_ctrl.show_toast("🌐 Partida LAN iniciada (Dificultad: %s)" % diff_name, Color(0.45, 0.95, 1.0))
+
+
 func _register_checkpoints() -> void:
 	checkpoint_positions.clear()
 	for node in get_tree().get_nodes_in_group("checkpoint"):
@@ -95,16 +169,15 @@ func _register_checkpoints() -> void:
 
 
 func _spawn_player_from_state() -> void:
-	if player == null:
+	var target_player: Player = local_player if local_player else player
+	if target_player == null:
 		return
 
-	var spawn_pos: Vector2 = player_spawn.global_position if player_spawn else Vector2(180, 616)
-	var cp_id: StringName = GameState.active_checkpoint_id if GameState else &""
+	var spawn_pos := _get_active_spawn_pos()
+	if NetworkManager and NetworkManager.is_multiplayer_active() and target_player.player_slot == 2:
+		spawn_pos += Vector2(56.0, 0.0)
 
-	if cp_id != &"" and checkpoint_positions.has(cp_id):
-		spawn_pos = checkpoint_positions[cp_id]
-
-	player.respawn_at(spawn_pos)
+	target_player.respawn_at(spawn_pos)
 
 
 func _setup_relics() -> void:
@@ -133,8 +206,9 @@ func _process(delta: float) -> void:
 		respawn_player_at_checkpoint()
 
 	# Detección de caída al vacío: reaparece en checkpoint
-	if player and player.global_position.y > 850.0:
-		player.take_direct_damage(2) # Pierde 1 corazón de daño por caída
+	var target_player: Player = local_player if local_player else player
+	if target_player and is_instance_valid(target_player) and target_player.global_position.y > 850.0:
+		target_player.take_direct_damage(2) # Pierde 1 corazón de daño por caída
 		respawn_player_at_checkpoint()
 
 	# Desplazamiento sutil del cielo en Parallax
@@ -149,6 +223,15 @@ func _on_player_health_changed(new_health: int, max_hp: int) -> void:
 
 
 func _on_player_died() -> void:
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		var ui_ctrl := ui_controller if ui_controller else (get_node_or_null("UIController") as UIController)
+		if ui_ctrl:
+			ui_ctrl.show_toast("💀 Has caído... Reapareciendo en 3s (o pulsa [R])", Color(1.0, 0.45, 0.4))
+		await get_tree().create_timer(3.0).timeout
+		if is_inside_tree() and local_player and is_instance_valid(local_player) and local_player.is_dead:
+			respawn_player_at_checkpoint()
+		return
+
 	var active_hud: HUD = hud if hud else (ui_controller.get_node_or_null("HUD") as HUD if ui_controller else null)
 	if active_hud:
 		active_hud.show_game_over()
@@ -196,6 +279,13 @@ func _on_goal_reached() -> void:
 
 	await get_tree().create_timer(transition_delay).timeout
 
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		# En LAN solo el Host ordena el cambio sincronizado de nivel
+		if multiplayer.is_server():
+			var next_id: StringName = &"level_02" if next_level_path.find("level_02") != -1 else &"level_01"
+			NetworkManager.host_broadcast_level_change(next_id)
+		return
+
 	if SceneFlow:
 		SceneFlow.change_to(next_level_path, 0.6)
 	elif next_level_path != "":
@@ -237,10 +327,36 @@ func _on_restart_level() -> void:
 
 
 func _on_return_main_menu() -> void:
+	if NetworkManager and NetworkManager.is_lan_session:
+		NetworkManager.disconnect_session(false)
 	if SceneFlow:
 		SceneFlow.change_to("res://scenes/ui/main_menu.tscn", 0.35)
 	else:
 		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+
+
+func _on_peer_left_match(disconnected_peer_id: int, player_name: String) -> void:
+	if net_players.has(disconnected_peer_id):
+		var remote_node := net_players[disconnected_peer_id] as Node
+		if is_instance_valid(remote_node):
+			remote_node.queue_free()
+		net_players.erase(disconnected_peer_id)
+
+	var ui_ctrl := ui_controller if ui_controller else (get_node_or_null("UIController") as UIController)
+	if ui_ctrl:
+		ui_ctrl.show_toast("⚠️ %s se desconectó. Puedes continuar solo." % player_name, Color(1.0, 0.55, 0.3))
+
+
+func _on_host_disconnected_mid_match() -> void:
+	var ui_ctrl := ui_controller if ui_controller else (get_node_or_null("UIController") as UIController)
+	if ui_ctrl:
+		ui_ctrl.show_toast("⚠️ Conexión perdida con el Host. Volviendo al Lobby...", Color(1.0, 0.38, 0.38))
+	await get_tree().create_timer(1.8).timeout
+	if is_inside_tree():
+		if SceneFlow:
+			SceneFlow.change_to("res://scenes/ui/lan_lobby.tscn", 0.35)
+		else:
+			get_tree().change_scene_to_file("res://scenes/ui/lan_lobby.tscn")
 
 func _setup_ambient_music() -> void:
 	if ambient_music == null:

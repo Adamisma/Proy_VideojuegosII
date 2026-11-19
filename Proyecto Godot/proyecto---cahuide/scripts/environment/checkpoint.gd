@@ -26,6 +26,21 @@ func _on_body_entered(body: Node2D) -> void:
 	if is_active or not body.is_in_group("player"):
 		return
 
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		if not multiplayer.is_server():
+			return
+		_rpc_activate_checkpoint.rpc()
+		return
+
+	_do_activate_checkpoint()
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_activate_checkpoint() -> void:
+	_do_activate_checkpoint()
+
+func _do_activate_checkpoint() -> void:
+	if is_active:
+		return
 	is_active = true
 	_set_activated_visual(true)
 
@@ -35,7 +50,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if GameState:
 		GameState.set_checkpoint(checkpoint_id)
 
-	if SaveManager:
+	if SaveManager and (NetworkManager == null or not NetworkManager.is_multiplayer_active()):
 		SaveManager.save_game()
 
 func _set_activated_visual(animate: bool) -> void:

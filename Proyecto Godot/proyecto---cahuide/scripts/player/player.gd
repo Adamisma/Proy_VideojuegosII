@@ -19,6 +19,10 @@ signal respawn_requested
 const LAND_DUST_SCENE: PackedScene = preload("res://scenes/vfx/fx_land_dust.tscn")
 const DAMAGE_FLASH_MAT: Material = preload("res://materials/mat_damage_flash.tres")
 const FX_ATTACK_WAVE_SCENE: PackedScene = preload("res://scenes/vfx/fx_attack_wave.tscn")
+const NET_ANIM_NAMES: PackedStringArray = [
+	"idle", "walk", "run", "jump", "attack", "hurt", "dead", "transform", "detransform"
+]
+const NET_SYNC_INTERVAL: float = 0.04 # 25 Hz ligero para baja latencia LAN
 
 # --- SKINS Y ANIMACIONES ---
 @export_category("Skins & Animations")
@@ -107,13 +111,99 @@ var facing_direction: float = 1.0 # 1 derecha, -1 izquierda
 var current_ranged_weapon: int = 0
 var flash_material: ShaderMaterial
 
+# --- MULTIJUGADOR LAN (US-05) ---
+var peer_id: int = 1
+var player_slot: int = 1
+var player_display_name: String = "Cahuide"
+var character_id: String = "cahuide"
+var base_tint: Color = Color(1.0, 1.0, 1.0, 1.0)
+var ranged_damage_bonus: int = 0
+var _base_max_speed: float = 260.0
+var _base_melee_damage: int = 25
+var _net_sync_accum: float = 0.0
+var _net_target_pos: Vector2 = Vector2.ZERO
+var _net_last_anim_idx: int = -1
+var _net_last_facing: float = 1.0
+var _name_tag: Label = null
+
+
+func is_local_controlled() -> bool:
+	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+		return true
+	return is_multiplayer_authority()
+
+
+func configure_network_player(p_peer_id: int, p_name: String, p_char_id: String, p_slot: int) -> void:
+	peer_id = p_peer_id
+	player_display_name = p_name
+	character_id = p_char_id
+	player_slot = p_slot
+	set_multiplayer_authority(p_peer_id)
+	if is_inside_tree():
+		_apply_network_setup()
+
+
+func _apply_network_setup() -> void:
+	var is_lan := NetworkManager != null and NetworkManager.is_multiplayer_active()
+	var local_ctrl := is_local_controlled()
+
+	# Aplicar perfil de personaje elegido en el lobby
+	if is_lan and NetworkManager:
+		var char_data: Dictionary = NetworkManager.get_character_data(character_id)
+		base_tint = char_data.get("tint", Color(1.0, 1.0, 1.0, 1.0))
+		max_health = int(char_data.get("max_health", 20))
+		health = max_health
+		var speed_mult := float(char_data.get("speed_mult", 1.0))
+		max_speed = _base_max_speed * speed_mult
+		if movement:
+			movement.max_speed = max_speed
+		melee_damage = _base_melee_damage + int(char_data.get("melee_bonus", 0))
+		if melee_hitbox and "damage" in melee_hitbox:
+			melee_hitbox.damage = melee_damage
+		ranged_damage_bonus = int(char_data.get("ranged_bonus", 0))
+		current_ranged_weapon = int(char_data.get("start_weapon", 0))
+		if animated_sprite:
+			animated_sprite.modulate = base_tint
+		_ensure_name_tag(char_data.get("badge_color", Color(1.0, 0.88, 0.3, 1.0)))
+
+	# Solo el jugador controlado localmente activa su cámara
+	if camera:
+		camera.enabled = local_ctrl
+		if local_ctrl:
+			camera.make_current()
+
+	_net_target_pos = global_position
+
+	if local_ctrl:
+		health_changed.emit(health, max_health)
+		if EventBus:
+			EventBus.player_damaged.emit(health, max_health)
+			var w_name := "Lanza Inca" if current_ranged_weapon == 1 else "Piedra Ancestral"
+			EventBus.ranged_weapon_swapped.emit(w_name)
+		if is_lan and NetworkManager:
+			NetworkManager.broadcast_local_health(health, max_health, is_dead)
+
+
+func _ensure_name_tag(badge_color: Color) -> void:
+	if _name_tag == null:
+		_name_tag = Label.new()
+		_name_tag.name = "PlayerNameTag"
+		_name_tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_name_tag.position = Vector2(-70, -78)
+		_name_tag.custom_minimum_size = Vector2(140, 22)
+		_name_tag.add_theme_font_size_override("font_size", 13)
+		_name_tag.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+		_name_tag.add_theme_constant_override("outline_size", 3)
+		add_child(_name_tag)
+	_name_tag.text = "P%d · %s" % [player_slot, player_display_name]
+	_name_tag.add_theme_color_override("font_color", badge_color)
+
+
 func _ready() -> void:
 	add_to_group("player")
+	_base_max_speed = max_speed
+	_base_melee_damage = melee_damage
 	health = max_health
-	health_changed.emit(health, max_health)
-
-	if EventBus:
-		EventBus.player_damaged.emit(health, max_health)
 
 	if normal_frames and animated_sprite:
 		animated_sprite.sprite_frames = normal_frames
@@ -141,14 +231,22 @@ func _ready() -> void:
 	if solar_sparks:
 		solar_sparks.emitting = false
 
+	_apply_network_setup()
+
 func _physics_process(delta: float) -> void:
+	if not is_local_controlled():
+		_process_remote_puppet(delta)
+		return
+
 	if is_dead:
 		_stop_footsteps()
+		_send_network_state(delta)
 		return
 
 	if is_transforming:
 		velocity = Vector2.ZERO
 		_stop_footsteps()
+		_send_network_state(delta)
 		return
 
 	_update_timers(delta)
@@ -173,6 +271,8 @@ func _physics_process(delta: float) -> void:
 
 	if is_dashing:
 		_process_dash_ghost_trail(delta)
+
+	_send_network_state(delta)
 
 # ====================================================================
 # LOCOMOCIÓN Y FÍSICAS
@@ -354,6 +454,9 @@ func _execute_melee_attack() -> void:
 	# Trazo / onda amarilla que acompaña al golpe
 	_spawn_attack_wave()
 
+	if NetworkManager and NetworkManager.is_multiplayer_active() and is_local_controlled():
+		_rpc_remote_melee.rpc(facing_direction)
+
 	if melee_hitbox:
 		melee_hitbox.monitoring = true
 		await get_tree().create_timer(0.22).timeout
@@ -379,32 +482,42 @@ func _throw_stone() -> void:
 		return
 	shoot_timer = shoot_cooldown
 
+	var spawn_pos := global_position + Vector2(facing_direction * 28.0, -10.0)
+	var bonus_dmg: int = (10 if has_sol_powerup else 0) + ranged_damage_bonus
+	_spawn_stone_instance(spawn_pos, facing_direction, bonus_dmg)
+
+	if NetworkManager and NetworkManager.is_multiplayer_active() and is_local_controlled():
+		_rpc_remote_projectile.rpc(0, spawn_pos, facing_direction, bonus_dmg)
+
+func _spawn_stone_instance(spawn_pos: Vector2, dir_x: float, bonus_dmg: int) -> void:
 	var stone := stone_projectile_scene.instantiate() as StoneProjectile
 	if stone == null:
 		return
-
 	get_tree().current_scene.add_child(stone)
-	stone.global_position = global_position + Vector2(facing_direction * 28.0, -10.0)
-
-	var bonus_dmg: int = 10 if has_sol_powerup else 0
+	stone.global_position = spawn_pos
 	stone.damage += bonus_dmg
-	stone.launch(Vector2(facing_direction * stone_speed_x, stone_speed_y))
+	stone.launch(Vector2(dir_x * stone_speed_x, stone_speed_y))
 
 func _throw_spear() -> void:
 	if spear_projectile_scene == null:
 		return
 	shoot_timer = shoot_cooldown + 0.15
 
+	var spawn_pos := global_position + Vector2(facing_direction * 32.0, -8.0)
+	var bonus_dmg: int = (15 if has_sol_powerup else 0) + ranged_damage_bonus
+	_spawn_spear_instance(spawn_pos, facing_direction, bonus_dmg)
+
+	if NetworkManager and NetworkManager.is_multiplayer_active() and is_local_controlled():
+		_rpc_remote_projectile.rpc(1, spawn_pos, facing_direction, bonus_dmg)
+
+func _spawn_spear_instance(spawn_pos: Vector2, dir_x: float, bonus_dmg: int) -> void:
 	var spear := spear_projectile_scene.instantiate() as SpearProjectile
 	if spear == null:
 		return
-
 	get_tree().current_scene.add_child(spear)
-	spear.global_position = global_position + Vector2(facing_direction * 32.0, -8.0)
-
-	var bonus_dmg: int = 15 if has_sol_powerup else 0
+	spear.global_position = spawn_pos
 	spear.damage += bonus_dmg
-	spear.launch(Vector2(facing_direction, 0.0))
+	spear.launch(Vector2(dir_x, 0.0))
 
 # ====================================================================
 # POWER-UP DEL SOL Y SKINS DINÁMICOS
@@ -412,6 +525,10 @@ func _throw_spear() -> void:
 func apply_powerup_sol() -> void:
 	if is_transforming or is_dead:
 		return
+
+	var local_ctrl := is_local_controlled()
+	if NetworkManager and NetworkManager.is_multiplayer_active() and local_ctrl:
+		_rpc_remote_powerup_sol.rpc(sol_duration)
 
 	# Pausa de movimiento e inmunidad estilo Super Mario durante la transformación
 	is_transforming = true
@@ -427,8 +544,11 @@ func apply_powerup_sol() -> void:
 	# Curación de 2 puntos (1 corazón)
 	health = mini(health + 2, max_health)
 	health_changed.emit(health, max_health)
-	if EventBus:
-		EventBus.player_damaged.emit(health, max_health)
+	if local_ctrl:
+		if EventBus:
+			EventBus.player_damaged.emit(health, max_health)
+		if NetworkManager and NetworkManager.is_multiplayer_active():
+			NetworkManager.broadcast_local_health(health, max_health, false)
 
 	# Sonido de transformación al transformarse
 	if sfx_transform:
@@ -466,14 +586,14 @@ func apply_powerup_sol() -> void:
 	has_sol_powerup = true
 	sol_timer = sol_duration
 
-	if EventBus:
-		EventBus.player_powerup_activated.emit(sol_duration)
-
-	# Sacudida de cámara al completar la transformación solar
-	_trigger_camera_shake(0.65)
+	if local_ctrl:
+		if EventBus:
+			EventBus.player_powerup_activated.emit(sol_duration)
+		# Sacudida de cámara al completar la transformación solar
+		_trigger_camera_shake(0.65)
 
 	if animated_sprite:
-		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		animated_sprite.modulate = base_tint
 		animated_sprite.play("idle")
 
 ## Alias de compatibilidad por si se invoca como activate_power_up_sol
@@ -492,7 +612,7 @@ func _update_sol_powerup(delta: float) -> void:
 	if sol_timer <= 3.0 and sol_timer > 0.0:
 		var blink := fmod(sol_timer * 10.0, 2.0) > 1.0
 		if animated_sprite and not is_invulnerable:
-			animated_sprite.modulate = Color(1.8, 1.6, 0.8, 1.0) if blink else Color(1, 1, 1, 1)
+			animated_sprite.modulate = Color(1.8, 1.6, 0.8, 1.0) if blink else base_tint
 
 	if sol_timer <= 0.0:
 		_remove_sol_powerup()
@@ -500,6 +620,10 @@ func _update_sol_powerup(delta: float) -> void:
 func _remove_sol_powerup() -> void:
 	if is_transforming or is_dead:
 		return
+
+	var local_ctrl := is_local_controlled()
+	if NetworkManager and NetworkManager.is_multiplayer_active() and local_ctrl:
+		_rpc_remote_remove_powerup_sol.rpc()
 
 	# Pausa de movimiento estilo Mario durante la des-transformación
 	is_transforming = true
@@ -541,14 +665,14 @@ func _remove_sol_powerup() -> void:
 	if normal_frames and animated_sprite:
 		animated_sprite.sprite_frames = normal_frames
 	if animated_sprite:
-		animated_sprite.modulate = Color(1, 1, 1, 1)
+		animated_sprite.modulate = base_tint
 		animated_sprite.play("idle")
 
 	has_sol_powerup = false
 	is_transforming = false
 	is_invulnerable = false
 
-	if EventBus:
+	if local_ctrl and EventBus:
 		EventBus.player_powerup_ended.emit()
 
 # ====================================================================
@@ -566,6 +690,12 @@ func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> v
 	if is_invulnerable or is_dead or is_transforming:
 		return
 
+	# En multijugador: si el Host detecta daño sobre el jugador remoto, lo reenvía al dueño
+	if NetworkManager and NetworkManager.is_multiplayer_active() and not is_local_controlled():
+		if multiplayer.is_server():
+			_rpc_apply_damage.rpc_id(get_multiplayer_authority(), amount, knockback)
+		return
+
 	var applied := _calculate_mitigated_damage(amount)
 	if applied <= 0:
 		return
@@ -575,6 +705,10 @@ func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> v
 
 	if EventBus:
 		EventBus.player_damaged.emit(health, max_health)
+
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		NetworkManager.broadcast_local_health(health, max_health, health <= 0)
+		_rpc_remote_damage_fx.rpc()
 
 	if knockback != Vector2.ZERO:
 		velocity = knockback
@@ -605,7 +739,7 @@ func _play_damage_flash() -> void:
 		)
 
 func _trigger_camera_shake(intensity: float) -> void:
-	if camera and camera.has_method("trigger_shake"):
+	if camera and camera.enabled and camera.has_method("trigger_shake"):
 		camera.trigger_shake(intensity)
 
 func _start_invulnerability(duration: float) -> void:
@@ -629,13 +763,17 @@ func _die() -> void:
 	if solar_sparks:
 		solar_sparks.emitting = false
 	player_died.emit()
-	if EventBus:
-		EventBus.player_died.emit()
+	if is_local_controlled():
+		if NetworkManager and NetworkManager.is_multiplayer_active():
+			NetworkManager.broadcast_local_health(0, max_health, true)
+		elif EventBus:
+			EventBus.player_died.emit()
 	if animated_sprite:
 		animated_sprite.play("dead")
 
 func respawn_at(new_position: Vector2) -> void:
 	global_position = new_position
+	_net_target_pos = new_position
 	velocity = Vector2.ZERO
 	is_dead = false
 	is_attacking = false
@@ -649,11 +787,15 @@ func respawn_at(new_position: Vector2) -> void:
 		animated_sprite.sprite_frames = normal_frames
 	health = max_health
 	health_changed.emit(health, max_health)
-	if EventBus:
-		EventBus.player_damaged.emit(health, max_health)
+	if is_local_controlled():
+		if EventBus:
+			EventBus.player_damaged.emit(health, max_health)
+		if NetworkManager and NetworkManager.is_multiplayer_active():
+			NetworkManager.broadcast_local_health(health, max_health, false)
+			_rpc_remote_respawn.rpc(new_position)
 	if animated_sprite:
 		animated_sprite.visible = true
-		animated_sprite.modulate = Color(1, 1, 1, 1)
+		animated_sprite.modulate = base_tint
 		animated_sprite.play("idle")
 
 # ====================================================================
@@ -679,3 +821,109 @@ func _update_animations() -> void:
 func _on_animation_finished() -> void:
 	if animated_sprite and (animated_sprite.animation == "attack" or animated_sprite.animation == "hurt"):
 		is_attacking = false
+
+# ====================================================================
+# SINCRONIZACIÓN DE RED LAN (Paquetes ligeros + Interpolación + RPCs)
+# ====================================================================
+func _get_current_anim_index() -> int:
+	if animated_sprite == null:
+		return 0
+	var idx := NET_ANIM_NAMES.find(String(animated_sprite.animation))
+	return idx if idx >= 0 else 0
+
+func _send_network_state(delta: float) -> void:
+	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+		return
+	_net_sync_accum += delta
+	var anim_idx := _get_current_anim_index()
+	var changed := (anim_idx != _net_last_anim_idx) or (facing_direction != _net_last_facing)
+	if _net_sync_accum < NET_SYNC_INTERVAL and not changed:
+		return
+	_net_sync_accum = 0.0
+	_net_last_anim_idx = anim_idx
+	_net_last_facing = facing_direction
+	var flags: int = (1 if has_sol_powerup else 0) | (2 if is_dashing else 0) | (4 if is_dead else 0)
+	_rpc_sync_state.rpc(global_position, velocity, facing_direction, anim_idx, flags)
+
+func _process_remote_puppet(delta: float) -> void:
+	# Corrección instantánea si hay gran desincronización (ej. respawn o teletransporte)
+	if global_position.distance_to(_net_target_pos) > 180.0:
+		global_position = _net_target_pos
+	else:
+		global_position = global_position.lerp(_net_target_pos, clampf(delta * 18.0, 0.0, 1.0))
+
+	if is_dashing:
+		_process_dash_ghost_trail(delta)
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func _rpc_sync_state(pos: Vector2, vel: Vector2, facing: float, anim_idx: int, flags: int) -> void:
+	_net_target_pos = pos
+	velocity = vel
+	facing_direction = facing
+	_update_facing()
+
+	var sol_flag := (flags & 1) != 0
+	is_dashing = (flags & 2) != 0
+	is_dead = (flags & 4) != 0
+
+	if sol_flag != has_sol_powerup and not is_transforming:
+		has_sol_powerup = sol_flag
+		if animated_sprite:
+			animated_sprite.sprite_frames = sol_frames if has_sol_powerup else normal_frames
+		if solar_sparks:
+			solar_sparks.emitting = has_sol_powerup
+
+	if animated_sprite and anim_idx >= 0 and anim_idx < NET_ANIM_NAMES.size():
+		var target_anim := NET_ANIM_NAMES[anim_idx]
+		if animated_sprite.animation != target_anim and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(target_anim):
+			animated_sprite.play(target_anim)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_melee(facing: float) -> void:
+	facing_direction = facing
+	_update_facing()
+	if animated_sprite:
+		animated_sprite.play("attack")
+	if sfx_attack:
+		sfx_attack.play()
+	_spawn_attack_wave()
+	# En el Host activamos brevemente el MeleeHitbox del cliente para validar daño contra enemigos
+	if multiplayer.is_server() and melee_hitbox:
+		melee_hitbox.monitoring = true
+		await get_tree().create_timer(0.22).timeout
+		if is_instance_valid(melee_hitbox):
+			melee_hitbox.monitoring = false
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_projectile(weapon_type: int, spawn_pos: Vector2, dir_x: float, bonus_dmg: int) -> void:
+	if weapon_type == 0:
+		_spawn_stone_instance(spawn_pos, dir_x, bonus_dmg)
+	else:
+		_spawn_spear_instance(spawn_pos, dir_x, bonus_dmg)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_powerup_sol(duration: float) -> void:
+	sol_duration = duration
+	apply_powerup_sol()
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_remove_powerup_sol() -> void:
+	_remove_sol_powerup()
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_damage_fx() -> void:
+	_play_damage_flash()
+	if animated_sprite and not is_dead:
+		animated_sprite.play("hurt")
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_remote_respawn(new_pos: Vector2) -> void:
+	respawn_at(new_pos)
+
+@rpc("any_peer", "call_local", "reliable")
+func _rpc_apply_damage(amount: int, knockback: Vector2) -> void:
+	# Solo aceptamos daño reenviado desde el Host (peer 1)
+	if multiplayer.get_remote_sender_id() != 1 and multiplayer.get_remote_sender_id() != 0:
+		return
+	if is_local_controlled():
+		take_direct_damage(amount, knockback)

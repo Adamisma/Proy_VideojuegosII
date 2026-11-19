@@ -34,7 +34,9 @@ func _ready() -> void:
 
 
 func open_menu() -> void:
-	get_tree().paused = true
+	# En partida LAN no congelamos el árbol para mantener viva la red ENet
+	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+		get_tree().paused = true
 	visible = true
 	if resume_btn:
 		resume_btn.grab_focus()
@@ -72,6 +74,8 @@ func _on_restart_checkpoint_pressed() -> void:
 
 func _on_main_menu_pressed() -> void:
 	get_tree().paused = false
+	if NetworkManager and NetworkManager.is_lan_session:
+		NetworkManager.disconnect_session(false)
 	if EventBus and EventBus.has_signal("game_paused"):
 		EventBus.game_paused.emit(false)
 	if SceneFlow:

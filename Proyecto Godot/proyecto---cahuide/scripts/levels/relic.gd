@@ -33,10 +33,27 @@ func _on_body_entered(body: Node2D) -> void:
 	if _collected or not body.is_in_group("player"):
 		return
 
+	if NetworkManager and NetworkManager.is_multiplayer_active():
+		if not multiplayer.is_server():
+			return
+		_rpc_collect_relic.rpc()
+		return
+
+	_do_collect_relic()
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_collect_relic() -> void:
+	_do_collect_relic()
+
+func _do_collect_relic() -> void:
+	if _collected:
+		return
 	_collected = true
 
 	if GameState:
 		GameState.register_collected_relic(relic_id, score_value)
+		if NetworkManager and NetworkManager.is_multiplayer_active() and multiplayer.is_server():
+			NetworkManager.host_broadcast_score(GameState.score, GameState.enemies_killed)
 	elif EventBus:
 		EventBus.score_changed.emit(score_value)
 

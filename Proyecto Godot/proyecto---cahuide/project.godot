@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Proyecto - Cahuide"
 run/main_scene="res://scenes/ui/main_menu.tscn"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,6 +25,7 @@ EventBus="*res://core/events/event_bus.gd"
 GameState="*res://core/services/game_state.gd"
 SceneFlow="*res://core/services/scene_flow.gd"
 SaveManager="*res://core/services/save_manager.gd"
+NetworkManager="*res://core/services/network_manager.gd"
 
 [display]
 
