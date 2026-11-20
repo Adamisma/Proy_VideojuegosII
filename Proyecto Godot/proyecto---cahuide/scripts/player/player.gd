@@ -43,7 +43,9 @@ var health: int = 20
 @export var jump_velocity: float = -570.0
 @export var coyote_time: float = 0.12
 @export var jump_buffer_time: float = 0.12
-@export var jump_cut_multiplier: float = 0.5
+@export var jump_cut_multiplier: float = 0.65
+@export var max_jump_hold_time: float = 0.28
+@export var min_jump_velocity: float = -380.0
 
 # --- PARED Y SALTO ---
 @export_category("Wall Mechanics")
@@ -93,6 +95,8 @@ var sol_timer: float = 0.0
 # --- VARIABLES DE ESTADO ---
 var coyote_timer: float = 0.0
 var jump_buffer_timer: float = 0.0
+var is_jumping: bool = false
+var jump_hold_timer: float = 0.0
 var dash_timer: float = 0.0
 var dash_cooldown_timer: float = 0.0
 var attack_timer: float = 0.0
@@ -299,13 +303,25 @@ func _update_facing() -> void:
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		var current_gravity := gravity
+		# Salto variable proporcional: mientras suba y mantenga pulsado salto durante la ventana de impulso
+		if is_jumping and velocity.y < 0.0:
+			if Input.is_action_pressed("jump") and jump_hold_timer > 0.0:
+				current_gravity *= 0.45 # Reduce gravedad para sustentar la elevación proporcional al tiempo presionado
+			else:
+				is_jumping = false
+		velocity.y += current_gravity * delta
 
 func _update_timers(delta: float) -> void:
 	if is_on_floor():
 		coyote_timer = coyote_time
+		is_jumping = false
+		jump_hold_timer = 0.0
 	else:
 		coyote_timer = max(0.0, coyote_timer - delta)
+
+	if is_jumping and jump_hold_timer > 0.0:
+		jump_hold_timer = max(0.0, jump_hold_timer - delta)
 
 	if Input.is_action_just_pressed("jump"):
 		jump_buffer_timer = jump_buffer_time
@@ -315,11 +331,18 @@ func _update_timers(delta: float) -> void:
 	attack_timer = max(0.0, attack_timer - delta)
 	shoot_timer = max(0.0, shoot_timer - delta)
 
+func _trigger_haptic(ms: int) -> void:
+	if is_local_controlled() and (OS.has_feature("mobile") or OS.has_feature("android") or OS.has_feature("ios")):
+		Input.vibrate_handheld(ms)
+
 func _try_jump() -> void:
 	if jump_buffer_timer > 0.0 and coyote_timer > 0.0:
 		velocity.y = jump_velocity
 		jump_buffer_timer = 0.0
 		coyote_timer = 0.0
+		is_jumping = true
+		jump_hold_timer = max_jump_hold_time
+		_trigger_haptic(20)
 		if not is_attacking and animated_sprite:
 			animated_sprite.play("jump")
 
@@ -333,12 +356,20 @@ func _try_wall_jump() -> void:
 		velocity.x = wall_normal.x * wall_jump_horizontal_speed
 		velocity.y = wall_jump_vertical_speed
 		jump_buffer_timer = 0.0
+		is_jumping = true
+		jump_hold_timer = max_jump_hold_time
+		_trigger_haptic(25)
 		facing_direction = sign(velocity.x)
 		_update_facing()
 
 func _apply_jump_cut() -> void:
+	# Al soltar el botón de salto prematuramente mientras asciende, cortar la velocidad hacia arriba
 	if Input.is_action_just_released("jump") and velocity.y < 0.0:
-		velocity.y *= jump_cut_multiplier
+		is_jumping = false
+		if velocity.y < min_jump_velocity:
+			velocity.y = min_jump_velocity
+		else:
+			velocity.y *= jump_cut_multiplier
 
 func _check_landing_dust() -> void:
 	if is_on_floor() and not was_on_floor:
@@ -359,6 +390,7 @@ func _try_start_dash() -> void:
 		is_dashing = true
 		dash_timer = dash_duration
 		dash_cooldown_timer = dash_cooldown
+		_trigger_haptic(25)
 
 func _update_dash(delta: float) -> void:
 	dash_cooldown_timer = max(0.0, dash_cooldown_timer - delta)
@@ -444,6 +476,7 @@ func _swap_ranged_weapon() -> void:
 func _execute_melee_attack() -> void:
 	attack_timer = attack_cooldown
 	is_attacking = true
+	_trigger_haptic(22)
 	if animated_sprite:
 		animated_sprite.play("attack")
 
@@ -490,12 +523,10 @@ func _throw_stone() -> void:
 		_rpc_remote_projectile.rpc(0, spawn_pos, facing_direction, bonus_dmg)
 
 func _spawn_stone_instance(spawn_pos: Vector2, dir_x: float, bonus_dmg: int) -> void:
-	var stone := stone_projectile_scene.instantiate() as StoneProjectile
+	var stone := ProjectilePool.acquire(stone_projectile_scene, get_tree().current_scene, spawn_pos) as StoneProjectile
 	if stone == null:
 		return
-	get_tree().current_scene.add_child(stone)
-	stone.global_position = spawn_pos
-	stone.damage += bonus_dmg
+	stone.damage = 15 + bonus_dmg
 	stone.launch(Vector2(dir_x * stone_speed_x, stone_speed_y))
 
 func _throw_spear() -> void:
@@ -511,12 +542,10 @@ func _throw_spear() -> void:
 		_rpc_remote_projectile.rpc(1, spawn_pos, facing_direction, bonus_dmg)
 
 func _spawn_spear_instance(spawn_pos: Vector2, dir_x: float, bonus_dmg: int) -> void:
-	var spear := spear_projectile_scene.instantiate() as SpearProjectile
+	var spear := ProjectilePool.acquire(spear_projectile_scene, get_tree().current_scene, spawn_pos) as SpearProjectile
 	if spear == null:
 		return
-	get_tree().current_scene.add_child(spear)
-	spear.global_position = spawn_pos
-	spear.damage += bonus_dmg
+	spear.damage = 30 + bonus_dmg
 	spear.launch(Vector2(dir_x, 0.0))
 
 # ====================================================================
@@ -715,6 +744,7 @@ func take_direct_damage(amount: int = 1, knockback: Vector2 = Vector2.ZERO) -> v
 
 	# Sacudida paramétrica de cámara al recibir daño según especificación
 	_trigger_camera_shake(0.55)
+	_trigger_haptic(55)
 
 	# Flash blanco instantáneo por shader
 	_play_damage_flash()

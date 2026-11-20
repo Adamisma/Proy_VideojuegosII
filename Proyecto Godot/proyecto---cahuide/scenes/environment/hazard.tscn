@@ -8,7 +8,7 @@ size = Vector2(54, 38.75)
 
 [node name="Hazard" type="Area2D" unique_id=1211282357]
 collision_layer = 128
-collision_mask = 66
+collision_mask = 86
 script = ExtResource("1_hazard")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1345397562]

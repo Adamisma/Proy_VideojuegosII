@@ -17,10 +17,29 @@ const HIT_SPARKS_SCENE: PackedScene = preload("res://scenes/vfx/fx_hit_sparks.ts
 var velocity: Vector2 = Vector2.ZERO
 var _has_impacted: bool = false
 var _time_alive: float = 0.0
+var is_pooled: bool = false
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
+
+func activate(pos: Vector2) -> void:
+	global_position = pos
+	_has_impacted = false
+	_time_alive = 0.0
+	rotation = 0.0
+	show()
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+	set_physics_process(true)
+
+func recycle() -> void:
+	_has_impacted = false
+	_time_alive = 0.0
+	hide()
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+	set_physics_process(false)
 
 func launch(initial_velocity: Vector2) -> void:
 	velocity = initial_velocity
@@ -37,7 +56,10 @@ func _physics_process(delta: float) -> void:
 
 	_time_alive += delta
 	if _time_alive >= lifetime:
-		queue_free()
+		if is_pooled:
+			recycle()
+		else:
+			queue_free()
 
 func _on_body_entered(body: Node2D) -> void:
 	if _has_impacted:
@@ -76,7 +98,10 @@ func _on_area_entered(area: Area2D) -> void:
 func _impact_and_destroy() -> void:
 	_has_impacted = true
 	_spawn_hit_sparks()
-	queue_free()
+	if is_pooled:
+		recycle()
+	else:
+		queue_free()
 
 func _spawn_hit_sparks() -> void:
 	if HIT_SPARKS_SCENE:

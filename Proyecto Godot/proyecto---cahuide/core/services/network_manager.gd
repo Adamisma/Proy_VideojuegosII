@@ -90,6 +90,7 @@ signal connection_failed_with_reason(reason: String)
 signal peer_left_match(peer_id: int, player_name: String)
 signal host_disconnected_mid_match
 signal partner_health_updated(peer_id: int, current_hp: int, max_hp: int, is_dead: bool)
+signal latency_updated(latency_ms: int)
 
 var is_lan_session: bool = false
 var match_started: bool = false
@@ -100,6 +101,9 @@ var game_options: Dictionary = {
 }
 var local_player_name: String = "Jugador"
 var current_port: int = DEFAULT_PORT
+var current_latency_ms: int = 0
+var _ping_timer: float = 0.0
+const PING_INTERVAL_SEC: float = 2.0
 
 var _connect_timer: Timer
 var _is_connecting: bool = false
@@ -120,6 +124,16 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+
+
+func _process(delta: float) -> void:
+	if not is_multiplayer_active():
+		return
+	if not multiplayer.is_server():
+		_ping_timer += delta
+		if _ping_timer >= PING_INTERVAL_SEC:
+			_ping_timer = 0.0
+			_rpc_ping_request.rpc_id(1, Time.get_ticks_msec())
 
 
 # ====================================================================
@@ -609,3 +623,18 @@ func broadcast_local_health(current_hp: int, max_hp: int, is_dead_flag: bool) ->
 func _rpc_partner_health(current_hp: int, max_hp: int, is_dead_flag: bool) -> void:
 	var sender_id := multiplayer.get_remote_sender_id()
 	partner_health_updated.emit(sender_id, current_hp, max_hp, is_dead_flag)
+
+
+@rpc("any_peer", "call_remote", "unreliable")
+func _rpc_ping_request(client_time_ms: int) -> void:
+	var sender_id := multiplayer.get_remote_sender_id()
+	if sender_id > 0:
+		_rpc_ping_response.rpc_id(sender_id, client_time_ms)
+
+
+@rpc("authority", "call_remote", "unreliable")
+func _rpc_ping_response(client_time_ms: int) -> void:
+	var now := Time.get_ticks_msec()
+	var rtt := maxi(1, now - client_time_ms)
+	current_latency_ms = rtt
+	latency_updated.emit(rtt)

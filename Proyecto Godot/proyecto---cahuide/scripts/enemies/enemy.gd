@@ -54,6 +54,10 @@ var dissolve_material: ShaderMaterial
 var _net_sync_accum: float = 0.0
 var _net_target_pos: Vector2 = Vector2.ZERO
 var _net_target_refresh: float = 0.0
+var _closest_player_dist: float = 9999.0
+var _last_synced_pos: Vector2 = Vector2.ZERO
+var _last_synced_anim: int = -1
+var _last_synced_hp: int = -1
 
 func _is_network_client() -> bool:
 	return NetworkManager != null and NetworkManager.is_multiplayer_active() and not multiplayer.is_server()
@@ -142,21 +146,33 @@ func _physics_process(delta: float) -> void:
 		_refresh_closest_player()
 
 	_net_sync_accum += delta
-	if _net_sync_accum >= ENEMY_SYNC_INTERVAL:
+	# Area of Interest (AoI): Si está lejos de ambos jugadores (> 650px), sincronizar a 2.5 Hz (0.4s)
+	# para ahorrar hasta un 80% de ancho de banda y CPU en móviles; a corta distancia sincroniza a 20 Hz
+	var sync_interval := 0.4 if _closest_player_dist > 650.0 else ENEMY_SYNC_INTERVAL
+	if _net_sync_accum >= sync_interval:
 		_net_sync_accum = 0.0
 		var anim_idx := _get_enemy_anim_index()
+		# Si está lejos y no ha cambiado posición ni animación ni vida, descartar paquete redundante
+		if _closest_player_dist > 650.0 and global_position.distance_to(_last_synced_pos) < 2.0 and anim_idx == _last_synced_anim and health == _last_synced_hp:
+			return
+		_last_synced_pos = global_position
+		_last_synced_anim = anim_idx
+		_last_synced_hp = health
 		_rpc_sync_enemy_state.rpc(global_position, direction, anim_idx, health, is_dead)
 
 func _refresh_closest_player() -> void:
 	var best_player: CharacterBody2D = null
 	var best_dist: float = 520.0 if is_ranged else 340.0
+	_closest_player_dist = 9999.0
 	for node in get_tree().get_nodes_in_group("player"):
 		var p := node as CharacterBody2D
 		if p == null or not is_instance_valid(p):
 			continue
+		var d := global_position.distance_to(p.global_position)
+		if d < _closest_player_dist:
+			_closest_player_dist = d
 		if "is_dead" in p and p.is_dead:
 			continue
-		var d := global_position.distance_to(p.global_position)
 		if d < best_dist:
 			best_dist = d
 			best_player = p
@@ -234,19 +250,17 @@ func _shoot_projectile() -> void:
 func _spawn_enemy_projectile(spawn_pos: Vector2, shoot_dir: Vector2, spd: float, authoritative: bool) -> void:
 	if not projectile_scene:
 		return
-	var proj := projectile_scene.instantiate() as Projectile
+	var proj := ProjectilePool.acquire(projectile_scene, get_tree().current_scene, spawn_pos) as Projectile
 	if not proj:
 		return
 	proj.is_enemy_projectile = true
 	proj.damage = ranged_damage if authoritative else 0
 	proj.speed = spd
 	proj.set_direction(shoot_dir)
-	proj.global_position = spawn_pos
 	if not authoritative:
 		# Visual en cliente; el Host aplica el daño real para evitar impactos duplicados
 		proj.set_deferred("monitoring", false)
 		proj.set_deferred("monitorable", false)
-	get_tree().current_scene.add_child(proj)
 
 func _on_received_damage(amount: int, knockback: Vector2) -> void:
 	if _is_network_client():

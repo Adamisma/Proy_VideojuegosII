@@ -39,10 +39,26 @@ func _ready() -> void:
 	_make_touch_friendly(quit_btn)
 
 
+var _lan_banner: Label = null
+
 func open_menu() -> void:
-	# En partida LAN no congelamos el árbol para mantener viva la red ENet
-	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+	var is_lan := NetworkManager != null and NetworkManager.is_multiplayer_active()
+	if is_lan:
+		# En partida LAN no congelamos el árbol para mantener viva la red y simulación
+		get_tree().paused = false
+		if save_btn:
+			save_btn.visible = false
+		if restart_cp_btn:
+			restart_cp_btn.visible = false
+		_show_lan_banner(true)
+	else:
 		get_tree().paused = true
+		if save_btn:
+			save_btn.visible = true
+		if restart_cp_btn:
+			restart_cp_btn.visible = true
+		_show_lan_banner(false)
+
 	visible = true
 	if resume_btn:
 		resume_btn.grab_focus()
@@ -52,10 +68,26 @@ func open_menu() -> void:
 
 func close_menu() -> void:
 	visible = false
-	get_tree().paused = false
+	if NetworkManager == null or not NetworkManager.is_multiplayer_active():
+		get_tree().paused = false
 	resumed.emit()
 	if EventBus and EventBus.has_signal("game_paused"):
 		EventBus.game_paused.emit(false)
+
+
+func _show_lan_banner(p_visible: bool) -> void:
+	if _lan_banner == null:
+		_lan_banner = Label.new()
+		_lan_banner.name = "LanNoticeBanner"
+		_lan_banner.text = "⚠️ Partida LAN en Vivo\n(El mundo continúa en tiempo real)"
+		_lan_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_lan_banner.add_theme_font_size_override("font_size", 12)
+		_lan_banner.add_theme_color_override("font_color", Color(1.0, 0.8, 0.35))
+		var vbox := get_node_or_null("CenterContainer/PanelContainer/VBoxContainer")
+		if vbox:
+			vbox.add_child(_lan_banner)
+			vbox.move_child(_lan_banner, 2)
+	_lan_banner.visible = p_visible
 
 
 func _on_resume_pressed() -> void:

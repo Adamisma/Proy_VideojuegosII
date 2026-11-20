@@ -21,6 +21,7 @@ signal main_menu_requested
 var _enemies_defeated: int = 0
 var _score: int = 0
 var partner_label: Label = null
+var ping_label: Label = null
 
 
 func _ready() -> void:
@@ -103,6 +104,8 @@ func _exit_tree() -> void:
 			NetworkManager.partner_health_updated.disconnect(_on_partner_health_updated)
 		if NetworkManager.peer_left_match.is_connected(_on_partner_disconnected):
 			NetworkManager.peer_left_match.disconnect(_on_partner_disconnected)
+		if NetworkManager.latency_updated.is_connected(_on_latency_updated):
+			NetworkManager.latency_updated.disconnect(_on_latency_updated)
 
 
 func _on_eventbus_player_died() -> void:
@@ -145,10 +148,32 @@ func _setup_lan_partner_indicator() -> void:
 	else:
 		partner_label.text = "🤝 Modo LAN (Solo)"
 
+	# Indicador de ping / latencia de red
+	ping_label = Label.new()
+	ping_label.name = "LanPingLabel"
+	ping_label.add_theme_font_size_override("font_size", 11)
+	if multiplayer.is_server():
+		ping_label.text = "📶 LAN: Host (0 ms)"
+		ping_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.45))
+	else:
+		ping_label.text = "📶 LAN: Conectando..."
+		ping_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+		if not NetworkManager.latency_updated.is_connected(_on_latency_updated):
+			NetworkManager.latency_updated.connect(_on_latency_updated)
+	$MarginContainer/VBoxContainer/TopBar/VBoxContainer.add_child(ping_label)
+
 	if not NetworkManager.partner_health_updated.is_connected(_on_partner_health_updated):
 		NetworkManager.partner_health_updated.connect(_on_partner_health_updated)
 	if not NetworkManager.peer_left_match.is_connected(_on_partner_disconnected):
 		NetworkManager.peer_left_match.connect(_on_partner_disconnected)
+
+
+func _on_latency_updated(rtt: int) -> void:
+	if ping_label == null:
+		return
+	var col := Color(0.3, 1.0, 0.45) if rtt < 50 else (Color(1.0, 0.85, 0.25) if rtt < 110 else Color(1.0, 0.4, 0.35))
+	ping_label.text = "📶 LAN: %d ms" % rtt
+	ping_label.add_theme_color_override("font_color", col)
 
 
 func _on_partner_health_updated(peer_id: int, current_hp: int, max_hp: int, is_dead_flag: bool) -> void:

@@ -14,18 +14,36 @@ extends Area2D
 var direction: Vector2 = Vector2.RIGHT
 var _time_alive: float = 0.0
 var _has_impacted: bool = false # Evita doble impacto en el mismo frame
+var is_pooled: bool = false
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
 	_update_rotation()
 
+func activate(pos: Vector2) -> void:
+	global_position = pos
+	_has_impacted = false
+	_time_alive = 0.0
+	show()
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+	set_physics_process(true)
+
+func recycle() -> void:
+	_has_impacted = false
+	_time_alive = 0.0
+	hide()
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+	set_physics_process(false)
+
 func _physics_process(delta: float) -> void:
 	global_position += direction * speed * delta
 	
 	_time_alive += delta
 	if _time_alive >= lifetime:
-		queue_free()
+		_impact_and_destroy()
 
 func set_direction(new_direction: Vector2) -> void:
 	if new_direction != Vector2.ZERO:
@@ -73,4 +91,7 @@ func _on_area_entered(area: Area2D) -> void:
 		_impact_and_destroy()
 
 func _impact_and_destroy() -> void:
-	queue_free()
+	if is_pooled:
+		recycle()
+	else:
+		queue_free()
